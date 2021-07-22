@@ -45,6 +45,10 @@ const myFavoriteTom = tom + " " + firstTom;
 - Exiba a "js" no console do browser;
 */
 
+const programmingLanguage = 'JavaScript'
+const js = programmingLanguage[0] + programmingLanguage[4]
+// console.log(js);
+
 /*
 06 - Comente o console.log acima, e,
 
@@ -66,7 +70,7 @@ const mdn =
 - Exiba no console do browser a quantidade de caracteres que a constante "programmingLanguage" possui;
 */
 
-// console.log("programmingLanguage".length);
+// console.log(programmingLanguage.length);
 
 /*
 08 - Comente o console.log acima, e,
@@ -136,7 +140,7 @@ const harryPotterAuthor = "J.K. Rowling";
 */
 
 const bestMovie = 'E o Oscar de melhor filme vai para: "La la land"!';
-const realBestMovie = bestMovie.replace('"La la land"', '"Moonlight"');
+const realBestMovie = bestMovie.replace('La la land', 'Moonlight');
 // console.log(realBestMovie);
 /*
 15 - Comente o console.log acima, e,
@@ -144,8 +148,10 @@ const realBestMovie = bestMovie.replace('"La la land"', '"Moonlight"');
 - Abaixo deste comentário, armazene o resto de 10 dividido por 3 em uma constante "reminder";
 - Exiba a reminder no console. O resultado deve ser 1;
 */
+
 const reminder = 10 % 3;
 // console.log(reminder);
+
 /*
 16 - Comente o console.log acima, e,
 
@@ -157,6 +163,7 @@ const reminder = 10 % 3;
 let episodes = 6;
 episodes++;
 // console.log(episodes);
+
 /*
 17 - Comente o console.log acima, e,
 
@@ -214,8 +221,8 @@ const bookMessage = '\'O Conto da Aia\' é um dos livros mais vendidos da décad
 */
 
 const name = "walter white";
-let newName = name.replaceAll('w', 'W')
-console.log(newName);
+let newName = name[0].toUpperCase() + name.slice(1,6) + ' ' + name[7].toUpperCase() + name.slice(8, 12)
+// console.log(newName);
 
 /*
 22 - Comente o console.log acima, e,
@@ -226,3 +233,6 @@ console.log(newName);
 - Não modifique a string da const "name";
 - Exiba a "newName" no console;
 */
+
+newName = `${name[0].toUpperCase()}${name.slice(1, 6)} ${name[7].toUpperCase()}${name.slice(8, 12)}`
+console.log(newName);

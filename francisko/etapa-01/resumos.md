@@ -204,3 +204,38 @@ const html = `
 `
 ```
 - Quando você não vai interpolar variáveis na string, usar aspas ou quebrar linhas, apas normais resolvem bem. Caso contrário template strings são uma boa
+
+# Aula 03-02 Arrays
+
+- Por que usar arrays?
+  - Para armazenar uma lista de valores que tem relação entre si
+- Para criar arrays:
+
+```javascript
+let heroes = ['batman', 'catwoman', 'iron man']
+```
+
+- Para acessar elementos específicos de uma array usamos `[]` da mesma forma que usamos em strings
+  - Podemos inclusive usar operações matemáticas nesses colchetes 
+- Para sobrescrever um elemento, selecionamos esse elemento e fazemos a atribuição
+- Arrays podem receber tipos de dados diferentes
+  - Mesmo sendo possível, isso não é necessariamente uma boa idéia
+- Alguns métodos
+  - `myArray.join(sep)` retorna uma nova string com os elementos do array separados por `sep`
+  - `myArray.indexOf(arg)` retorna o primeiro index do primeiro match de `arg`
+  - `myArray.concat(myOtherArray)`  concatena/junta dois arrays, recebe um array como argumento. Retorna um novo array com o conteúdo do array original mais o conteúdo do novo array. O argumento pode ser um array ou um/vários item soltos
+  - `myArray.push(newItem1, newItem2)` adiciona items ao array e retorna o número de items no array após a adição. Esse método **muda o array original**
+  - `myArray.pop()` remove e retorna o último item do array. Esse método **muda o array original**
+
+# Aula 03-03 Null e undefined
+
+- `Null` e `Undefined` são tipos similares usados para identificar a falta de um valor
+- `Null` deve ser intencional, ao contrário de `Undefined`
+- JS  atribui `undefined` para variáveis que não recebem nenhum valor como no exemplo a seguir
+  
+```javascript
+const emptiness
+console.log(emptiness) // imprime "undefined"
+```
+
+- Usamos `Null` indica intencionalmente que não há valor em uma variável

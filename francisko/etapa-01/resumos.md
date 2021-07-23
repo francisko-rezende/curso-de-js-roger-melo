@@ -1,4 +1,6 @@
-# Aula 01-04 Adicionando o JavaScript a uma pagina web
+# Aula 01
+
+## 01-04 Adicionando o JavaScript a uma pagina web
 
 - Como adicionar JS a uma página web?
   - Primeira pergunta a se fazer é, na verdade, "onde"
@@ -8,14 +10,14 @@
   - Apesar de adicionar JS no próprio HTML ser possível, é melhor guardar o JS em seu próprio arquivo principalmente quando o código for extenso;
   - Nesse caso, fazemos o link desse arquivo assim: `<script src="path-to-js/app.js"></script>`;
   
-# Aula 01-05 O console do browser
+## Aula 01-05 O console do browser
 
 - O roger usa o google chrome por causa das suas features (eg dev tools)
 - Podemos usar o browser pra executar JS;
 - JS executa o código de maneira sequencial, de cima pra baixo;
 - `console.log()` é uma função que imprime os argumentos passados no console;
 
-# Aula 01-06 Constantes, variáveis e comentários
+## Aula 01-06 Constantes, variáveis e comentários
 
 - Variáveis armazenam valores (eg nomes, emails, números...);
 - Declarando com `let`
@@ -60,7 +62,9 @@ let age = 31
   linhas
   */
 
-# Aula 02-02 - Um overview sobre tipos de dados
+# Aula 02
+
+## Aula 02-02 - Um overview sobre tipos de dados
 
 - JS tem oito tipos de dados mais comuns:
   - Number
@@ -82,7 +86,7 @@ let age = 31
     - Usado para manipular números inteiros muito grandes
 - Variáveis podem armazenar qualquer um desses e nao precisamos explicitar o tipo de dado que estamos setando
 
-# Aula 02-03 Strings
+## Aula 02-03 Strings
 
 - São usados para armazenar letras, números, ou qualquer outro tipo de caractere;
 - São criadas usando aspas simples ou duplas:
@@ -111,7 +115,7 @@ console.log(fullName[0])
     - Os métodos `.toLowerCase()`e `.toUpperCase()` não alteram a string original no qual estão executando a ação, mas outros métodos podem modificar
     - Alguns métodos como `.indexOf()` precisam de argumentos para funcionar
 
-# Aula 02-04 Métodos comuns de strings
+## Aula 02-04 Métodos comuns de strings
 
 - Lembrando: métodos são funções que pertencem a um objeto ou tipo de dado específico
 - Nessa aula veremos alguns dos métodos de `strings`
@@ -138,7 +142,7 @@ myString.replace('a', 'b')
 - `b`: caractere que irá substituir o que passamos em `a`
 - Esse método **não** altera a string original
 
-# Aula 02-05 Numbers
+## Aula 02-05 Numbers
 
 - Números são usados em diversos casos em JS
 - Usamos `.` ao invés de `,` para criar números decimais
@@ -177,7 +181,7 @@ myString.replace('a', 'b')
 - Concatenação de string com números
   - Número sempre resulta em string 
   
-  # Aula 02-06 Template strings
+  ## Aula 02-06 Template strings
  - Template string é uma forma de escrever strings mais moderna (introduzida no es6)
  - Também chamados de "Template Literals";
  - Torna a criação de strings menos verbosa e mais fácil de escrever, segue um exemplo
@@ -205,7 +209,9 @@ const html = `
 ```
 - Quando você não vai interpolar variáveis na string, usar aspas ou quebrar linhas, apas normais resolvem bem. Caso contrário template strings são uma boa
 
-# Aula 03-02 Arrays
+# Aula 03
+
+## Aula 03-02 Arrays
 
 - Por que usar arrays?
   - Para armazenar uma lista de valores que tem relação entre si
@@ -227,7 +233,7 @@ let heroes = ['batman', 'catwoman', 'iron man']
   - `myArray.push(newItem1, newItem2)` adiciona items ao array e retorna o número de items no array após a adição. Esse método **muda o array original**
   - `myArray.pop()` remove e retorna o último item do array. Esse método **muda o array original**
 
-# Aula 03-03 Null e undefined
+## Aula 03-03 Null e undefined
 
 - `Null` e `Undefined` são tipos similares usados para identificar a falta de um valor
 - `Null` deve ser intencional, ao contrário de `Undefined`
@@ -239,3 +245,4 @@ console.log(emptiness) // imprime "undefined"
 ```
 
 - Usamos `Null` indica intencionalmente que não há valor em uma variável
+

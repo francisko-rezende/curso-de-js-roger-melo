@@ -246,3 +246,97 @@ console.log(emptiness) // imprime "undefined"
 
 - Usamos `Null` indica intencionalmente que não há valor em uma variável
 
+# Aula 4
+
+## aula 04-02 booleans e comparações
+
+- Booleans representam os valores `true` e `false`;
+- Esses valores são especiais, **não** são strings;
+- São usados para verificar se pedaços do nosso código são verdadeiros ou falsos;
+- Exemplos:
+  
+  ```javascript
+  const email = 'brucewayne@email.com';
+  const includes = email.includes('@') // true
+
+  const names = ['dio', 'roger', 'robert']
+  const arrayIncludes =names.includes('rob') // false
+  ```
+
+- Também recebemos booleans quando usamos operadores de comparação (eg == igual a; != diferente de):
+  
+  ```javascript
+  const age = 31;
+
+  console.log(age == 31) // tue
+  console.log(age == 35) // false
+  console.log(age != 35) // true
+  console.log(age > 31) // false
+  console.log(age < 32) // true
+  console.log(age <= 31) // true
+  console.log(age >= 31) // true
+  ```
+- Também fazemos comparações com strings:
+
+```javascript
+const name = 'roger';
+
+console.log(name == 'roger') // true
+console.log(name == 'Roger') // false
+console.log(name > 'belinha') // true
+console.log(name > 'Roger') // true
+console.log(name > 'Belinha') // true
+```
+- `roger > belinha` retorna `true` porque a "r" (a primeira letra de "roger") vem depois de "b" (a primeira letra de "belinha") e, por vir depois, é considerada maior em JS
+- `roger > Roger` retorna `true` porque letras minúsculas são consideradas **maiores** que letras maiúsculas em JS
+- `roger > Belinha` retorna `true` pelo mesmo motivo descrito no item anterior
+- `==` é o operador "igual a", ele testa se um  operando é igual ao outro sem considerar o tipo dos operandos
+
+## Aula 04-03 - Comparações com igualdade estrita
+
+- `2 == '2'` retorna `true` porque o operador `==` converte o tipo dos operandos antes de realizar a comparação
+- Para realizar comparações incluindo o tipo dos comparandos (eg "igual a, e do mesmo tipo" e "diferente de, e do mesmo tipo") usamos os operadores de comparação estrita (eg `===` e `!==)`
+
+```javascript
+const age = 31;
+
+console.log(age === 31)  // true
+console.log(age === '31')  // false
+console.log(age !== 31)  // false
+console.log(age !== '31')  // true
+```
+
+- De maneira geral é melhor usar operadores de comparação estritos pois é mais fácil de prever seu comportamento
+
+## Aula 04-04 - Conversão de tipo
+
+- Podemos trocar o tipo de nossas variáveis e precisamos fazer isso em alguns casos
+- Essa conversão rolar assim:
+
+```javascript
+let score = "100"
+
+score = Number(score) // actual type conversion
+
+console.log(score + 1)
+
+console.log(typeof score) // to check types
+
+const crazyConversion = Number('Pera')
+
+console.log(crazyConversion) // prints NaN because we tried to make a conversion that results in something that does not make sense as a number
+
+const convertedNumber = String(97) // "97"
+
+const booleanConversion = Boolean(10)
+```
+
+- `Boolean(10)` retorna `true` porque é um valor "truthy", valores que retornar `false` na conversão são valores "falsy"
+- Valores falsy:
+  - `false`
+  - 0 (o número, não a string!)
+  - "", '', ``
+  - `undefined`
+  - `NaN`
+- Valores truthy:
+  - tudo que não é falsy

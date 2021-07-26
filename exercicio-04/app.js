@@ -13,7 +13,11 @@
   "Minhas 3 séries favoritas são: SÉRIE_01, SÉRIE_02 e SÉRIE_03."
 */
 
+const my3FavoriteTVShows = ['Bojack Horseman', 'The Midnight Gospel', 'Friends']
 
+const sentence = `Minhas 3 séries favoritas são: ${my3FavoriteTVShows.slice(0, 2).join(', ')} e ${my3FavoriteTVShows.slice(2)}`
+
+// console.log(sentence)
 
 /*
   02 - Comente o console.log() acima e:
@@ -22,7 +26,7 @@
     possui 3 itens.
 */
 
-
+// console.log(my3FavoriteTVShows.length === 3)
 
 /*
   03 - Comente o console.log() acima e:
@@ -36,6 +40,10 @@
 
 const randomTVShow = 'Watchmen'
 
+const isRandomTVShowIncluded = my3FavoriteTVShows.includes(randomTVShow)
+
+// console.log(isRandomTVShowIncluded)
+
 /*
   04 - Comente o console.log() acima e:
 
@@ -47,7 +55,9 @@ const randomTVShow = 'Watchmen'
   "O tipo de dado que a const "isRandomTVShowIncluded" armazena é: TIPO_DE_DADO."
 */
 
+const typeSentence = `O tipo de dado que a const "isRandomTVShowIncluded" armazena é: ${typeof isRandomTVShowIncluded}.`
 
+// console.log(typeSentence)
 
 /*
   05 - Comente o console.log() acima e:
@@ -63,7 +73,9 @@ const randomTVShow = 'Watchmen'
   caracteres? BOOLEAN."
 */
 
+const characterNum = 39
 
+// console.log(`A string que a "typeSentence" armazena tem mais de 39 caracteres? ${String(typeSentence.length > characterNum).slice(0, 1).toUpperCase() + String(typeSentence.length > characterNum).slice(1, typeSentence.length)}.`)
 
 /*
   06 - Comente o console.log() acima e:
@@ -77,6 +89,9 @@ const randomTVShow = 'Watchmen'
 
 const falsyValues = [0, "", false, '', ``, null, undefined, NaN]
 
+// console.log(`Todos os ${falsyValues.length} itens do array "falsyValues" são falsy. Inclusive o  
+// ${falsyValues[2]}.`)
+
 /*
   07 - Comente o console.log() acima e:
 
@@ -86,7 +101,11 @@ const falsyValues = [0, "", false, '', ``, null, undefined, NaN]
   - Você sabe por que essa conversão resultou em true?
 */
 
+const crazyOperation =  null + 1
 
+const crazyConversion = Boolean(crazyOperation)
+
+// Sim. Essa conversão resultou em true pq crazyOperation é 1, que é truthy.
 
 /*
   08 - Comente o console.log() acima e:
@@ -101,7 +120,12 @@ const falsyValues = [0, "", false, '', ``, null, undefined, NaN]
   é: BOOLEAN."
 */
 
+const ages = [31, 82, 61, 11]
 
+const agesSum = ages[0] + ages[2]
+
+// console.log(`A soma entre o 1º e o 3º item de "ages" é menor ou igual a 92. Essa afirmação  
+// é: ${agesSum <= 92}.`)
 
 /*
   09 - Comente o console.log() acima e:
@@ -112,7 +136,9 @@ const falsyValues = [0, "", false, '', ``, null, undefined, NaN]
   - Exiba a "isNotAString" no console.
 */
 
+const isNotAString = typeof randomTVShow !== 'string'
 
+// console.log(isNotAString);
 
 /*
   10 - Comente o console.log() acima e:
@@ -123,3 +149,5 @@ const falsyValues = [0, "", false, '', ``, null, undefined, NaN]
 */
 
 const evenNumbers = [0, 2, 4, 6, 8, 10]
+
+console.log(evenNumbers.indexOf(8) !== -1)

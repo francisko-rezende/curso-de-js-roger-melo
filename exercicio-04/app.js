@@ -13,9 +13,9 @@
   "Minhas 3 séries favoritas são: SÉRIE_01, SÉRIE_02 e SÉRIE_03."
 */
 
-const my3FavoriteTVShows = ['Bojack Horseman', 'The Midnight Gospel', 'Friends']
-
-const sentence = `Minhas 3 séries favoritas são: ${my3FavoriteTVShows.slice(0, 2).join(', ')} e ${my3FavoriteTVShows.slice(2)}`
+const my3FavoriteTVShows = ['Bojack Horseman', 'Game of Thrones', 'Friends']
+const sentence = `Minhas 3 séries favoritas são: ${my3FavoriteTVShows.join(', ')}.`
+  .replace(', F', ' e F')
 
 // console.log(sentence)
 
@@ -73,9 +73,9 @@ const typeSentence = `O tipo de dado que a const "isRandomTVShowIncluded" armaze
   caracteres? BOOLEAN."
 */
 
-const characterNum = 39
+const numToCheck = 39
 
-// console.log(`A string que a "typeSentence" armazena tem mais de 39 caracteres? ${String(typeSentence.length > characterNum).slice(0, 1).toUpperCase() + String(typeSentence.length > characterNum).slice(1, typeSentence.length)}.`)
+// console.log(`A string que a "typeSentence" armazena tem mais de ${numToCheck} caracteres? ${String(numToCheck < typeSentence.length).replace('t', 'T')}`)
 
 /*
   06 - Comente o console.log() acima e:
@@ -150,4 +150,4 @@ const isNotAString = typeof randomTVShow !== 'string'
 
 const evenNumbers = [0, 2, 4, 6, 8, 10]
 
-console.log(evenNumbers.indexOf(8) !== -1)
+// console.log(evenNumbers.indexOf(8) !== -1)

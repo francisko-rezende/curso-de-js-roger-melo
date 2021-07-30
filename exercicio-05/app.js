@@ -23,7 +23,7 @@
 
 // let i = 0;
 
-// while (i < 6) {
+// while (i <= 5) {
 //   console.log(i)
 //   i++
 // }
@@ -34,7 +34,7 @@
   - Utilizando um for loop, faça o mesmo que foi pedido no exercício 01.
 */
 
-// for (let i = 0; i < 6; i++) {
+// for (let i = 0; i <= 5; i++) {
 //   console.log(i)
 // }
 
@@ -49,7 +49,7 @@
   "Esta é a Xª vez que esta frase é exibida no console."
 */
 
-// for (let i = 1; i < 11; i++) {
+// for (let i = 1; i <= 10; i++) {
 //   console.log(`Esta é a ${i}ª vez que esta frase é exibida no console.`)
 // }
 
@@ -67,7 +67,7 @@ const cities = ['São Paulo', 'Rio de Janeiro', 'Minas Gerais']
 
 let upperCaseCities = []
 
-for (let i = 0; i < 2; i++) {
+for (let i = 0; i < cities.length; i++) {
   upperCaseCities.push(cities[i].toUpperCase())
 }
 
@@ -135,12 +135,12 @@ const arrays = [
   [2, 8, 4]
 ]
 
-let sumArrays = 0
+let arraysSum = 0
 
-for (let i = 0; i < arrays.length; i ++) {
+for (let i = 0; i < arrays.length; i++) {
   for (let j = 0; j < arrays[i].length; j++) {
-    sumArrays += arrays[i][j]
+    arraysSum += arrays[i][j]
   }
 }
 
-console.log(sumArrays);
+// console.log(arraysSum);

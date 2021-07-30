@@ -43,11 +43,11 @@ for(let i = 0; i < names.length; i++) { // como usamos a propriedade length, o l
 
 ## Aula 01-04 - while loops e exercícios
 
-- O `while` faz, basicamente, a mesma coisa que o `for`: esses loops executam um codigo um determinado numero de vezes. Eles diferem em sua sintaxe.
+- O `while` faz, basicamente, a mesma coisa que o `for`: esses loops executam um código um determinado numero de vezes. Eles diferem em sua sintaxe.
 - Segue um exemplo de `while`:
 
 ```javascript
-let i = 0 // a declaracao do contador nao acontece dentro do loop e sim antes dele
+let i = 0 // a declaração do contador nao acontece dentro do loop e sim antes dele
 
 while (i < 5) {
     console.log(`Dentro do loop: ${i}`)

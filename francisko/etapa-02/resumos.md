@@ -146,3 +146,100 @@ if (password.length >= 12 && password.includes('1')){
 ```
 - Atenção, `password.length >= 8 || password.includes('1') && password.length >= 5` tem duas condições principais: `password.length >= 8` e `password.includes('1') && password.length >= 5`. Para o código delimitado por um bloco que contenha essas condições ser executado, pelo uma das duas precisa ser verdadeira
 - O exemplo do tópico acima não segue boas práticas, evitar!
+
+# Aula 03
+
+## Aula 03-01 - Correção dos exercícios da aula anterior
+
+## Aula 03-02 - O operador lógico not (`!`)
+
+- Usado, por exemplo, quando queremos executar um bloco de código delimitado por um `if` cuja condição é falsa
+- Se colocado antes de um boolean, o ! inverte o valor desse boolean
+- Segue um exemplo em que queremos exibir uma mensagem caso o usuário de nossa aplicação não esteja logado
+
+```javascript
+let isUserLoggedIn = false
+
+if (!isUserLoggedIn) {
+  console.log('Voce precisa fazer login para continuar')
+}
+```
+- Como dito anteriormente, o `!` inverte booleans
+
+```javascript
+console.log(!true) //imprime false
+console.log(!false) //imprime true
+```
+## Aula 03-03 `break` e `continue`
+
+- `break`: "quebra" o loop/loop é interrompido
+- `continue`: pula uma iteração em particular mas não interrompe a execução do loop
+
+```javascript
+const scores = [50, 25, 0, 30, 100, 20, 10]
+
+for (let i = 0; i < scores.length; i++) {
+
+  if (scores[i] === 0) {
+    continue  // não exibe nada no console e pula a iteração em que scores === 0 mas o loop continua
+  }
+
+  console.log(`Sua pontuação é ${scores[i]}`)
+
+  if (scores[i] === 100) {
+    console.log('Parabéns, você atingiu a pontuação máxima')  // O código desse bloco é executado e o loop é interrompido
+
+    break
+  }
+}
+```
+## Aula 03-04 - A condicional `switch`
+
+- Usada para verificar múltiplos valores possíveis de uma variável/expressão e para cada valor possível temos a possibilidade de reagir de forma diferente
+
+```javascript
+const grade = 'b'
+
+// usando if 
+
+if (grade === 'a') {
+
+} else if (grade === 'b') {
+
+} else if (grade === 'c') {
+
+} else if (grade === 'd') {
+
+} else if (grade === 'e') {
+
+} else {
+
+}
+
+// alternativa usando switch
+
+const grade = b
+
+switch (grade) {
+  case 'a':
+    console.log('você tirou um "a"')
+    break
+  case 'b':
+    console.log('você tirou um "b"')
+    break
+  case 'c':
+    console.log('você tirou um "c"')
+    break
+  case 'd':
+    console.log('você tirou um "d"')
+    break
+  case 'e':
+    console.log('você tirou um "e"')
+    break
+  default:
+    console.log('nota inválida')
+}
+```
+
+- É necessário usar o `break` para evitar que os casos abaixo do case que deu match na variável (case b no caso) sejam executados
+- Por isso o `default` não precisa de um `break`: como ele é o último caso `switch` statement

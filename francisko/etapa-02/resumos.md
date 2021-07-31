@@ -65,3 +65,84 @@ while (i < names.length) {
     i++
 }
 ```
+
+# Aula 02
+
+## Aula 02-01 - Correção de exercícios
+
+## Aula 02-02 - A condicional `if`
+
+- A condicional if é um tipo de controle de fluxo chamado de estrutura condicional
+- Ela recebe esse nome (if, que significa "se" em inglês) pois serve para delimitar um bloco de código que é executado se uma determinada condição for verdadeira
+- Segue um exemplo
+  
+```javascript
+const age = 18
+
+if (age > 18) {
+  console.log('Vocẽ tem mais de 18 anos.')
+}
+
+// Nesse caso nada acontece (feijoada) porque a condição retorna false
+```
+
+- Segue outro exemplo
+
+```javascript
+const simpsons = ['Marge', 'Homer', 'Lisa', 'Bart']
+
+if (simpsons.length >= 3) {
+  console.log('O array tem bastante personagens')
+}
+```
+
+- Mais outro exemplo 
+
+```javascript
+const password = 'oi123'
+
+if (password.length >= 8) {
+  console.log('essa senha tem 8 ou mais caracteres')
+}
+```
+
+## Aula 02-03 - `else` e `else if` statements
+
+- Usamos `else` para adicionar alternativas de execução a blocos de `if`
+- `else` (que é "senão" em inglês) é usada em conjunto com blocos `if` delimita blocos de código que são executados quando a condição do `if` é falsa
+- Se houverem várias condições que queremos testar usamos o `else if`
+- Segue um exemplo
+
+```javascript
+const password = 'oi123'
+
+if (password.length >= 12){
+  console.log('senha muito forte :)')
+} else if (password.length >= 8) {
+  console.log('essa senha tem 8 ou mais caracteres')
+} else {
+  console.log('a senha deve conter 8 ou mais caracteres')
+}
+```
+
+## Aula 02-04 - Operadores lógicos `&&` e `||`
+
+- Os operadores dessa sessão são usados para executar um bloco de código caso uma certa combinação de condições seja verdadeira
+- `&&` é o operador "e" e `||` é o operador "ou"
+- `&&` delimita um bloco que será executado se *todas* as condições forem verdadeiras
+- `||` delimita um bloco que será executado se *ao menos uma* condição for verdadeira
+- Segue um exemplo
+
+```javascript
+const password = 'oi123'
+
+if (password.length >= 12 && password.includes('1')){
+  console.log('senha muito forte :)')
+} else if (password.length >= 8 || password.includes('1')) {
+  console.log('essa forte')
+} else {
+  console.log('a senha deve conter 8 ou mais caracteres')
+}
+```
+- Atenção, `password.length >= 8 || password.includes('1') && password.length >= 5` tem duas condições principais: `password.length >= 8` e `password.includes('1') && password.length >= 5`. Para o código delimitado por um bloco que contenha essas condições ser executado, pelo uma das duas precisa ser verdadeira
+- O exemplo do tópico acima não segue boas práticas, evitar!

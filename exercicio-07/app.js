@@ -120,7 +120,7 @@ for (let i = 0; i < randomValues.length; i++) {
 }
 
 const lastString = firstFourStrings[firstFourStrings.length - 1]
-const firstFour = firstFourStrings.join(', ').replace(`${lastString}`, `e ${lastString}`)
+const firstFour = firstFourStrings.join(', ').replace(`, ${lastString}`, ` e ${lastString}`)
 
 console.log(`3 informações sobre o array randomValues:
   - As primeiras 4 strings são ${firstFour};

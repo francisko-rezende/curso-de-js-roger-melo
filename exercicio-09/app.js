@@ -13,9 +13,9 @@
     valor no console.
 */
 
-function convertToString (value) {
-  return String(value)
-}
+const convertToString = value => String(value)
+
+// console.log(convertToString('89'))
 
 /*
   02
@@ -23,6 +23,8 @@ function convertToString (value) {
   - Crie uma função que retorne a quantidade de caracteres que uma string  
     recebida por parâmetro possui.
 */
+
+const calculateCharacterAmount = (string = '') => string.length
 
 /*
   03
@@ -33,6 +35,19 @@ function convertToString (value) {
 
   "CHOCOTONE E OVO DE PÁSCOA JUNTOS NO MERCADO EM PLENO FEVEREIRO"
 */
+const transformToLowerCase = (sentence = '') => {
+  let lowerSentence = ''
+
+  for(let i = 0; i < sentence.length; i++) {
+    let loweCaseChar = sentence[i].toLowerCase()
+   
+    lowerSentence += loweCaseChar
+  }
+
+  return lowerSentence
+}
+
+// console.log(transformToLowerCase('CHOCOTONE E OVO DE PÁSCOA JUNTOS NO MERCADO EM PLENO FEVEREIRO'))
 
 /*
   04
@@ -41,12 +56,16 @@ function convertToString (value) {
   - Ao ser invocada, a função deve retornar o index do caractere na string.
 */
 
+const returnIndex = (char, string) => string.indexOf(char)
+
 /*
   05
 
   - Crie uma função que, ao ser invocada, retorna um boolean indicando se o item  
     passado por argumento existe no array (também passado por argumento).
 */
+
+const hasItem = (item = null, array = []) => array.includes(item)
 
 /*
   06
@@ -55,6 +74,8 @@ function convertToString (value) {
     argumentos em sua invocação;
 */
 
+const myConcat = (firstArray, secondArray) => firstArray.concat(secondArray)
+
 /*
   07
 
@@ -62,12 +83,16 @@ function convertToString (value) {
     mas com o último item removido.
 */
 
+const removeLastItem = array => array.slice(0, array.length - 1)
+
 /*
   08
 
   - Crie uma função que retorna se o valor passado como argumento em sua  
     invocação é null.
 */
+
+const isNull = (value) => value === null
 
 /*
   09
@@ -80,6 +105,12 @@ function convertToString (value) {
     foi exibido.
 */
 
+const invokeCallback = (callback) => callback()
+
+const printName = () => console.log('Francisko')
+
+// invokeCallback(printName)
+(printName)
 /*
   10
 
@@ -90,6 +121,10 @@ function convertToString (value) {
   - Faça com que a invocação da função descrita no 1º item deste exercício (10)  
     resulte no triplo de 33.
 */
+
+const newInvokeCallback = (callback, arg) => callback(arg)
+
+const triple = (number) => number * 3
 
 /*
   11
@@ -102,6 +137,14 @@ function convertToString (value) {
 
 const numbers = [1, 2, 3]
 
+numbers.forEach(
+  (number, i, array) => {
+    let order = i + 1
+    
+    // console.log(`O ${order}º item do array ${array} é ${number}.`)
+  }
+)
+
 /*
   12
 
@@ -113,9 +156,12 @@ const numbers = [1, 2, 3]
 const letters = ['v', 'e', 'p']
 let lettersCopy = []
 
-for (let i = 0; i < letters.length; i++) {
-  lettersCopy.push(letters[i])
-}
+// for (let i = 0; i < letters.length; i++) {
+//   lettersCopy.push(letters[i])
+// }
+letters.forEach(letter => lettersCopy.push(letter))
+
+// console.log(lettersCopy);
 
 /*
   13
@@ -146,6 +192,8 @@ const review = [
 
 let paragraphs = ''
 
+review.forEach(paragraph => paragraphs +=`<p>${paragraph}</p>`)
+
 section.innerHTML = paragraphs
 
 /*
@@ -168,3 +216,55 @@ section.innerHTML = paragraphs
     pelo restante da quantidade de pessoas que curtiram o post (além das duas  
     pessoas já mencionadas no início da mensagem).
 */
+
+// const countLikes = (likedBy = []) => {
+//   let message = null
+//   const likeNumber = likedBy.length
+//   const firstPerson = likedBy[0]
+//   const lastPerson = likedBy[likedBy.length - 1]
+//   const personList = likedBy.join(', ').replace(`, ${lastPerson}`, ` e ${lastPerson}`)
+//   const first2People = likedBy.slice(0, 2).join(', ')
+//   const totalMinus2 = likedBy.length - 2
+  
+//   switch (likeNumber) {
+//     case 0:
+//       message = 'Ninguém curtiu isso'
+//       break
+//     case 1:
+//       message = `${firstPerson} curtiu isso`
+//       break
+//     case 2:
+//     case 3:
+//       message =`${personList} curtiram isso`
+//       break
+//     default:
+//       message = `${first2People} e mais ${totalMinus2} pessoas curtiram isso"` 
+//   }
+
+// return message
+// }
+
+
+const countLikes = (likedBy = []) => {
+  const likeNumber = likedBy.length
+  const firstPerson = likedBy[0]
+  const lastPerson = likedBy[likedBy.length - 1]
+  const personList = likedBy.join(', ').replace(`, ${lastPerson}`, ` e ${lastPerson}`)
+  const first2People = likedBy.slice(0, 2).join(', ')
+  const totalMinus2 = likedBy.length - 2
+  const oneLike = likeNumber === 1 
+  const twoOrThreeLikes = likeNumber === 2 || likeNumber === 3
+  const fourOrMoreLikes = likeNumber >= 4
+
+  if (likeNumber === 0) {
+    return 'Ninguém curtiu isso'
+  } else if (oneLike) {
+    return `${firstPerson} curtiu isso`
+  } else if (twoOrThreeLikes) {
+    return `${personList} curtiram isso`
+  }  else if (fourOrMoreLikes) {
+    return `${first2People} e mais ${totalMinus2} pessoas curtiram isso"`
+  }
+}
+
+// console.log(countLikes(['joao', 'jose', 'jobson', 'gillian', 'joana', 'ricardo']));

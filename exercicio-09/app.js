@@ -13,6 +13,10 @@
     valor no console.
 */
 
+// function convertToString (value) {
+//   return String(value)
+// }
+
 const convertToString = value => String(value)
 
 // console.log(convertToString('89'))
@@ -24,7 +28,7 @@ const convertToString = value => String(value)
     recebida por parâmetro possui.
 */
 
-const calculateCharacterAmount = (string = '') => string.length
+const getStringLength = string => string.length
 
 /*
   03
@@ -35,17 +39,7 @@ const calculateCharacterAmount = (string = '') => string.length
 
   "CHOCOTONE E OVO DE PÁSCOA JUNTOS NO MERCADO EM PLENO FEVEREIRO"
 */
-const transformToLowerCase = (sentence = '') => {
-  let lowerSentence = ''
-
-  for(let i = 0; i < sentence.length; i++) {
-    let loweCaseChar = sentence[i].toLowerCase()
-   
-    lowerSentence += loweCaseChar
-  }
-
-  return lowerSentence
-}
+const convertToLowerCase = string => string.toLowerCase()
 
 // console.log(transformToLowerCase('CHOCOTONE E OVO DE PÁSCOA JUNTOS NO MERCADO EM PLENO FEVEREIRO'))
 
@@ -65,7 +59,7 @@ const returnIndex = (char, string) => string.indexOf(char)
     passado por argumento existe no array (também passado por argumento).
 */
 
-const hasItem = (item = null, array = []) => array.includes(item)
+const isItemIncluded = (item, array) => array.includes(item)
 
 /*
   06
@@ -74,7 +68,7 @@ const hasItem = (item = null, array = []) => array.includes(item)
     argumentos em sua invocação;
 */
 
-const myConcat = (firstArray, secondArray) => firstArray.concat(secondArray)
+const concatArrays = (firstArray, secondArray) => firstArray.concat(secondArray)
 
 /*
   07
@@ -83,7 +77,10 @@ const myConcat = (firstArray, secondArray) => firstArray.concat(secondArray)
     mas com o último item removido.
 */
 
-const removeLastItem = array => array.slice(0, array.length - 1)
+const removeLastItem = array => {
+  array.pop()
+  return array
+}
 
 /*
   08
@@ -105,12 +102,16 @@ const isNull = (value) => value === null
     foi exibido.
 */
 
-const invokeCallback = (callback) => callback()
+const invokeCallback = (callback) => {
+  callback()
+}
 
-const printName = () => console.log('Francisko')
+const printName = () => {
+  console.log('Francisko')
+}
 
 // invokeCallback(printName)
-(printName)
+
 /*
   10
 
@@ -122,9 +123,11 @@ const printName = () => console.log('Francisko')
     resulte no triplo de 33.
 */
 
-const newInvokeCallback = (callback, arg) => callback(arg)
+const callCallback = (value, callback) => {
+  return callback(value)
+}
 
-const triple = (number) => number * 3
+const triple = number => number * 3
 
 /*
   11
@@ -137,13 +140,14 @@ const triple = (number) => number * 3
 
 const numbers = [1, 2, 3]
 
-numbers.forEach(
-  (number, i, array) => {
-    let order = i + 1
-    
-    // console.log(`O ${order}º item do array ${array} é ${number}.`)
-  }
-)
+const showNumbersInfo = (number, index, array) => {    
+  const itemPosition = index + 1
+  const items = array.join(', ')
+
+  // console.log(`O ${itemPosition}º item do array [${items}] é ${number}.`)
+}
+
+numbers.forEach(showNumbersInfo)
 
 /*
   12
@@ -156,10 +160,13 @@ numbers.forEach(
 const letters = ['v', 'e', 'p']
 let lettersCopy = []
 
-// for (let i = 0; i < letters.length; i++) {
-//   lettersCopy.push(letters[i])
-// }
-letters.forEach(letter => lettersCopy.push(letter))
+for (let i = 0; i < letters.length; i++) {
+  lettersCopy.push(letters[i])
+}
+
+letters.forEach(letter => {
+  lettersCopy.push(letter)
+})
 
 // console.log(lettersCopy);
 
@@ -192,7 +199,11 @@ const review = [
 
 let paragraphs = ''
 
-review.forEach(paragraph => paragraphs +=`<p>${paragraph}</p>`)
+const createParagraphs = paragraph => {
+  paragraphs +=`<p>${paragraph}</p>`
+}
+
+review.forEach(createParagraphs)
 
 section.innerHTML = paragraphs
 
@@ -217,54 +228,25 @@ section.innerHTML = paragraphs
     pessoas já mencionadas no início da mensagem).
 */
 
-// const countLikes = (likedBy = []) => {
-//   let message = null
-//   const likeNumber = likedBy.length
-//   const firstPerson = likedBy[0]
-//   const lastPerson = likedBy[likedBy.length - 1]
-//   const personList = likedBy.join(', ').replace(`, ${lastPerson}`, ` e ${lastPerson}`)
-//   const first2People = likedBy.slice(0, 2).join(', ')
-//   const totalMinus2 = likedBy.length - 2
-  
-//   switch (likeNumber) {
-//     case 0:
-//       message = 'Ninguém curtiu isso'
-//       break
-//     case 1:
-//       message = `${firstPerson} curtiu isso`
-//       break
-//     case 2:
-//     case 3:
-//       message =`${personList} curtiram isso`
-//       break
-//     default:
-//       message = `${first2People} e mais ${totalMinus2} pessoas curtiram isso"` 
-//   }
-
-// return message
-// }
+const getLikesMessage = (names = []) => {
+  const firstName = names[0]
+  const secondName = names[1]
+  const thirdName = names[2]
+  const totalNamesMinusTwo = names.length - 2
 
 
-const countLikes = (likedBy = []) => {
-  const likeNumber = likedBy.length
-  const firstPerson = likedBy[0]
-  const lastPerson = likedBy[likedBy.length - 1]
-  const personList = likedBy.join(', ').replace(`, ${lastPerson}`, ` e ${lastPerson}`)
-  const first2People = likedBy.slice(0, 2).join(', ')
-  const totalMinus2 = likedBy.length - 2
-  const oneLike = likeNumber === 1 
-  const twoOrThreeLikes = likeNumber === 2 || likeNumber === 3
-  const fourOrMoreLikes = likeNumber >= 4
-
-  if (likeNumber === 0) {
-    return 'Ninguém curtiu isso'
-  } else if (oneLike) {
-    return `${firstPerson} curtiu isso`
-  } else if (twoOrThreeLikes) {
-    return `${personList} curtiram isso`
-  }  else if (fourOrMoreLikes) {
-    return `${first2People} e mais ${totalMinus2} pessoas curtiram isso"`
+  switch (names.length) {
+    case 0:
+      return 'Ninguem curtiu isso'
+    case 1:
+      return `${firstName} curtiu isso`
+    case 2:
+      return `${firstName} e ${secondName} curtiram isso`
+    case 3:
+      return `${firstName}, ${secondName} e ${thirdName} curtiram isso`
+    default:
+      return `${firstName}, ${secondName} e mais ${totalNamesMinusTwo} pessoas curtiram isso`
   }
 }
 
-// console.log(countLikes(['joao', 'jose', 'jobson', 'gillian', 'joana', 'ricardo']));
+// console.log(getLikesMessage(['roger', 'gean', 'edson', 'neilson']))

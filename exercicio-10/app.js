@@ -10,10 +10,10 @@
   - Exiba o objeto no console.
 */
 
-const cat = {
+let cat = {
   name: 'Mingau',
   age: 2,
-  color: 'white',
+  color: 'branco',
   bestFriends: ['Magali', 'Bidu'],
   sound: function() {
     return 'miau'
@@ -51,11 +51,11 @@ console.log(cat.age);
     adicionado.
 */
 
-const addFriend = friend => {
-  cat.bestFriends.push(friend)
+const addFriend = (friend, object) => {
+  object.bestFriends.push(friend)
 }
 
-addFriend('Bugu')
+addFriend('Bugu', cat)
 
 console.log(cat.bestFriends);
 
@@ -68,13 +68,15 @@ console.log(cat.bestFriends);
     colchetes.
 */
 
-const newColor = newColor => {
-  cat['color'] += `, ${newColor}`
+const changeColor = newColor => {
+  cat['color'] += ` e ${newColor}`
 }
 
-newColor('orange')
+changeColor('orange')
 
-console.log(cat['color']);
+const colorProperty = 'color'
+
+console.log(cat[colorProperty]);
 
 /*
   06
@@ -108,7 +110,12 @@ const dog = {
   }
 }
 
-console.log(`A soma das idades de ${cat.name} e ${dog.name} é ${cat.age + dog.age}.`)
+const getAgeMessage = (cat, dog) => `A soma das idades de ${cat.name} e ${dog.name} é ${cat.age + dog.age}.`
+
+const ageMessage = getAgeMessage(cat, dog)
+
+console.log(ageMessage);
+
 /*
   08
 
@@ -117,24 +124,15 @@ console.log(`A soma das idades de ${cat.name} e ${dog.name} é ${cat.age + dog.a
   - Como você refatoraria esta função?
 */
 
-const isAnSUV = car => {
-  switch (car) {
-    case 'Honda HR-V':
-    case 'Jeep Renegade':
-    case 'Ford EcoSport':
-    case 'Hyundai iX35':
-      return true
-    default:
-      return false
-  }
-}
-// const isAnSUV = car => {
-//   if (car === 'Honda HR-V' || car === 'Jeep Renegade' || car === 'Ford EcoSport' || car === 'Hyundai iX35') {
-//     return true
-//   }
+const cars = ['Honda HR-V', 'Jeep Renegade', 'Ford EcoSport', 'Hyundai iX35']
 
-//   return false
-// }
+const isAnSUV = car => {
+  if (cars.includes(car)) {
+    return true
+  }
+
+  return false
+}
 
 console.log(isAnSUV('Honda Civic'))
 console.log(isAnSUV('Ford EcoSport'))
@@ -152,23 +150,16 @@ console.log(isAnSUV('Ford EcoSport'))
   - Teste a função, exibindo no console a mensagem de cada propriedade.
 */
 
-const typeInfo = type => {
-  const object = {
+const getTypeDefinition = type => {
+  const obj = {
     null: 'Seta, explicitamente, uma variável sem valor.',
     undefined: 'Representa um valor não-setado.',
     object: 'Arrays, Datas, Objetos literais, Funções, etc.'
   }
 
-  switch (type) {
-    case null:
-      return object.null 
-    case undefined:
-      return object.undefined 
-    case 'object':
-      return object.object
-  }
+  return obj[type]
 }
 
-console.log(typeInfo(null));
-console.log(typeInfo(undefined));
-console.log(typeInfo('object'));
+console.log(getTypeDefinition(null));
+console.log(getTypeDefinition(undefined));
+console.log(getTypeDefinition('object'));

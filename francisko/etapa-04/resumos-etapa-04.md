@@ -146,3 +146,117 @@ let user = {
         })
  }
  ```
+
+ # Aula 03
+
+ ## Aula 03-01 - Correção de exercícios
+
+ ## Aula 03-02 - Objetos em arrays
+
+ - Armazenar objetos dentro de arrays é algo possível e comum, basta separar os objetos por vírgulas como faríamos com qualquer outro valor:
+
+```javascript
+
+const posts = [
+    { title: 'Empadao de frango', likes: 30 },
+    { title: '4 receitas de pure de batata', likes: 50}
+]
+}
+```
+
+- Vamos mudar o objeto que criamos na última aula para usar um objetos ao invés de strings
+
+```javascript
+
+let user = {
+    name: 'Joao',
+    age: 31,
+    email: 'joaocardoso@gmail.com',
+    city: 'Sao Paulo',
+    blogPost: [
+        { title: 'Empadao de frango', likes: 30 },
+        { title: '4 receitas de pure de batata', likes: 50}
+    ],
+    login: function () {
+        console.log('Usuario logado')
+    },
+    logout: function() {
+        console.log('Usuario logado')
+    },
+    logBlogPosts: functions () { 
+        console.log(`${this.name} escreveu os seguintes posts:`)
+        
+        this.blogPosts.forEach(post =>  {
+            console.log(post.title, post.likes) // modificamos a funcao para acessar as propriedades title e likes 
+        })
+    }
+```
+
+## Aula 03-03 - O objeto Math
+
+- O objeto `Math` vem de fábrica no JS e é bem útil
+
+```javascript
+// acessando o pi
+
+Math.PI
+
+// acessando e (base dos logs naturais)
+
+Math.E
+
+// para listarmos as props do obj
+
+console.log(Math)
+
+// alguns métodos úteis
+
+const area = 7.7
+
+console.log(Math.round(area)) // arredonda pra 8, se o decimal for >= 5 arredonda pra cima
+
+Math.floor(area) // arredonda pra 7, floor sempre arredonda pra baixo
+
+Math.ceil(area) // arredonda pra 8, ceil  sempre arredonda pra 9
+
+Math.trunk(area) // retorna 7, trunk remove o decimal e retorna a parte inteira de um número
+``` 
+- Agora veremos um exemplo
+
+```javascript
+const randomNumber = Math.random() // retorna um número aleatório entre 0 e 1
+
+Math.round(randomNumber * 100) // retorna um número aleatório entre 0 e 100
+```
+
+## Aula 03-04 - Tipos de referência vs Tipos primitivos
+
+- Tipos primitivos são
+  - Numbers
+  - Strings
+  - Booleans
+  - Null
+  - Undefined
+  - Symbol
+- Tipos de referência são tipos de objetos
+  - Objetos literais
+  - Arrays
+  - Funções
+  - Datas
+  - Todos os outros objetos
+- A diferença entre tipos primitivos e tipos de referência está em como eles são armazenados na memória
+- Tipos primitivos são armazenados na memória numa estrutura chamada **stack**, que possui espaço limitado porém é rápida
+- Tipos de referência são armazenados na memória em uma estrutura chamada **heap**, que tem mais espaço disponível do que a **stack** mas é mais lento
+- Quando armazenamos um dado do tipo primitivo e referenciamos esse dado através do nome de sua variável, acessamos a stack diretamente
+- Quando armazenamos um tipo de referência, o valor em si vai pro **heap** mas também é criado um ponteiro que vai pra **stack**. Esse ponteiro é a variável que aponta pro real dado
+- Isso é importante porque:
+  ```javascript
+  let scoreOne = 50 // scoreOne é criado na stack
+  let scoreTwo = scoreOne // scoreTwo é criada como um valor separado na stack
+  scoreOne = 100 // O valor de scoreOne será atualizado e scoreTwo não será afetada pois é um valor independente na stack
+
+  let userOne = {user: 'Roger', score: 100} // userOne eh armazenado no heap e seu pointer vai pra stack
+  let userTwo = userOne // userTwo não é criada como um valor independente no heap! é criada apenas uma cópia do ponteiro de userOne que recebe um novo rótulo e que aponta pro mesmo valor no heap
+  userOne.score = 50 // Na prática, isso significa podemos alterar o objeto na heap ambos os pointers vão refletir essa mudança
+  console.log(userTwo.score) // imprime 50 pois o valor no heap foi atualizado
+  ```

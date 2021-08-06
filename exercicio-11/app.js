@@ -54,18 +54,16 @@ let car = {
   isRunning: false,
   run () {
     this.isRunning = true
-    console.log(`A ${this.name} está em movimento`)
+    return `A ${this.name} está em movimento`
   },
   stop () {
     this.isRunning = false
-    console.log(`A ${this.name} está parada`);
+    return `A ${this.name} está parada`;
   },
   getColorsMessage () {
-    const name = this.name
-    const lastColor = this.colors[this.colors.length - 1]
-    const colorList = this.colors.join(', ').replace(`, ${lastColor}`, ` e ${lastColor}`)
-
-    console.log(`A ${name} está disponível nas cores ${colorList}.`);
+    const lastItem = this.colors[this.colors.length - 1]
+    const colors = this.colors.join(', ').replace(`, ${lastItem}`, ` e ${lastItem}`)
+    console.log(`A ${this.name} está disponível nas cores ${colors}.`);
   }
 }
 
@@ -75,7 +73,7 @@ let car = {
   - Faça o carro andar e exiba no console se ele realmente está em movimento.
 */
 
-car.run()
+console.log(car.run())
 console.log(car.isRunning);
 
 /*
@@ -84,7 +82,7 @@ console.log(car.isRunning);
   - Faça o carro parar e exiba no console se ele realmente está parado.
 */
 
-car.stop()
+console.log(car.stop())
 console.log(car.isRunning)
 
 /*
@@ -102,7 +100,4 @@ car.getColorsMessage()
   - Utilize a notação de colchetes para acessar as propriedades do carro.
 */
 
-const carBrand = 'brand'
-const carName = 'name'
-
-console.log(`O carro é um ${car[carBrand]} ${car[carName]}`);
+console.log(`O carro é um ${car['brand']} ${car['name']}`);

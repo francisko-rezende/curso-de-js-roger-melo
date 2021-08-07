@@ -27,16 +27,16 @@ const best2019Movies = [
   { title: 'A Vida Invisível', directedBy: 'Karim Aïnouz' }
 ]
 
-let movieInfo = 'Segundo o site Omelete, os melhores filmes de 2019 são:'
+let message = 'Segundo o site Omelete, os melhores filmes de 2019 são:'
 
-best2019Movies.forEach(movie => {
-let title = movie.title
-let director = movie.directedBy
+const generateMovieMessage = movie => {
+  message += `
+    - ${movie.title}, dirigido por ${movie.director}`
+}
 
-  movieInfo += `\n  - ${title}, dirigido por ${director}`
-})
+best2019Movies.forEach(generateMovieMessage)
 
-console.log(movieInfo);
+console.log(message);
 
 /*
   02
@@ -71,18 +71,16 @@ const youtubeUser = {
     },
     country: 'Brasil'
   },
-  showRecentVideosTitle () {
-    let videoInfo = 'Vídeos recentes de Roger Melo:';
+  getRecentVideos () {
+    console.log(`Vídeos recentes de ${this.name}:`)
     
     this.videos.recentVideos.forEach(video => {
-      videoInfo += `\n${video.title}`
+      console.log(`${video.title}`)
     })
-
-    console.log(videoInfo);
 }}
 
 
-youtubeUser.showRecentVideosTitle()
+youtubeUser.getRecentVideos()
 
 /*
   03
@@ -143,6 +141,5 @@ console.log(Math.trunc(fourthNumber));
 */
 
 const randomNumber = Math.random()
-const randomNumberBetween0and10 = Math.round(randomNumber * 10)
 
-console.log(roundedNumber);
+console.log(Math.round(randomNumber * 10));

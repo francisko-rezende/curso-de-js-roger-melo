@@ -12,12 +12,18 @@ const getCatInfo = () => {
   const name = 'Marcos'
   let age = 3
   const color = 'Cinza'
-  return {name, age, color}
+
+  return { name, age, color }
 }
 
-const cat = getCatInfo()
+// destructuring assignment: eh uma expressao que possibilita a gente atribuir a variaveis copias de items de um array ou valores de um objeto
+const { name, age, color } = getCatInfo()
 
-console.log(`${cat.name} é um gato ${cat.color} de ${cat.age} anos.`);
+console.log(`${name} é um gato ${color} de ${age} anos.`)
+
+
+// short-hand property names: se o nome da propriedade e o seu valor tem o mesmo nome, podemos inserir so o nome em um objeto 
+
 
 /*
   02
@@ -52,7 +58,9 @@ external()
 
 let randomNumbers = [3, 2, 1]
 
-console.log(randomNumbers.reverse());
+randomNumbers.reverse()
+
+console.log(randomNumbers);
 
 /*
   04
@@ -69,6 +77,7 @@ let crazyArray = [
 ]
 
 crazyArray.shift()
+
 console.log(crazyArray);
 
 /*
@@ -88,7 +97,9 @@ const dogs = [
   { name: 'Xica', age: 6, gender: 'Female', breed: 'Chihuahua' }
 ]
 
-console.log(dogs.find(dog => dog.name === 'Zequinha'));
+const zequinha = dogs.find(dog => dog.name === 'Zequinha')
+
+console.log(zequinha);
 
 /*
   06
@@ -122,9 +133,9 @@ console.log(dogs.find(dog => dog.name === 'Zequinha'));
   </section>
 */
 
-const title = document.querySelector('h1')
+const h1 = document.querySelector('.main-title')
 
-console.log(title);
+console.log(h1);
 
 /*
   07
@@ -134,6 +145,6 @@ console.log(title);
   - Exiba esse NodeList no console.
 */
 
-const secondaryTitles = document.querySelectorAll('.secondary-title')
+const allH2 = document.querySelectorAll('.secondary-title')
 
-console.log(secondaryTitles);
+console.log(allH2);

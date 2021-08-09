@@ -240,3 +240,222 @@ const title = document.querySelector('h1')
 title.classList.toggle('test') // test não está presente e portanto é adicionada ao title
 title.classList.toggle('test') // test está presente e portanto é removida do title
 ```
+
+# Aula 03
+
+## Aula 03-01 - Correção dos exercícios da última aula
+
+## Aula 03-02 - Parents, children e siblings
+
+- Essa aula trata das relações entre os elementos do DOM
+- Elementos do mesmo nível com o mesmo pai direto são chamados de **siblings**
+![](dom-tree.png)
+- Os elementos com descendentes diretos são chamados de **parent** e os seus descendentes são chamados de **children**
+- Usamos esses tipos de relações para atravessar o DOM entre diferentes elementos e obter seleções maiores de elementos
+![](parent-children.png)
+- Por exemplo, dado HTML abaixo:
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Parents, children e siblings - Aula 03-02</title>
+</head>
+<body>
+    <h1>Parents, children e siblings</h1>
+    <article>
+        <h2>Titulo do post</h2>
+
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</p>
+        <div>Escrito por Roger Melo</div>
+    </article>
+    <script src="./app-aula-03-02.js"></script>
+</body>
+</html>
+```
+- Se quisermos acessar todos os elementos dentro do `article` poderíamos selecionar as tags individualmente. Porém, esse método não é eficiente pois teríamos que escrever muito código. Além disso,em casos como quando lidamos com CMSs como o WordPress, em que as tags são geradas de maneira dinâmica, esse método é muito mais difícil de ser executado.
+- Por isso é mais simples buscarmos o `article` no DOM, armazenar sua referência e usar uma propriedade `children` para obter todas as referências dentro do article:
+
+```javascript
+const article = document.querySelector('article')
+
+article.children // retorna um HTML collection com todas as children do article
+```
+- Como a propriedade `children` abriga uma HTML collection, que não possui o método `forEach`, vamos convertê-la para um `array` para facilitar a iteração por seus elementos
+- Fazemos essa conversão usando o método `from`, da função construtora `Array`. 
+
+```javascript
+Array.from(article.children)
+```
+- Essa invocação não é destrutiva/não modifica o objeto original. Ou seja, `Array.from()` retorna um novo array
+- Também conseguimos obter o pai de elementos, basta obtermos a referência do elemento filho que desejamos obter o pai e usarmos a propriedade `parentElement`:
+
+```javascript
+const title = document.querySelector('h2')
+
+title.parentElement // retorna article
+```
+- Essas propriedades são encadeáveis, portanto podemos encadear mais uma `parentElement` e obteremos o pai do `article`
+
+```javascript
+const title = document.querySelector('h2')
+
+title.parentElement.parentElement // retorna body
+```
+
+- Para descobrirmos o próximo elemento irmão do `h2` (de cima pra baixo), usamos a propriedade `nextElementSibling`
+
+```javascript
+const title = document.querySelector('h2')
+
+title.nextElementSibling
+```
+- Para descobrirmos o elemento anterior do `h2` (também seguindo a ordem de cima pra baixo), usamos a propriedade `previousElementSibling`
+
+```javascript
+const title = document.querySelector('h2')
+
+title.previousElementSibling 
+```
+## Aula 03-03 - Eventos de clique
+
+- Grande parte das interações com o DOM são reações a ações do usuário na página (como exibir uma pop-up quando o usuário clica em um botão)
+- A interação com cliques passa por três passos
+  1. Obtemos a referência do elemento em que queremos que a interação aconteça através de uma query no DOM
+  2. Adicionamos um event listener a esse elemento, que 'escuta' os eventos que acontecem ali
+  3. Implementamos uma função de callback que é executada quando o evento de fato acontece
+- Considerando o HTML abaixo
+  ```javascript
+  <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style-aula-03-03.css">
+    <title>Aula 03-03 - Eventos de clique</title>
+</head>
+<body>
+    <h1>Todos</h1>
+
+    <ul>
+        <li>Comprar frango</li>
+        <li>Ler livro</li>
+        <li>Tocar violão</li>
+        <li>Pagar as contas</li>
+    </ul>
+
+    <button>Clique aqui</button>
+
+    <script src="app-aula-03-03.js"></script>
+</body>
+</html>
+  ```
+- Adicionamos um event listener no `button` assim:
+  
+  ```javascript
+  const button = document.querySelector('button')  // pegando a referencia do botao
+
+  button.addEventListener('click', () => {  // adiciona o eventListener, recebe dois argumentos: o evento em si ('click') e uma callback que eh executada quando o evento acontece
+    console.log('clicou no botao')
+  })
+  ```
+- Para adicionar eventListener em todas as lis para que elas sejam removidas da ul (e da tela) nós começamos selecionamos todas a lis e iteramos por elas adicionando os eventListeners:
+
+```javascript
+const lis = document.querySelectorAll("li");
+
+lis.forEach((li) => {
+  li.addEventListener("click", () => {
+    console.log("clicou no li");
+  });
+});
+```
+- Para identificar em qual li os clicks acontecem usamos o objeto `event`
+- O browser disponibiliza esse objeto dentro da função de callback que passamos pro `addEventListener` quando um evento acontece
+- Esse objeto abriga informações sobre o evento que aconteceu
+- Acessamos esse elemento assim:
+
+```javascript
+const lis = document.querySelectorAll("li");
+
+lis.forEach((li) => {
+  li.addEventListener("click", (event) => {
+    console.log(event); // aqui imprimi o objeto só pra exemplificar
+  });
+});
+```
+- O objeto `event`, por sua vez, tem uma propriedade `target` que tem a referência do elemento em que o evento ocorreu
+
+```javascript
+const lis = document.querySelectorAll("li");
+
+lis.forEach((li) => {
+  li.addEventListener("click", (event) => {
+    event.target;
+  });
+});
+```
+- Também podemos obter a referência do elemento em que o evento rolou usando o parâmetro passado pra callback to `forEach`
+
+```javascript
+const lis = document.querySelectorAll('li')
+
+lis.forEach(li => {
+  console.log(li) // esse parametro aqui
+})
+```
+- Vamos usar o eventTarget pois ele vai facilitar a realização de event delegation (um tópico que veremos depois)
+- Com a referência dos elementos clicados via o `event.target` podemos modificar esses elementos normalmente
+- Vamos fazer com que os itens da lista sejam cortados quando receberem um clique:
+
+```javascript
+const lis = document.querySelectorAll("li");
+
+lis.forEach((li) => {
+  li.addEventListener("click", (event) => {
+    const clickedElement = event.target
+
+    clickedElement.style.textDecoration = 'line-through'
+  });
+});
+```
+## Aula 03-04 - Criando e removendo elementos do DOM
+
+- Para remover ou adicionar elementos ao DOM, obtemos a referência do elemento que queremos remover usando o `querySelector` e depois invocamos o método `remove()`
+- Por exemplo, se quiséssemos remover a `ul`:
+
+```javascript
+const ul = document.querySelector('ul')
+
+ul.remove()
+```
+- Para remover os itens da lista com o clique, podemos fazer o seguinte:
+
+```javascript
+const lis = document.querySelectorAll('li')
+
+lis.forEach(li => {
+    li.addEventListener('click', event => {
+        const clickedElement = event.target
+
+        clickedElement.remove()
+    })
+})
+```
+- Para adicionar elementos HTML ao DOM podemos usar o método que aprendemos nas aulas anteriores:
+  - Obter a referência do elemento em que queremos adicionar HTML
+  - Editar a propriedade `innterHTML` do referência obtida
+```javascript
+const button = document.querySelector("button");
+
+button.addEventListener("click", () => {
+  ul.innerHTML += `<li>Item novo na area</li>`;
+});
+```
+- Uma outra forma de adicionar elementos HTML ao DOM, vamos criar uma nova tag HTML
+- Então, usamos o método `createElement`, do `document` passando o nome da tag que queremos criar como argumento para esse método e armazenamos o resultado numa variável
+- A tag criada não tem conteúdo, podemos mudar isso usando a propriedade `textContent`
+- Existem algumas formas distintas de colocar essa tag recém criada na `ul`
+  - Tanto o método `append(newTag)` quanto o método `prepend(newTag)` invocados no elemento pai inserem a nova tag no DOM
+  - `append` insere o elemento no final/último filho (de cima pra baixo) e `prepend` insere o elemento no começo/primeiro filho

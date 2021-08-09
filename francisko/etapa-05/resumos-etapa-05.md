@@ -254,6 +254,7 @@ title.classList.toggle('test') // test está presente e portanto é removida do 
 - Usamos esses tipos de relações para atravessar o DOM entre diferentes elementos e obter seleções maiores de elementos
 ![](parent-children.png)
 - Por exemplo, dado HTML abaixo:
+  
 ```html
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -327,30 +328,33 @@ title.previousElementSibling
   2. Adicionamos um event listener a esse elemento, que 'escuta' os eventos que acontecem ali
   3. Implementamos uma função de callback que é executada quando o evento de fato acontece
 - Considerando o HTML abaixo
-  ```javascript
-  <!DOCTYPE html>
+  
+```html
+<!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style-aula-03-03.css">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style-aula-03-03.css" />
     <title>Aula 03-03 - Eventos de clique</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Todos</h1>
 
     <ul>
-        <li>Comprar frango</li>
-        <li>Ler livro</li>
-        <li>Tocar violão</li>
-        <li>Pagar as contas</li>
+      <li>Comprar frango</li>
+      <li>Ler livro</li>
+      <li>Tocar violão</li>
+      <li>Pagar as contas</li>
     </ul>
 
     <button>Clique aqui</button>
 
     <script src="app-aula-03-03.js"></script>
-</body>
+  </body>
 </html>
-  ```
+```
+
+
 - Adicionamos um event listener no `button` assim:
   
   ```javascript

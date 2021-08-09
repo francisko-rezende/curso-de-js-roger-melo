@@ -5,9 +5,9 @@
     maiúsculas.
 */
 
-const h1 = document.querySelector('h1')
+const title = document.querySelector('h1')
 
-h1.textContent = h1.textContent.toUpperCase()
+title.textContent = title.textContent.toUpperCase()
 
 /*
   02
@@ -18,13 +18,13 @@ h1.textContent = h1.textContent.toUpperCase()
 
 const numbers = [ 53, 24, 3, 8, 1, 6, 57, 80, 77, 98, 55 ]
 
-const ul = document.querySelector('ul')
+const ul = document.querySelector('.numbers')
 
-const addNumbers = number => {
+const insertNumberIntoUl = number => {
   ul.innerHTML += `<li class="number">${number}</li>`
 }
 
-numbers.forEach(addNumbers)
+numbers.forEach(insertNumberIntoUl)
 
 /*
   03
@@ -34,20 +34,21 @@ numbers.forEach(addNumbers)
     - Se o número é ímpar, exiba-o na cor "pink".
 */
 
-const lis = document.querySelectorAll('li')
+const lis = document.querySelectorAll('.number')
 
-const colorNumbers = (item) => {
-  const isEven = Number(item.textContent) % 2 === 0
+const changeLiColor = (li) => {
+  const isEven = Number(li.textContent) % 2 === 0
   
   if (isEven) {
-    item.style.color = "lightblue";
-  } else {
-    item.style.color = "pink";
+    li.style.color = "lightblue";
+    return
   }
+
+  li.style.color = "pink";
 };
 
 
-lis.forEach(colorNumbers)
+lis.forEach(changeLiColor)
 
 /*
   04
@@ -57,7 +58,8 @@ lis.forEach(colorNumbers)
   P.s: a classe "body-background" já está declarada no style.css.
 */
 
-const body = document.querySelector('body')
+// const body = document.querySelector('body')
+const body = document.body
 
 body.classList.add('body-background')
 
@@ -74,9 +76,9 @@ const repoLink = document.querySelector('a')
 repoLink.setAttribute('href', 'https://github.com/roger-melo-treinamentos/curso-de-js-roger-melo')
 
 /*
-  06
+06
 
-  - Exiba o novo valor do atributo href do link no console.
+- Exiba o novo valor do atributo href do link no console.
 */
 
 console.log(repoLink.getAttribute('href'));
@@ -88,7 +90,7 @@ console.log(repoLink.getAttribute('href'));
     manipuladas via JS no h1.
 */
 
-console.log(h1.style);
+console.log(title.style);
 
 /*
   08

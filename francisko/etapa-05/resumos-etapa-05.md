@@ -446,6 +446,7 @@ lis.forEach(li => {
 - Para adicionar elementos HTML ao DOM podemos usar o método que aprendemos nas aulas anteriores:
   - Obter a referência do elemento em que queremos adicionar HTML
   - Editar a propriedade `innterHTML` do referência obtida
+
 ```javascript
 const button = document.querySelector("button");
 

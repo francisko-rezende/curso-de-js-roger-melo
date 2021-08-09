@@ -113,3 +113,130 @@ const paragraphs = document.getElementsByTagName('p') // resulta em um html coll
 ```
 
 - Esses métodos tem seus usos mas também têm suas limitações que vem do fato deles retornarem html collections. A impossibilidade (sem antes converter as html collections) de utilizar forEach é uma delas.
+
+# Aula 02
+
+## Aula 02-01 - Correção dos exercícios da aula anterior
+
+## Aula 02-02 - Adicionando e modificando conteúdo em uma página
+
+- Como manipular elementos do DOM?
+- Manipulando o *texto* de elementos do DOM
+  - A propriedade `document.innerText` determina o texto dos elementos do DOM
+  - Portanto, podemos realizar modificações no texto através de modificações no valor dessa propriedade
+  - Essas modificações podem ser feitas em dois passos simples:
+    1. Selecionamos o elemento que queremos modificar usando `document.querySelector`
+    2. Modificamos o valor da propriedade `innerText` usando JS (eg fazendo uma reatribuição, concatenação ou qualquer outra operação aceita em JS)
+
+  ```javascript
+  const paragraph = document.querySelector('p')
+
+  paragraph.innerText = 'Estou mudando o texto'
+  ```
+  - O processo é parecido para realizar modificações em múltiplos elementos:
+    1. Selecionamos os elementos que queremos modificar usando `document.querySelectorAll`
+    2. Modificamos o valor das propriedades `innerText` usando JS (como `querySelectorAll` retorna uma nodeList podemos usar forEach para facilitar as modificações)
+
+  ```javascript
+  const paragraphs = document.querySelectorAll('p')
+
+  log
+
+  paragraphs.forEach((paragraph, index) => {
+      paragraph.innerText += `novo texto ${index + 1}`
+  })
+  ```
+
+  - Manipulando o HTML de elementos do DOM
+    - A propriedade `innerHTML` contém o código HTML (inclusive os espaços e identações) dos elementos do DOM
+    - Então podemos modificar o HTML através dessa propriedade assim como fizemos com `innerText`
+    - Esse método funciona inclusive com propriedades que não possuem conteúdo
+    - Caso já exista HTML no elemento que estamos modificando, esse HTML será sobrescrito. Caso não haja HTML, o HTML que passarmos pro elemento será adicionado ao elemento
+    - Podemos **acrescentar** HTML usando concatenações ou addition assignments
+  
+  ```javascript
+  const div = document.querySelector('.content')
+
+  const people = ['Jonatan', 'Vinicius', 'Diego']
+
+  people.forEach(person => {
+      div.innerHTML += `<p>${person}</p>`
+  })
+  ```
+- Tanto `innerText` quanto `innerHTML` são getters e setters: podemos usá-las para obter (get) valores e setar (set) valores
+
+## Aula 02-03 - Obtendo e setando atributos
+
+- Também podemos obter e modificar atributos e elementos HTML
+- Para obter os atributos de um determinado elemento, primeiro selecionamos os elemento usando `querySelector` (ou `querySelectorAll`) e depois encadeamos `getAttribute`, que recebe uma string com o nome do atributo que queremos obter
+
+```javascript
+const link = document.querySelector('a')
+
+link.getAttribute('href');
+```
+- Para setar atributos, usamos `setAttribute` que recebe dois argumentos: o nome do atributo que queremos modificar e o valor que queremos inserir nesse atributo
+
+```javascript
+const link = document.querySelector('a')
+
+link.setAttribute('href', 'https://www.rogermelo.com.br')
+```
+- Modificar atributos é útil em casos como quando o usuário preenche um formulário e, caso haja erro, modificamos a classe do form para uma classe que denota erro ou, caso não exista erro, usamos uma classe que denota que está tudo certo
+- Também podemos setar atributos que não existem no elemento/adicionar novos atributos usando `setAttribute`
+
+```javascript
+paragraph.setAttribute('style', 'color: green')
+```
+
+## Aula 02-04 - Modificando estilos CSS (inline)
+
+- Setar o style da forma como fizemos na última aula (usando `setAttribute` para setar o `style` diretamente) não é uma idéia tão boa pois esse método *pode* **sobrescreve** o style que o elemento possa ter
+- Usamos a propriedade `style` para adicionar estilos mantendo o que já existe
+- Essa propriedade contém outras propriedades que representam propriedades CSS
+- Modificamos o estilo reatribuindo valores para essas propriedades
+- Segue um exemplo de como setar a margem de um elemento
+
+```javascript
+const title = document.querySelector('h1')
+
+title.style.margin = '50px'
+```
+- Esse método funciona tanto para adicionar novos atributos CSS quanto para modificar atributos existentes
+- **Atenção!** Os atributos CSS que têm hífen são escritos em camelCase no JS! Por exemplo, `font-size` vira `fontSize`
+- Podemos remover o valor de atributos setando uma string vazia para a propriedade que queremos remover
+- Apesar de mudar o estilo usando `style` ser mais interessante do que usando `setAttribute`, é ainda melhor mudar o estilo através de alterações nas classes CSS (atribuir novas classes)
+
+## Aula 02-05 - Obtendo, adicionando, removendo e alternando classes CSS
+
+- Uma vez que tenhamos selecionado o elemento que queremos modificar, podemos verificar as classes atribuídas a esse elemento na propriedade `classList`, que retorna um `DOMTokenList` (similar a um array) contendo as classes do elemento
+
+```javascript
+const paragraph = document.querySelector('p')
+
+paragraph.classList
+```
+
+- Usamos o método `add()`, da propriedade `classList` para adicionar classes à elementos do DOM
+
+```javascript
+const paragraph = document.querySelector('p')
+
+paragraph.classList.add('error')
+```
+- Usamos o método `remove()`, da propriedade `classList` para adicionar classes à elementos do DOM
+
+```javascript
+const paragraph = document.querySelector('p')
+
+paragraph.classList.remove('error')
+```
+- Para alternar uma classe em um elemento (se um elemento tiver uma classe vamos removê-la e se ele tiver vamos adicioná-la)
+  - Usamos o método `element.classList.toggle('className')` para adicionar uma classe caso a mesma não esteja presente ou remover uma classe já aplicada a um elemento
+
+```javascript
+const title = document.querySelector('h1')
+
+title.classList.toggle('test') // test não está presente e portanto é adicionada ao title
+title.classList.toggle('test') // test está presente e portanto é removida do title
+```

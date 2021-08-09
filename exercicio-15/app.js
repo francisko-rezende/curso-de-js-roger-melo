@@ -10,9 +10,11 @@ const ul = document.querySelector('.videos')
 
 const lis = Array.from(ul.children)
 
-lis.forEach(li => {
+const insertVideoClass = li => {
   li.classList.add('video')
-})
+}
+
+lis.forEach(insertVideoClass)
 
 
 /*
@@ -24,9 +26,7 @@ lis.forEach(li => {
 
 const h2 = document.querySelector('h2')
 
-const h2Parent = h2.parentElement
-
-console.log(h2Parent);
+console.log(h2.parentElement);
 
 /*
   03
@@ -36,9 +36,7 @@ console.log(h2Parent);
 
 const h1 = document.querySelector('h1')
 
-const h1NextSibling = h1.nextElementSibling
-
-console.log(h1NextSibling)
+console.log(h1.nextElementSibling)
 
 /*
   04
@@ -46,9 +44,7 @@ console.log(h1NextSibling)
   - Descubra quem é o irmão anterior da ul e exiba-o no console;
 */
 
-const ulPreviousSibling = ul.previousElementSibling
-
-console.log(ulPreviousSibling);
+console.log(ul.previousElementSibling);
 
 /*
   05
@@ -57,11 +53,15 @@ console.log(ulPreviousSibling);
     exibida no console.
 */
 
-lis.forEach(li => {
-  li.addEventListener('click', event => {
-    console.log(event.target)
-  })
-})
+const showClickedLi = event => {
+  console.log(event.target)
+}
+
+const addClickEvent = li => {
+  li.addEventListener('click', showClickedLi)
+}
+
+lis.forEach(addClickEvent)
 
 /*
   06
@@ -83,16 +83,16 @@ const videos = [{
 
 const button = document.querySelector('button')
 
-button.addEventListener('click', () => {
-  videos.forEach(video => {
-    const newVideoTitle = document.createElement('li')
+const insertVideoLi = ({ name }) => {
+  ul.innerHTML += `<li>${name}</li>`
+}
 
-    newVideoTitle.textContent = video.name
-
-    ul.append(newVideoTitle)
-  })
+const handleClickButton = () => {
+  videos.forEach(insertVideoLi)
   
-})
+}
+
+button.addEventListener('click', handleClickButton)
 
 /*
   07
@@ -101,12 +101,8 @@ button.addEventListener('click', () => {
     sejam removidos.
 */
 
+const body = document.body
+
 h1.addEventListener('click', () => {
-  const body = document.querySelector('body')
-  const bodyChildren = Array.from(body.children)
-
-  bodyChildren.forEach(element => {
-    body.remove(element)
-  })
-
+  body.innerHTML = ''
 })

@@ -464,3 +464,82 @@ button.addEventListener("click", () => {
 - Existem algumas formas distintas de colocar essa tag recém criada na `ul`
   - Tanto o método `append(newTag)` quanto o método `prepend(newTag)` invocados no elemento pai inserem a nova tag no DOM
   - `append` insere o elemento no final/último filho (de cima pra baixo) e `prepend` insere o elemento no começo/primeiro filho
+
+# Aula 04
+
+## Aula 04-01 - Correção dos exercícios da última aula
+
+## Aula 04-02 - Event bubbling e event delegation
+
+- **Event bubbling:** a propagação de eventos DOM acima
+- Eventos são iniciados no target do evento, que é o elemento no qual o evento foi adicionado e esse evento se propaga para os pais desse target fazendo com que as callbacks de enventuais eventos presentes nesses pai sejam invocadas também
+- Portanto, é essencial ter atenção aos eventListeners em nosso código pois eles podem ser disparados de maneira involuntária mesmo se o evento que atrelamos à principío não tenha rolado
+- Para evitar o event bubbling usamos `event.stopPropagation()` dentro do elemento em que **não** não queremos que o bubbling ocorra
+- **Event delegation:** é um design para lidar com eventos em que, ao invés de adicionar múltiplos eventos semelhantes a elementos irmãos, adicionamos um único eventListener ao pai que esses elementos compartilham
+- Útil quando temos que setar eventListeners em vários elementos, o que, além de não ser uma boa prática, pode prejudicar a performance das nossas aplicações
+- Exemplo:
+
+```html
+    <ul>
+        <li>Comprar frango</li>
+        <li>Ler livro</li>
+        <li>Tocar violão</li>
+        <li>Pagar as contas</li>
+    </ul>
+```
+- Ao invés de adicionar um eventListener em cada `<li>` podemos fazer o seguinte
+
+```javascript
+const ul = document.querySelector('ul')
+
+ul.addEventListener('click', event => {
+    const clickedElement = event.target
+
+    if (clickedElement.tagName === 'LI') { // usamos a propriedade tagName que recebe o nome da tag em caixa alta para indentificar quando clicamos em uma li
+        clickedElement.remove()
+    }
+})
+```
+## Aula 04-03 - Mais eventos do DOM
+
+- `copy` 
+  - Famoso ctrl + c (ou qualquer outra maneira de copiar conteúdo)
+  
+  ```javascript
+  const paragraph = document.querySelector('.copy-me')
+
+  paragraph.addEventListener('copy', () => {
+      console.log('texto copiado');
+  })
+  ```
+
+- `mousemove`
+  - Dispara quando movemos o mouse sobre o elemento em que setamos esse evento
+  - As propriedades `offsetX` e `offsetY` informa a posição (em pixels) do pixel em que ocursor do mouse estava no momento do disparo
+  - A contagem começa do canto superior esquerdo do container
+  - Esse evento é útil quando precisamos saber a posição do cursor do mouse na tela
+    
+  ```javascript
+  const div = document.querySelector(".box");
+
+  div.addEventListener("mousemove", (event) => {
+    div.textContent = `X ${event.offsetX} | Y ${event.offsetY}`;
+    console.log(event.offsetX, event.offsetY);
+  });
+  ```
+- `wheel`
+  - Dispara quando rolamos a página (nomeado por conta da rodinha do mouse)
+  - As suas propriedades `pageX` e `pageY` informam a posição do absoluta (essa posição é em relação à página inteira) mouse no momento da rolagem
+
+## Aula 04-04 - Desenvolvendo um popup
+
+- O roger constrói um popup do zero, vale à pena rever o vídeo pra prestar mais atenção na linha de raciocínio que ele adota
+- A parte mais interessante pra mim foi a introdução do método de array `some`, que recebe uma callback e testa se pelo menos um elemento do array em que o método é invocado passa no teste implementado na callback
+- Por exemplo, para testar se algum elemento do array `classNames` é igual à string "teste" fazemos o seguinte
+
+```javascript
+const classNames = ['popup-close', 'popup-wrapper', 'popup-link']
+
+const shouldClosePopup = classNames.some(className => 
+        className === 'teste')
+```

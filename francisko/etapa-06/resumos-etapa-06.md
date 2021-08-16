@@ -53,3 +53,73 @@
   - Se der match, ele retorna 0. Senão, ele retorna -1
   - Caso a regex não delimite o início/fim da string (usando ^ e $) e role um match, o `search` retorna o índice do ínicio do match
   - O `search` é útil, por exemplo, quando temos um parágrafo e queremos descobrir o índice da match dentro desse parágrafo
+
+# Aula 02
+
+## Aula 02-01 - Correção de exercícios
+
+## Aula 02-02 - Validação básica de formulários
+
+- Uma forma simples de validar um `form` e dar feedback pro usuário em um elemento da página é o seguinte
+
+```javascript
+const form = document.querySelector('.signup-form')
+const feedback = document.querySelector('.feedback')
+
+form.addEventListener('submit', event => {
+    event.preventDefault()
+
+    const username = event.target.username.value
+    const usernameRegex = /^[a-zA-Z]{6,12}$/
+
+    const isAValidUsername = usernameRegex.test(username)
+
+    if (isAValidUsername) {
+        feedback.textContent = 'Username valido =)'
+        return
+    }
+
+    feedback.textContent = 'O username deve conter enter 6 a 12 caracteres e deve conter apenas letras'
+
+})
+```
+
+## Aula 02-03 - Eventos do teclado
+
+- Apesar do método da aula anterior funcionar, dar feedback em tempo real conforme o usuário digita é mais interessante. Veremos como fazer isso nessa aula
+- Usaremos um evento chamado "keyup", que executa a ação quando a tecla é solta
+- o evento keyup informa, por exemplo
+  - se no momento da liberação da tecla, se as teclas ctrl, shift e alt estavam pressionadas
+- Para utilizar o `keyup` para dar um feedback imediato pro usuário, fazemos o seguinte
+
+```javascript
+const form = document.querySelector('.signup-form')
+const feedback = document.querySelector('.feedback')
+
+const testUsername = username => /^[a-zA-Z]{6,12}$/.test(username) 
+
+
+form.addEventListener('submit', event => {
+    event.preventDefault()
+
+    const isAValidUsername = testUsername( event.target.username.value)
+
+    if (isAValidUsername) {
+        feedback.textContent = 'Username valido =)'
+        return
+    }
+
+    feedback.textContent = 'O username deve conter enter 6 a 12 caracteres e deve conter apenas letras'
+
+})
+
+form.username.addEventListener('keyup', event => {
+    const isAValidUsername = testUsername(event.target.value)
+
+    if (isAValidUsername) {
+        form.username.setAttribute('class', 'success')
+        return
+    }
+    form.username.setAttribute('class', 'error')
+})
+```

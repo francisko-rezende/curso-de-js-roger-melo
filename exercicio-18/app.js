@@ -21,6 +21,66 @@
   Dica: pesquise pelo método "insertAdjacentElement", no MDN;
 */
 
+// getting DOM references
+
+const form = document.querySelector('form')
+
+const usernameInput = form.username
+
+const inputFeedback = document.createElement('p')
+
+const formFeedback = document.createElement('p')
+
+// creating new HTML elements for feedback
+
+usernameInput.insertAdjacentElement('afterend', inputFeedback)
+
+form.insertAdjacentElement('afterend', formFeedback)
+
+// defining functions
+
+const provideFeedback = (paragraph, className, message) => {
+  paragraph.setAttribute('class', className)
+  paragraph.textContent = message
+}
+
+const isUsernameValid = username => /^[a-zA-Z]{6,}$/.test(username)
+
+const clearUsername = () => usernameInput.value = ''
+
+const provideRealTimeFeedback = () => {
+  const usernameValue = usernameInput.value
+
+  if (isUsernameValid(usernameValue)) {
+    provideFeedback(inputFeedback, 'username-success-feedback', 'Username válido =)')
+    return
+  }
+  
+  provideFeedback(inputFeedback, 'username-help-feedback', 
+  'O valor deve conter no mínimo 6 caracteres, com apenas letras maiúsculas e/ou minúsculas')
+}
+
+const validateForm = event => {
+  event.preventDefault()
+
+  const usernameValue = usernameInput.value
+
+  if (isUsernameValid(usernameValue)) {
+    provideFeedback(formFeedback, 'submit-success-feedback', 'Dados enviados =)')
+    clearUsername()
+    return
+  }
+
+  provideFeedback(formFeedback, 'submit-help-feedback', 'Por favor, insira um username válido')
+  clearUsername()
+}
+
+// adding event listeners
+
+usernameInput.addEventListener('keyup', provideRealTimeFeedback)
+
+form.addEventListener('submit', validateForm)
+
 /*
   02
 
@@ -53,3 +113,23 @@
   Spoiler alert: este tipo de exercício será frequente em etapas mais avançadas  
   do curso, onde falaremos sobre TDD. Vá se aquecendo =D
 */
+
+const newSome = (array, callback) => {
+
+  for (let i = 0; i < array.length; i++) {
+    const value = array[i]
+    const valuePassesTest = callback(value)
+
+    if (valuePassesTest) {
+      return true
+    }
+  }
+
+  return false
+}
+
+// console.log(newSome([1, 2, 3], item => item > 2))
+// console.log(newSome([1, 3, 5], item => item === 0))
+
+// console.log(newSome([2, 5, 8, 1, 4], x => x > 10));  // false
+// console.log(newSome([12, 5, 8, 1, 4], x => x > 10)); // true

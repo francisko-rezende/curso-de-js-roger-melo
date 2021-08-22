@@ -21,65 +21,89 @@
   Dica: pesquise pelo método "insertAdjacentElement", no MDN;
 */
 
-// getting DOM references
-
+const inputUsername = document.querySelector('#username')
 const form = document.querySelector('form')
+const button = document.querySelector('button')
 
-const usernameInput = form.username
+const paragraphUsernameFeedback = document.createElement('p')
+const paragraphSubmitFeedback = document.createElement('p')
 
-const inputFeedback = document.createElement('p')
+paragraphSubmitFeedback.setAttribute('data-feedback', 'submit-feedback')
 
-const formFeedback = document.createElement('p')
+const invalidSubmitInfo = {
+  paragraph: paragraphSubmitFeedback,
+  text: 'Por favor, insira um username válido',
+  className: 'submit-help-feedback',
+  previousSibling: button
+}
 
-// creating new HTML elements for feedback
+const validSubmitInfo = {
+  paragraph: paragraphSubmitFeedback,
+  text: 'Dados enviados =)',
+  className: 'submit-success-feedback',
+  previousSibling: button
+}
 
-usernameInput.insertAdjacentElement('afterend', inputFeedback)
+const invalidUsernameInfo = {
+  paragraph: paragraphUsernameFeedback,
+  text: 'O valor deve conter no mínimo 6 caracteres, com apenas letras maiúsculas e/ou minúsculas',
+  className: 'username-help-feedback',
+  previousSibling: inputUsername
+}
 
-form.insertAdjacentElement('afterend', formFeedback)
+const validUsernameInfo = {
+  paragraph: paragraphUsernameFeedback,
+  text: 'Username válido',
+  className: 'username-success-feedback',
+  previousSibling: inputUsername
+}
 
-// defining functions
+const removeSubmitParagraph = () => {
+  const paragraphSubmitFeedback = document.
+  querySelector('[data-feedback="submit-feedback"]')
 
-const provideFeedback = (paragraph, className, message) => {
+  if (paragraphSubmitFeedback) {
+    paragraphSubmitFeedback.remove()
+  }
+}
+
+const insertParagraphIntoDOM = (paragraphInfo) => {
+  const { paragraph, text, className, previousSibling } = paragraphInfo
+  paragraph.textContent = text
   paragraph.setAttribute('class', className)
-  paragraph.textContent = message
+  previousSibling.insertAdjacentElement('afterend', paragraph)
 }
 
-const isUsernameValid = username => /^[a-zA-Z]{6,}$/.test(username)
+const testUsername = inputValue => /^[a-zA-Z]{6,}$/.test(inputValue)
 
-const clearUsername = () => usernameInput.value = ''
+const showUsernameInfo = event => {
+  const isUsernameValid = testUsername(event.target.value)
 
-const provideRealTimeFeedback = () => {
-  const usernameValue = usernameInput.value
+  removeSubmitParagraph()
 
-  if (isUsernameValid(usernameValue)) {
-    provideFeedback(inputFeedback, 'username-success-feedback', 'Username válido =)')
+  if (!isUsernameValid) {
+    insertParagraphIntoDOM(invalidUsernameInfo)
     return
   }
-  
-  provideFeedback(inputFeedback, 'username-help-feedback', 
-  'O valor deve conter no mínimo 6 caracteres, com apenas letras maiúsculas e/ou minúsculas')
+
+  insertParagraphIntoDOM(validUsernameInfo)
 }
 
-const validateForm = event => {
+const showSubmitInfo = event => {
   event.preventDefault()
+  
+  const isUsernameValid = testUsername(inputUsername.value)
 
-  const usernameValue = usernameInput.value
-
-  if (isUsernameValid(usernameValue)) {
-    provideFeedback(formFeedback, 'submit-success-feedback', 'Dados enviados =)')
-    clearUsername()
+  if (!isUsernameValid) {
+    insertParagraphIntoDOM(invalidSubmitInfo)
     return
   }
 
-  provideFeedback(formFeedback, 'submit-help-feedback', 'Por favor, insira um username válido')
-  clearUsername()
+  insertParagraphIntoDOM(validSubmitInfo)
 }
 
-// adding event listeners
-
-usernameInput.addEventListener('keyup', provideRealTimeFeedback)
-
-form.addEventListener('submit', validateForm)
+inputUsername.addEventListener('input', showUsernameInfo)
+form.addEventListener('submit', showSubmitInfo)
 
 /*
   02
@@ -114,22 +138,19 @@ form.addEventListener('submit', validateForm)
   do curso, onde falaremos sobre TDD. Vá se aquecendo =D
 */
 
-const newSome = (array, callback) => {
+const newSome = (array, func) => {
 
   for (let i = 0; i < array.length; i++) {
-    const value = array[i]
-    const valuePassesTest = callback(value)
-
-    if (valuePassesTest) {
+    if (func(array[i])) {
       return true
     }
   }
-
+  
   return false
 }
 
-// console.log(newSome([1, 2, 3], item => item > 2))
-// console.log(newSome([1, 3, 5], item => item === 0))
+console.log(newSome([1, 2, 3], item => item > 2))
+console.log(newSome([1, 3, 5], item => item === 0))
 
-// console.log(newSome([2, 5, 8, 1, 4], x => x > 10));  // false
-// console.log(newSome([12, 5, 8, 1, 4], x => x > 10)); // true
+console.log(newSome([2, 5, 8, 1, 4], x => x > 10));  // false
+console.log(newSome([12, 5, 8, 1, 4], x => x > 10)); // true

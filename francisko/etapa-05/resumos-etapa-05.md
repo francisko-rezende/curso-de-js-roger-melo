@@ -533,8 +533,181 @@ ul.addEventListener('click', event => {
 
 ## Aula 04-04 - Desenvolvendo um popup
 
-- O roger constrói um popup do zero, vale à pena rever o vídeo pra prestar mais atenção na linha de raciocínio que ele adota
-- A parte mais interessante pra mim foi a introdução do método de array `some`, que recebe uma callback e testa se pelo menos um elemento do array em que o método é invocado passa no teste implementado na callback
+- Iniciamos o desenvolvimento do pop-up pelo HTML
+  - Primeiro criamos um botão com o texto "Clique aqui"
+  
+  ```html
+  <button>Clique aqui</button>
+  ```
+
+  - Depois, criamos uma `div` com a classe "popup-wrapper". Essa `div` vai ser responsável pelo fundo esmaecido do pop-up
+
+  ```html
+  <div class="popup-wrapper"> </div>
+  ```
+
+  - O pop-up em si vai dento da `.popup-wrapper` e vai ser outra div mas dessa vez com a class `popup`
+
+  ```html
+   <div class="popup-wrapper">
+     <div class="popup">
+
+     </div>
+   </div>
+  ```
+  - O conteúdo do pop-up vai dentro da div `.popup` e também vai ser uma div que recebe a classe `popup-content`
+
+  ```html
+  <div class="popup-wrapper">
+    <div class="popup">
+      <div class="popup-content">
+
+      </div>
+    </div>
+  </div>
+  ```
+  - O popup vai conter um título secundário, um parágrafo e um link:
+
+  ```html
+  <div class="popup-wrapper">
+    <div class="popup">
+      <div class="popup-content">
+        <h2>Popup deselegante</h2>
+        <p>O autor do popup foi o programador Ethan Zuckerman.</p>
+        <a href="#">Saiba mais</a>
+      </div>
+    </div>
+  </div>
+  ```
+  - Finalmente, vamos adicionar um elemento irmão anterior ao `popup-content que usaremos para fechar o popup
+
+  ```html
+  <div class="popup-close">x</div>
+  ```
+  - O código final fica assim:
+
+  ```html
+  <div class="popup-wrapper">
+    <div class="popup-close">x</div>
+    
+    <div class="popup">
+      <div class="popup-content">
+        <h2>Popup deselegante</h2>
+        <p>O criador do popup foi o programador Ethan Zuckerman</p>
+        <a href="#">Saiba mais</p>
+      </div>
+    </div>
+  </div>
+  ```
+- Com o HTML pronto, partimos pro CSS
+  - Começamos setando o box model de todos os elementos
+
+  ```css
+  * {
+    box-sizing: border-box;
+  }
+  ```
+  - Damos seguimento setando o estilo do `button`
+
+  ```css
+  button {
+    display: block;
+    margin: 20px auto;
+    background: crimson;
+    color: white;
+    border: 0;
+    cursor: pointer;
+    padding: 6px 10px;
+  }
+  ```
+  - O próximo passo é estilizar o popup wrapper
+
+  ```css
+  .popup-wrapper {
+    background: rgba(0, 0, 0, .5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%
+  }
+  ```
+  - Agora vamos estilizar a div com a classe `popup`
+
+  ```css
+  .popup {
+    font-family: arial;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+    margin: 10% auto;
+    padding 20px;
+    background: white;
+    position: relative;
+  }
+  ```
+  - Agora vamos estilizar o link dentro do popup, que vai ter o mesmo estilo do botão que foi clicado para abrir o popup
+
+  ```css
+  .popup a {
+    color: white;
+    border: 0;
+    cursor: pointer;
+    padding: 6px 10px;
+    text-decoration: none;
+    background: crimson
+  }
+  ```
+  - Agora vamos estilizar a div com a classe `.popup-close`
+
+  ```css
+  .popup-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+  }
+  ```
+- Agora vamos adicionar funcionalidade ao popup
+  - Iniciaremos fazendo com que o popup só apareça quando clicarmos no botão
+  - Para fazer isso, vamos setar a propriedade `display` do `popup-wrapper` para "none", o que faz com que o popup não seja exibido
+  - Para fazer o popup aparecer vamos setar um eventListener do tipo 'click' no botão
+  - Em seguida, vamos fazer com que a callback mude o display da `popup-wrapper` para "block"
+  - O próximo passo é fazer com que um clique no "x" ou na área escura feche o popup, que também faremos atrelando um eventListener no x, cuja
+  - A abordagem acima tem um problema: um clique em qualquer lugar do wrapper fecha o popup
+  - Para resolver essa treta removemos o eventListener do closeButton e utilizaremos um eventListener no wrapper com o parâmetro event para identificar a classe do elemento que foi clicado
+  - Como o link não tinha classe, adicionamos a classe `popup-link` a esse elemento
+  - Obtemos a classe do elemento clicado através da propriedade `classList`, que acessamos dentro da callback
+  - Essa propriedade contém um `DOMTokenList`, que é similar a um array e nesse caso vamos utilizar o valor do índice 0 desse token list
+
+  ```javascript
+  const button = document.querySelector('button')
+  const popupWrapper = document.querySelector('.popup-wrapper')
+  <!-- const closeButton = document.querySelector('.popup-close') -->
+
+  button.addEventListener('click', () => {
+    popupWrapper.style.display = 'block'
+  })
+
+  <!-- closeButton.addEventListener('click', () => {
+    popupWrapper.style.display = 'none'
+  }) -->
+
+  popupWrapper.addEventListener('click', event => {
+    const classNameOfClickedElement = event.target.classList[0]
+    const classNames = ['popup-close', 'popup-link', 'popup-wrapper']
+    const shouldClosePopup = classNames.some(className => className === classNameOfClickedElement)
+
+
+    if (shouldClosePopup) {
+      popupWrapper.style.display = 'none'
+    }
+    
+  })
+
+  ```
+
+- O método de array `some`, que recebe uma callback e testa se pelo menos um elemento do array em que o método é invocado passa no teste implementado na callback
 - Por exemplo, para testar se algum elemento do array `classNames` é igual à string "teste" fazemos o seguinte
 
 ```javascript

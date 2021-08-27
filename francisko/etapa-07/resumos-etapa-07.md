@@ -105,3 +105,199 @@ form.addEventListener('submit', event => {
     })
 })
 ```
+
+# Aula 02
+
+## Aula 02-01 - Exibindo a pontuação
+
+- Vamos exibir a pontuação entre os dois títulos do quiz
+- Inciamos o processo pela marcação HTML
+
+```html
+<div class="result py-4 d-none bg-light text-center">
+    <div class="container lead">
+        <p>Você acertou <span class="text-primary display-4 p-3">0%</span>
+        do quiz!
+        </p>
+    </div>
+</div>
+```
+- A classe `.result` vai ser usada para obtermos a referência do div
+- A classe `.py-4` implica que estamos adicionando um padding no eixo y
+- A classe `.d-none` faz com que a div tenha um display none
+- A classe `.bg-light` estiliza o fundo da div
+- A classe `.text-center` centraliza o texto dentro da div
+- A classe `.container` mantém o elemento em uma posição central da página
+- A classe `.lead` estiliza o texto dentro desse elemento
+- O `span` tem algumas classes que o estilizam e dentro dele vai a porcentagem de acertos do usuários
+- Essas classes estão explicadas nos docs do bootstrap
+- Como a div recebe display none, quando o form for enviado precisamos adicionar o valor dessa porcentagem ao span e exibir essa div
+- Então, iremos manipular essa div como estamos acostumados a fazer: declaramos uma const que vai receber a referência da div
+
+```javascript
+const finalResult = document.querySelector('.result')
+```
+
+- Daí usaremos essa referência para obtermos a referência do span encadeando querySelector na finalResult e, como queremos mudar o text do span, encadeamos também textContent
+
+```javascript
+finalResult.querySelector('span').textContent = `${score}%`
+```
+- O último passo é remover a classe `.d-none`
+
+```javascript
+finalResult.classList.remove('d-none')
+```
+
+- Juntando tudo (inclusive o que criamos na aula anterior) fica
+
+```javascript
+const form = document.querySelector('.quiz-form')
+const finalResult = document.querySelector('.result')
+
+const correctAnswers = ['B', 'B', 'B', 'B']
+
+
+form.addEventListener('submit', event => {
+    event.preventDefault()
+
+    let score = 0
+    const userAnswers = [
+        form.inputQuestion1.value,
+        form.inputQuestion3.value,
+        form.inputQuestion3.value,
+        form.inputQuestion4.value
+    ]
+
+    userAnswers.forEach((userAnswer, index) => {
+        if (userAnswer === correctAnswer[index]) {
+            score += 25
+        }
+    })
+
+    finalResult.querySelector('span').textContent = `${score}%`
+    finalResult.classList.remove('d-none')
+})
+```
+
+## Aula 02-02 - setTimeout() e o objeto window
+
+- A solução para exibir a pontuação do usuário mostrada acima tem um problema: os pontos acabam aparecendo na parte superior da tela e podem passar desapercebidos caso o usuário acesse a aplicação em uma tela pequena e role a página para responder às últimas perguntas
+- Para solucionar esse problema, vamos rolar a tela pro topo automaticamente usando um método do objeto `window`
+- `window` é o objeto que existe no escopo global de aplicações JS quando trabalhamos no frontend/browser (no backend, usando node, o objeto global se chama `global`)
+- Se digitarmos `window` no console e pressionarmos enter, vemos todas as propriedades do window, que são muitas!
+- Por exemplo, a prop `window.outerWidth` retorna a largura atual da janela
+- Quando queremos acessar propriedades do objeto `window` não precisamos chamar o objeto explicitamente, o que significa que `window.outerWidth === outerWidth`
+  - Um outro exemplo disso é o `console.log()`, que é na verdade vem de `window.console.log()`, assim como o objeto `document` e seus métodos
+  - De maneira geral, sempre que vermos propriedades ou métodos que não declaramos sendo usados, essas props ou métodos vêm do objeto window
+- Veremos um outro método do `window`, o `setTimeout()`
+  - Esse método executa uma função depois de um determinado tempo e recebe dois argumentos: a função que será executada e o o tempo até a execução da função em milisegundos
+  - Por exemplo, para exibir um alert depois de dois segundos, fazemos o seguinte
+
+    ```javascript
+    setTimeout(() => {
+        alert('executou')
+    }, 2000)
+    ```
+- Para rolar a página para o topo, usaremos o método `scrollTo`, quer recebe as coordenadas X e Y do que deve aparecer no canto superior esquerdo da tela
+- Ou seja, `scrollTo(0, 100)` rola a página para o pixel 0 no eixo X o 100o pixel de cima pra baixo no eixo Y
+- O código já com essa estratégia implementada fica assim
+
+```javascript
+const form = document.querySelector('.quiz-form')
+const finalResult = document.querySelector('.result')
+
+const correctAnswers = ['B', 'B', 'B', 'B']
+
+
+form.addEventListener('submit', event => {
+    event.preventDefault()
+
+    let score = 0
+    const userAnswers = [
+        form.inputQuestion1.value,
+        form.inputQuestion3.value,
+        form.inputQuestion3.value,
+        form.inputQuestion4.value
+    ]
+
+    userAnswers.forEach((userAnswer, index) => {
+        if (userAnswer === correctAnswer[index]) {
+            score += 25
+        }
+    })
+
+    scrollTo(0, 0)
+
+    finalResult.querySelector('span').textContent = `${score}%`
+    finalResult.classList.remove('d-none')
+})
+```
+## Aula 02-02 - setInterval() e animação da pontuação
+
+- Nessa aula, animaremos a pontuação do usuário. A pontuação irá de 0 até a pontuação final rapidamente
+- Usaremos o `setInterval()` para isso
+  - Esse método recebe uma função e um intervalo de tempo em milisegundos
+  - Ele executa a função do primeiro argumento a cada intervalo setado no segundo argumento
+- Usaremos o `setInterval()` para aumentar a pontuação de 0 até a pontuação do usuário
+- Porém, esse método não para por padrão, temos que codar uma forma de fazer com que a contagem pare
+- Criaremos uma `counter` antes de iniciar o `setInterval`, que será armazenado em uma constante e logo abaixo vamos adicionar um condicional que executará `clearInterval()`, que é uma função que para a execução do `setInterval()`
+- Para que o `clearInterval()` pare um `setInterval()`, precisamos passar o ID único do setInterval que queremos parar como argumento para o `clearInterval()`. Obtemos esse ID setando uma const que recebe a invocação do setInterval e então podemos passar essa const como argumento para o `clearInterval`
+- Segue um exemplo
+
+```javascript
+let counter = 0  // setamos o valor inicial do counter
+
+const timer = setInterval(() => {  //setamos o setInterval e armazenamos seu valor na const timer
+    console.log('1 segundo se passou')  // A funcao eh executada a cada segundo, exibindo a mensagem no console 
+    counter++ // incrementando o valor da counter
+
+    if (counter === 5) { // se counter for 5, o clearInterval para a execução do setInterval
+        clearInterval(timer)
+    }
+}, 1000)
+```
+- Implementamos esse counter no código do quiz assim
+
+```javascript
+const form = document.querySelector('.quiz-form')
+const finalResult = document.querySelector('.result')
+
+const correctAnswers = ['B', 'B', 'B', 'B']
+
+
+form.addEventListener('submit', event => {
+    event.preventDefault()
+
+    let score = 0
+    const userAnswers = [
+        form.inputQuestion1.value,
+        form.inputQuestion3.value,
+        form.inputQuestion3.value,
+        form.inputQuestion4.value
+    ]
+
+    userAnswers.forEach((userAnswer, index) => {
+        if (userAnswer === correctAnswer[index]) {
+            score += 25
+        }
+    })
+
+    scrollTo(0, 0)
+
+    
+    finalResult.classList.remove('d-none')
+
+    let counter = 0  // criamos o counter que recebe 0
+
+    const timer = setInterval(() => {  // invocamos e armazenamos o id do setInterval, que executara a funcao a cada 10 milisegundos
+        if (counter === score) {  // se o counter for igual a pontuacao do usuario o setInterval eh cancelado
+            clearInterval(timer)
+        }
+
+        finalResult.querySelector('span').textContent = `${counter}%`
+        counter++
+    }, 10)
+})
+```
+- Substituímos  `finalResult.querySelector('span').textContent = ${score}%` por `finalResult.querySelector('span').textContent = ${counter}%` pois se usássemos "score" o valor final seria exibido logo de cara ao invés de aumentar como queríamos que acontecesse

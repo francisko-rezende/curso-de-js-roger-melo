@@ -123,3 +123,83 @@ const rogerScore = phaseScores.reduce((accumulator, phaseScore) => {
     return accumulator
 }, 0)
 ```
+
+# Aula 02
+
+## Aula 02-01 - Correção dos exercícios da aula anterior
+
+## Aula 02-02 - O método sort
+
+- O método `sort` é usado pra ordenar elementos de arrays
+- Ao contrário dos métodos `map` e `filter`, `sort` **altera** o array original 
+- Por exemplo, esse método pode ser usado para ordenar elementos de arrays em ordem alfabética (algo que o `sort` faz por default):
+
+```javascript
+const names = ['Christian', 'Alfredo', 'Edson']
+
+names.sort()
+
+console.log(names)
+```
+- Também podemos usar o `sort` para ordenar arrays com números
+
+```javascript
+const scores = [10, 50, 20, 5, 35, 70, 45]
+
+scores.sort()
+
+console.log(scores)
+```
+
+- O código acima trás um problema: a ordem é determinada só pelo primeiro caractere
+- Veremos como solucionar isso logo, pacienza
+- Por enquanto vamos ver como ordenar objetos, faremos uma ordenação decrescente baseada na propriedade `score`
+
+```javascript
+const theBigFamily = [
+  { name: 'Lineu', score: 20 },
+  { name: 'Nenê', score: 10 },
+  { name: 'Tuco', score: 50 },
+  { name: 'Bebel', score: 30 },
+  { name: 'Agostinho', score: 70 }
+]
+
+theBigFamily.sort((item1, item2) => {
+  if (item1.score > item2.score) {
+    return -1
+  } else if (item2.score > item1.score) {
+    return 1
+  }
+
+  return 0
+})
+```
+- O `sort` pode receber um argumento opcional que é um a função de comparação
+- Essa função recebe dois parâmetros, item1 e item2 e nessa função comparamos esses items para decidir qual vem primeiro
+- A função deve retornar um número que define a ordem dependendo do que ela retorna--a ordem vai ser diferente se o número retornado for menor que zero, for zero, ou for maior que zero.
+  - Se o número retornado for menor que zero, o item1 vem antes do que o item2 na ordenação do sort
+  - Se o número retornado for maior que zero, o item2 vem antes do que o item1 na ordenação do sort
+  - Se o número retornado for 0, os dois item ocuparão a mesma posição na ordenação do sort
+- Então, construímos essa função para que o valor retornado seja negativo, positivo, ou 0 dependendo de como queremos ordenar os items
+- Uma alternativa pro código acima é a seguinte
+
+```javascript
+theBigFamily.sort((item1, item2) => item2.score - item1.score)
+```
+
+- Se o item2.score - item1.score for positivo, esse número positivo vai ser retornado pela função e o item2 vai vir antes do item1
+- Se item2.score - item1.score resultar em um número negativo, esse número negativo vai ser retornado pela função e o item1 vai vir antes do item2
+- Se os valores forem iguais, a expressão resulta em 0 e os items não vão ser ordenados
+- Agora podemos voltar ao segundo exemplo
+
+```javascript
+const scores = [10, 50, 20, 5, 35, 70, 45]
+
+scores.sort((score1, score2) => score2 - score1) // para ordem decrescente
+
+scores.sort((score1, score2) => score1 - score2) // para ordem crescente
+```
+
+- Se score2 > score1, a função retornará um número positivo e o score2 vem antes do score1
+- Se score1 > score2, a função retornará um número negativo e o score1 vem antes do score1
+- Se score1 = score2, a função retornará 0 e os dois ocuparão o mesmo lugar na ordem do `sort`

@@ -203,3 +203,33 @@ scores.sort((score1, score2) => score1 - score2) // para ordem crescente
 - Se score2 > score1, a função retornará um número positivo e o score2 vem antes do score1
 - Se score1 > score2, a função retornará um número negativo e o score1 vem antes do score1
 - Se score1 = score2, a função retornará 0 e os dois ocuparão o mesmo lugar na ordem do `sort`
+
+## Aula 02-03 - Encadeando métodos
+
+- Imagine que primeiro a gente precise obter desse array só livros acima de 20 reais e depois precisamos gerar uma string informando o nome e o preço do livro em promoção
+- Iniciamos usando `filter` pois queremos só um subset dos elementos do array
+- Depois podemos usar o `map` pois queremos um array de strings com o mesmo número de elementos que o array original
+- À princípio podemos pensar em ter variáveis intermediárias para conter o resultado das operações que queremos realizar (eg um array só com os livros filtrados e outro com a string). Isso não é necessário pois já que os métodos que estamos usando retornam arrays, podemos encadear as invocações uma na outra
+- Lembrar de prestar atenção na formatação do código!
+  
+```javascript
+const books = [
+  { name: 'Código Limpo', price: 30 },
+  { name: 'O milagre da manhã', price: 5 },
+  { name: 'Alice no País das Maravilhas', price: 10 },
+  { name: 'Quem Pensa Enriquece', price: 50 },
+  { name: 'O livro da ciência', price: 40 }
+]
+
+// Sem encadear métodos
+
+const filteredBooks = books.filter(book => book.price > 20)
+const booksOnSale = filteredBooks.map(book => `O preço do livro "${book.name}" caiu para ${book.price} reais`)
+
+// Encadeando métodos
+
+const booksOnSale = books
+  .filter(({ price }) => price > 20)
+  .map(({ name, price }) => 
+    `O preço do livro "${name}" caiu para "${price}" reais`)
+```

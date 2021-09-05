@@ -154,8 +154,8 @@ console.log(dogsInHumanAge)
 
 const ul = document.querySelector('.list-group')
 
-ul.innerHTML = topBrazilMovies.reduce((acc, { title }) => 
-  acc + `<li>${title}</li>`, '')
+ul.innerHTML = topBrazilMovies
+  .reduce((acc, { title }) => acc + `<li>${title}</li>`, '')
 
 /*
   10

@@ -6,12 +6,12 @@
   - Exiba o array ordenado no console.
 */
 
+const getArrayCopy = array => array.map(item => item)
+
 const names = ['Caio', 'André', 'Dário']
+const namesInAlphabeticalOrder = getArrayCopy(names).sort()
 
-const orderedNames = [...names].sort()
-
-console.log(orderedNames);
-
+console.log(namesInAlphabeticalOrder)
 
 
 /*
@@ -29,10 +29,11 @@ const characters = [
   { id: 04, name: 'Mufasa' }
 ]
 
-const orderedCharacters = [...characters].sort((character1, character2) => 
-character1.id - character2.id)
+const charactersOrderedById = characters
+  .map(({ id, name }) => ({ id, name  }))
+  .sort((character1, character2) => character1.id - character2.id)
 
-console.log(orderedCharacters);
+console.log(charactersOrderedById)
 
 /*
   03
@@ -43,12 +44,10 @@ console.log(orderedCharacters);
 */
 
 const numbers = [41, 15, 63, 349, 25, 22, 143, 64, 59, 291]
+const numbersInAscendingOrder = getArrayCopy(numbers)
+  .sort((item1, item2) => item1 - item2)
 
-const copyNumbers = [41, 15, 63, 349, 25, 22, 143, 64, 59, 291]
-
-copyNumbers.sort((number1, number2) => number1 - number2)
-
-console.log(copyNumbers);
+console.log(numbersInAscendingOrder)
 
 /*
   04
@@ -57,18 +56,7 @@ console.log(copyNumbers);
 */
 
 const randomNumbers = [10, 5, 0, 40, 60, 10, 20, 70]
-
-let firstNumberGreaterThan50 = null
-
-for (let i = 0; i < randomNumbers.length; i++) {
-  const randomNumber = randomNumbers[i];
-
-  if (randomNumber > 50) {
-    firstNumberGreaterThan50 = randomNumber
-    break
-  }
-  
-}
+const firstNumberGreaterThan50 = randomNumbers.find(number => number > 50)
 
 console.log(firstNumberGreaterThan50);
 
@@ -81,12 +69,9 @@ console.log(firstNumberGreaterThan50);
 */
 
 const people = ['Cauã', 'Alfredo', 'Bruno']
+const peopleInReverseAlphabeticOrder = getArrayCopy(people).sort().reverse()
 
-const copyPeople = ['Cauã', 'Alfredo', 'Bruno']
-
-copyPeople.sort().reverse()
-
-console.log(copyPeople)
+console.log(peopleInReverseAlphabeticOrder)
 
 /*
   06
@@ -98,13 +83,15 @@ console.log(copyPeople)
 
 const ingredients = ['vinho', 'tomate', 'cebola', 'cogumelo']
 
-let message = ''
+const cookedIngredients = ingredients.reduce((acc, item, index, array) => {
+  const correctWordGender = /a$/.test(item) ? 'cozida' : 'cozido'
+  const isLastItem = index === array.length - 1
+  const ingredientMessage = acc + `${item} ${correctWordGender}`
 
-ingredients.forEach(ingredient => {
-  message += ` ${ingredient} cozido,`
-})
+  return isLastItem ? ingredientMessage : `${ingredientMessage}, `
+}, '')
 
-console.log(message);
+console.log(cookedIngredients)
 
 /*
   07
@@ -113,7 +100,7 @@ console.log(message);
     assistiram apenas os filmes da Disney.
 */
 
-const topBrazilmovies = [
+const topBrazilMovies = [
   { title: 'Vingadores: Ultimato', peopleAmount: 19686119, distributedBy: 'Disney' },
   { title: 'Titanic', peopleAmount: 17050000, distributedBy: 'Paramount / 20th Century' },
   { title: 'O Rei Leão', peopleAmount: 16267649, distributedBy: 'Disney' },
@@ -126,11 +113,11 @@ const topBrazilmovies = [
   { title: 'Dona Flor e Seus Dois Maridos', peopleAmount: 10735524, distributedBy: 'Embrafilme' }
 ]
 
-const totalAttendanceDisneyMovies = topBrazilmovies
-  .filter(topBrazilmovie => topBrazilmovie.distributedBy === 'Disney')
-  .reduce((accumulator, topBrazilmovie) => accumulator += topBrazilmovie.peopleAmount, 0)
+const peopleAmount = topBrazilMovies
+  .filter(({ distributedBy }) => distributedBy === 'Disney')
+  .reduce((acc, { peopleAmount }) => acc + peopleAmount, 0)
 
-console.log(totalAttendanceDisneyMovies);
+console.log(peopleAmount)
 
 /*
   08
@@ -152,23 +139,23 @@ const pets = [
   { name: 'Chico', age: 6, gender: 'Male', type: 'Dog' }
 ]
 
-const dogs = pets
-  .filter(pet => pet.type === 'Dog')
-  .map(dog => {return {name: dog.name, age: dog.age * 7, type: dog.type}})
+const dogsInHumanAge = pets
+  .filter(({ type }) => type === 'Dog')
+  .map(({ name, age, gender, type }) => ({ name, age: age * 7, gender, type }))
 
-console.log(dogs, pets);
+console.log(dogsInHumanAge)
 
 /*
   09
   
-  - Considerando o array topBrazilmovies, através do map ou do reduce, insira 
+  - Considerando o array topBrazilMovies, através do map ou do reduce, insira 
     os nomes dos filmes na ul do index.html.
 */
 
 const ul = document.querySelector('.list-group')
 
-ul.innerHTML = topBrazilmovies.reduce((accumulator, topBrazilmovie) => 
-accumulator += `<li>${topBrazilmovie.title}</li>`, '')
+ul.innerHTML = topBrazilMovies.reduce((acc, { title }) => 
+  acc + `<li>${title}</li>`, '')
 
 /*
   10

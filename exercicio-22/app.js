@@ -8,6 +8,12 @@
 
 const names = ['Caio', 'André', 'Dário']
 
+const orderedNames = [...names].sort()
+
+console.log(orderedNames);
+
+
+
 /*
   02
 
@@ -23,6 +29,11 @@ const characters = [
   { id: 04, name: 'Mufasa' }
 ]
 
+const orderedCharacters = [...characters].sort((character1, character2) => 
+character1.id - character2.id)
+
+console.log(orderedCharacters);
+
 /*
   03
 
@@ -33,6 +44,12 @@ const characters = [
 
 const numbers = [41, 15, 63, 349, 25, 22, 143, 64, 59, 291]
 
+const copyNumbers = [41, 15, 63, 349, 25, 22, 143, 64, 59, 291]
+
+copyNumbers.sort((number1, number2) => number1 - number2)
+
+console.log(copyNumbers);
+
 /*
   04
 
@@ -40,6 +57,20 @@ const numbers = [41, 15, 63, 349, 25, 22, 143, 64, 59, 291]
 */
 
 const randomNumbers = [10, 5, 0, 40, 60, 10, 20, 70]
+
+let firstNumberGreaterThan50 = null
+
+for (let i = 0; i < randomNumbers.length; i++) {
+  const randomNumber = randomNumbers[i];
+
+  if (randomNumber > 50) {
+    firstNumberGreaterThan50 = randomNumber
+    break
+  }
+  
+}
+
+console.log(firstNumberGreaterThan50);
 
 /*
   05
@@ -51,6 +82,12 @@ const randomNumbers = [10, 5, 0, 40, 60, 10, 20, 70]
 
 const people = ['Cauã', 'Alfredo', 'Bruno']
 
+const copyPeople = ['Cauã', 'Alfredo', 'Bruno']
+
+copyPeople.sort().reverse()
+
+console.log(copyPeople)
+
 /*
   06
   
@@ -60,6 +97,14 @@ const people = ['Cauã', 'Alfredo', 'Bruno']
 */
 
 const ingredients = ['vinho', 'tomate', 'cebola', 'cogumelo']
+
+let message = ''
+
+ingredients.forEach(ingredient => {
+  message += ` ${ingredient} cozido,`
+})
+
+console.log(message);
 
 /*
   07
@@ -81,6 +126,12 @@ const topBrazilmovies = [
   { title: 'Dona Flor e Seus Dois Maridos', peopleAmount: 10735524, distributedBy: 'Embrafilme' }
 ]
 
+const totalAttendanceDisneyMovies = topBrazilmovies
+  .filter(topBrazilmovie => topBrazilmovie.distributedBy === 'Disney')
+  .reduce((accumulator, topBrazilmovie) => accumulator += topBrazilmovie.peopleAmount, 0)
+
+console.log(totalAttendanceDisneyMovies);
+
 /*
   08
   
@@ -101,12 +152,23 @@ const pets = [
   { name: 'Chico', age: 6, gender: 'Male', type: 'Dog' }
 ]
 
+const dogs = pets
+  .filter(pet => pet.type === 'Dog')
+  .map(dog => {return {name: dog.name, age: dog.age * 7, type: dog.type}})
+
+console.log(dogs, pets);
+
 /*
   09
   
   - Considerando o array topBrazilmovies, através do map ou do reduce, insira 
     os nomes dos filmes na ul do index.html.
 */
+
+const ul = document.querySelector('.list-group')
+
+ul.innerHTML = topBrazilmovies.reduce((accumulator, topBrazilmovie) => 
+accumulator += `<li>${topBrazilmovie.title}</li>`, '')
 
 /*
   10

@@ -23,6 +23,10 @@ const people = [
   { firstName: 'Eric', lastName: 'Silva', score: 82 }
 ]
 
+const peopleOrderedbyScore = people
+  .map(person => person)
+  .sort((item1, item2) => item1.score - item2.score)
+
 /*
   03
 
@@ -35,6 +39,10 @@ const people = [
 
 const animals = ['cão', 'gato', 'boi', 'leão', 'gnu', 'alce', 'ema']
 
+const threeLetterAnimals = animals
+  .map(animal => animal)
+  .filter(animal => animal.length === 3)
+
 /*
   04
 
@@ -42,7 +50,8 @@ const animals = ['cão', 'gato', 'boi', 'leão', 'gnu', 'alce', 'ema']
     nome de cada animal. Ex.: [6, 8, 2].
 */
 
-
+const animalNameLengths = animals
+  .map(animal => animal.length)
 
 /*
   05
@@ -60,7 +69,9 @@ const friends = [
   { id: 5, name: 'Solange', nearMe: false }
 ]
 
-
+const friendsNearby = friends
+  .filter(friend => friend.nearMe)
+  .map(friend => friend.name)
 
 /*
   06
@@ -70,6 +81,10 @@ const friends = [
 */
 
 const numbers = [46, 86, 212, 29, 51, 9, 25, 42, 81]
+
+const oddSumResult = numbers
+  .filter(number => number % 2 === 1)
+  .reduce((acc, number) => acc += number, 0)
 
 /*
   07
@@ -91,3 +106,7 @@ const data = [{
   country: 'Indonesia',
   population: 263991379
 }]
+
+const populationMinusChina = data
+  .filter(datum => datum.country !== 'China')
+  .reduce((acc, datum) => acc += datum.population, 0)

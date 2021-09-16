@@ -6,6 +6,7 @@
 */
 
 const myString = '    JS      '
+console.log(myString.trim())
 
 /*
   02
@@ -23,9 +24,11 @@ const people = [
   { firstName: 'Eric', lastName: 'Silva', score: 82 }
 ]
 
-const peopleOrderedbyScore = people
-  .map(person => person)
-  .sort((item1, item2) => item1.score - item2.score)
+const peopleOrderedByScore = people
+  .map(({ firstName, lastName, score }) => ({ firstName, lastName, score,}))
+  .sort((a, b) => a.score - b.score)
+
+console.log(peopleOrderedByScore)
 
 /*
   03
@@ -38,10 +41,7 @@ const peopleOrderedbyScore = people
 */
 
 const animals = ['cão', 'gato', 'boi', 'leão', 'gnu', 'alce', 'ema']
-
-const threeLetterAnimals = animals
-  .map(animal => animal)
-  .filter(animal => animal.length === 3)
+const threeLetterAnimals = animals.filter(({ length }) => length === 3)
 
 /*
   04
@@ -50,8 +50,7 @@ const threeLetterAnimals = animals
     nome de cada animal. Ex.: [6, 8, 2].
 */
 
-const animalNameLengths = animals
-  .map(animal => animal.length)
+const animalNamesLengths = animals.map(({ length }) => length)
 
 /*
   05
@@ -69,9 +68,8 @@ const friends = [
   { id: 5, name: 'Solange', nearMe: false }
 ]
 
-const friendsNearby = friends
-  .filter(friend => friend.nearMe)
-  .map(friend => friend.name)
+const friendsNearMe = friends.filter(({ nearMe }) => nearMe)
+const nameOfFriendsNearMe = friendsNearMe.map(({ name }) => name)
 
 /*
   06
@@ -81,10 +79,9 @@ const friendsNearby = friends
 */
 
 const numbers = [46, 86, 212, 29, 51, 9, 25, 42, 81]
-
-const oddSumResult = numbers
-  .filter(number => number % 2 === 1)
-  .reduce((acc, number) => acc += number, 0)
+const oddNumbersSum = numbers
+  .filter(number => number % 2)
+  .reduce((acc, number) => acc + number, 0)
 
 /*
   07
@@ -107,6 +104,6 @@ const data = [{
   population: 263991379
 }]
 
-const populationMinusChina = data
-  .filter(datum => datum.country !== 'China')
-  .reduce((acc, datum) => acc += datum.population, 0)
+const populationSum = data
+  .filter(({ country }) => country !== 'China')
+  .reduce((acc, { population }) => acc + population, 0)

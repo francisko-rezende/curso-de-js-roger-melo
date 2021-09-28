@@ -38,7 +38,7 @@ console.log(numbers.includes(635))
     Se futuramente a marcação HTML da aplicação mudar, se o parentElement mudar, 
     o código que foi implementado não funcionará.
     
-    Dica: pesquise por dataset.
+    Dica: pesquise por dataset e atributos data.
 */
 
 /*

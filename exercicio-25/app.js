@@ -47,7 +47,7 @@ console.log(present.getFullYear())
   - Exiba o objeto no console.
 */
 
-const past = new Date('April 30 2020 12:00:00')
+const past = new Date('January 17 2020 21:17:00')
 console.log(past)
 
 /*
@@ -65,7 +65,7 @@ console.log(past.getHours())
   - Exiba o objeto no console.
 */
 
-const future = new Date('December 24 2027 18:00:00')
+const future = new Date('May 4 2021 00:00:00')
 console.log(future)
 
 /*
@@ -75,11 +75,8 @@ console.log(future)
 */
 
 const difference = future.getTime() - past.getTime()
-const seconds = Math.round(difference / 1000)
-const minutes = Math.round(seconds / 60)
-const hours = Math.round(minutes / 60)
-const days = Math.round(hours / 24)
-console.log(days)
+const differenceInDays = Math.round(difference / 1000 / 60 / 60 / 24)
+console.log(differenceInDays)
 /*
   08
   

@@ -64,3 +64,41 @@ const days = Math.round(hours / 24)
 ```javascript
 new Date(myTimestamp)
 ```
+
+# Aula 02
+
+## Aula 02-01 - Correção dos exercícios da aula anterior
+
+## Aula 02-02 - Construindo um relógio digital
+
+## Aula 02-03 - Conhecendo a date-fns
+
+- Datas e JS puro complicam as coisas, por isso vamos estudar uma lib pra manter nossa sanidade intacta
+- A primeira coisa que precisamos é instalar a lib, faremos isso através da CDN
+- Essa lib parou de ser disponibilizada através de CDN há um tempo. Por isso vamos atrás da versão 1.9, que ainda está disponível através da CDN
+- A assinatura geral da date-fns é `dateFns.method`
+- Podemos usar esse lib para formatar datas dessa forma
+- O `format` pode receber 3 argumentos
+
+```javascript
+const present = new Date()
+
+console.log(dateFns.format(present, 'MMMM'))  // June
+console.log(dateFns.format(present, 'YY'))  // 20
+console.log(dateFns.format(present, 'dddd'))  // Sunday
+console.log(dateFns.format(present, 'Do'))  // 7th
+console.log(dateFns.format(present, 'DD/MM/YYYY'))  // 07/06/2020
+```
+
+- Agora vamos usar a date-fns para comparar datas
+
+```javascript
+const past = new Date('April 7 2019 17:00:00')
+
+console.log(dateFns.distanceInWords(present, past))  // about one year ou outra aproximacao da diferenca
+```
+- Podemos adicionar um objeto como terceiro argumento do `distanceInWords` para obter um sufixo que fornece mais informações sobre a diferença obtida
+
+```javascript
+console.log(dateFns.distanceInWords(present, past, { addSuffix: true }))  // about one year AGO ou outra aproximacao da diferenca
+```

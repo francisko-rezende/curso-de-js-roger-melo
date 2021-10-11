@@ -6,6 +6,10 @@
   - Não utilize a date-fns.
 */
 
+const present = new Date()
+
+const formatDate = date => `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`
+
 /*
   02
 
@@ -13,6 +17,8 @@
     data na formatação: "03:07 - domingo, 7 de junho de 2020";
   - Não utilize a date-fns.
 */
+
+const formatDateTime = date => `${date.getHours()}:${date.getMinutes()} ${date.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`
 
 /*
   03
@@ -23,6 +29,7 @@
 */
 
 const user = { id: 42, isVerified: true }
+const { id, isVerified } = user
 
 /*
   04
@@ -37,6 +44,9 @@ const user = { id: 42, isVerified: true }
 const robotA = { name: 'Bender' }
 const robotB = { name: 'HAL 9000' }
 
+const {name: nameA} = robotA
+const {name: nameB} = robotB 
+
 /*
   05
 
@@ -50,29 +60,51 @@ const a = 'a'
 const b = 'b'
 const c = 'c'
 
+const shortHandObj = { a, b, c }
+
 /*
   06
 
   - Refatore o código abaixo.
 */
 
+// const useDataSomewhereElse = value => {
+//   console.log(value)
+// }
+
+// const updateSomething = (data = {}) => {
+//   const target = data.target
+//   const property = data.property
+//   let willChange = data.willChange
+
+//   if (willChange === 'valor indesejado') {
+//     willChange = 'valor desejado'
+//   }
+
+//   useDataSomewhereElse({
+//     target: target,
+//     property: property,
+//     willChange: willChange
+//   })
+// }
+
+// updateSomething({ target: '1', property: '2', willChange: 'valor indesejado' })
+
 const useDataSomewhereElse = value => {
   console.log(value)
 }
 
 const updateSomething = (data = {}) => {
-  const target = data.target
-  const property = data.property
-  let willChange = data.willChange
+  const { target, property } = data
+  let { willChange } = data
+  const isUndesirableValue = willChange === 'valor indesejado' 
 
-  if (willChange === 'valor indesejado') {
-    willChange = 'valor desejado'
-  }
+  willChange = isUndesirableValue ? 'valor desejado' : willChange
 
   useDataSomewhereElse({
-    target: target,
-    property: property,
-    willChange: willChange
+     target,
+     property,
+     willChange
   })
 }
 
@@ -87,6 +119,8 @@ updateSomething({ target: '1', property: '2', willChange: 'valor indesejado' })
 
 const clockContainer = document.querySelector('.clock-container')
 
+const formatTime = time => String(time).length === 1 ? `0${time}` : time 
+
 const updateClock = () => {
   const present = new Date()
   const hours = present.getHours()
@@ -94,9 +128,9 @@ const updateClock = () => {
   const seconds = present.getSeconds()
 
   const clockHTML = `
-    <span>${String(hours).length === 1 ? `0${hours}` : hours}</span> :
-    <span>${String(minutes).length === 1 ? `0${minutes}` : minutes}</span> :
-    <span>${String(seconds).length === 1 ? `0${seconds}` : seconds}</span>
+    <span>${formatTime(hours)}</span> :
+    <span>${formatTime(minutes)}</span> :
+    <span>${formatTime(seconds)}</span>
   `
 
   clockContainer.innerHTML = clockHTML

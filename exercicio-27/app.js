@@ -9,7 +9,7 @@ console.log('Linha 2')
 console.log('Linha 3')
 console.log('Linha 4')
 
-
+// setTimeout(console.log, 1, 'Essa linha é assíncrona')
 
 console.log('Linha 5')
 console.log('Linha 6')
@@ -27,7 +27,11 @@ function logGreeting (name) {
   console.log(`olá, ${name}`)
 }
 
-// x(logGreeting)
+const x = fn => {
+  fn('Francisko')
+}
+
+x(logGreeting)
 
 /*
   03
@@ -36,7 +40,8 @@ function logGreeting (name) {
 */
 
 const numbers = [3, 4, 10, 20]
-const lesserThanFive = numbers.filter(num => num < 5)
+const isLessThanFive = num => num < 5
+const lesserThanFive = numbers.filter(isLessThanFive)
 
 console.log(lesserThanFive)
 
@@ -47,11 +52,12 @@ console.log(lesserThanFive)
 */
 
 const prices = [12, 19, 7, 209]
-let totalPrice = 0
+// let totalPrice = 0
 
-for (let i = 0; i < prices.length; i++) {
-  totalPrice += prices[i]
-}
+// for (let i = 0; i < prices.length; i++) {
+//   totalPrice += prices[i]
+// }
+const totalPrice = prices.reduce((acc, price) => acc + price, 0)
 
 console.log(`Preço total: ${totalPrice}`)
 
@@ -63,6 +69,7 @@ console.log(`Preço total: ${totalPrice}`)
 */
 
 let car = { color: 'amarelo' }
+car['color'] = 'azul'
 
 /*
   06
@@ -73,6 +80,13 @@ let car = { color: 'amarelo' }
   - Se todos os argumentos forem passados, retorne a string 'A função foi 
     invocada com 3 argumentos'.
 */
+
+const checkIfArgIsMissing = (first, second, third) => {
+  const messageOk = 'A função foi invocada com 3 argumentos'
+  const messageHelp = 'A função deve ser invocada com 3 argumentos'
+
+  return first && second && third ? messageOk : messageHelp
+}
 
 /*
   07
@@ -96,7 +110,56 @@ let car = { color: 'amarelo' }
       na frase acima.
 */
 
+// let booksBox = {
+//   spaces: 5,
+//   booksIn: 0,
+//   addBooks (bookNumber) {
+//     this.booksIn += bookNumber
+//     this.spaces -= bookNumber
+
+//     if (this.spaces === 0) {
+//       return "A caixa já está cheia"
+//     }
+
+//     if (this.spaces < 0) {
+//       return this.spaces + bookNumber === 1 ? `Só cabe mais ${this.spaces += bookNumber} livro` : `Só cabem mais ${this.spaces += bookNumber} livros`
+//     }
+
+//     return `Já há ${this.booksIn} livros na caixa`
+//   }
+// }
+
 let booksBox = {
   spaces: 5,
-  booksIn: 0
+  booksIn: 0,
+  addBooks (bookNumber) {
+    const tentativeBooks = bookNumber + this.booksIn
+    const isBookNumberTooHigh = this.spaces < tentativeBooks 
+    
+    if (isBookNumberTooHigh) {
+      const isThereRoomForABook = this.spaces - this.booksIn === 1
+      const remainingSpaceSingular = `Só cabe mais 1 livro`
+      const remainingSpace = this.spaces - this.booksIn
+      const remainingSpacePlural = `Só cabem mais ${remainingSpace} livros`
+      
+      return isThereRoomForABook ? remainingSpaceSingular : remainingSpacePlural
+    }
+    
+    this.booksIn = tentativeBooks
+    
+    const isBoxFull = this.spaces === this.booksIn
+    const fullBoxMessage = 'A caixa já está cheia'
+    const partiallyFilledBoxMessage = `Já há ${this.booksIn} livros na caixa`
+
+    return isBoxFull ? fullBoxMessage : partiallyFilledBoxMessage
+  }
 }
+
+console.log(booksBox.addBooks(1))
+console.log(booksBox.addBooks(1))
+console.log(booksBox.addBooks(1))
+
+console.log(booksBox.addBooks(5))
+
+console.log(booksBox.addBooks(1))
+console.log(booksBox.addBooks(3))

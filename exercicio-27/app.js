@@ -27,8 +27,8 @@ function logGreeting (name) {
   console.log(`olá, ${name}`)
 }
 
-const x = fn => {
-  fn('Francisko')
+const x = callback => {
+  callback('Francisko')
 }
 
 x(logGreeting)
@@ -40,8 +40,8 @@ x(logGreeting)
 */
 
 const numbers = [3, 4, 10, 20]
-const isLessThanFive = num => num < 5
-const lesserThanFive = numbers.filter(isLessThanFive)
+const getLessThanFive = num => num < 5
+const lesserThanFive = numbers.filter(getLessThanFive)
 
 console.log(lesserThanFive)
 
@@ -52,12 +52,8 @@ console.log(lesserThanFive)
 */
 
 const prices = [12, 19, 7, 209]
-// let totalPrice = 0
-
-// for (let i = 0; i < prices.length; i++) {
-//   totalPrice += prices[i]
-// }
-const totalPrice = prices.reduce((acc, price) => acc + price, 0)
+const getTotalPrice = (acc, price) => acc + price
+const totalPrice = prices.reduce(getTotalPrice, 0)
 
 console.log(`Preço total: ${totalPrice}`)
 
@@ -81,11 +77,12 @@ car['color'] = 'azul'
     invocada com 3 argumentos'.
 */
 
-const checkIfArgIsMissing = (first, second, third) => {
-  const messageOk = 'A função foi invocada com 3 argumentos'
-  const messageHelp = 'A função deve ser invocada com 3 argumentos'
+const checkIfArgIsMissing = (param1, param2, param3) => {
+  if ([param1, param2, param3].includes(undefined)) {
+    return 'A função deve ser invocada com 3 argumentos'
+  }
 
-  return first && second && third ? messageOk : messageHelp
+  return 'A função foi invocada com 3 argumentos'
 }
 
 /*
@@ -110,56 +107,39 @@ const checkIfArgIsMissing = (first, second, third) => {
       na frase acima.
 */
 
-// let booksBox = {
-//   spaces: 5,
-//   booksIn: 0,
-//   addBooks (bookNumber) {
-//     this.booksIn += bookNumber
-//     this.spaces -= bookNumber
-
-//     if (this.spaces === 0) {
-//       return "A caixa já está cheia"
-//     }
-
-//     if (this.spaces < 0) {
-//       return this.spaces + bookNumber === 1 ? `Só cabe mais ${this.spaces += bookNumber} livro` : `Só cabem mais ${this.spaces += bookNumber} livros`
-//     }
-
-//     return `Já há ${this.booksIn} livros na caixa`
-//   }
-// }
-
 let booksBox = {
   spaces: 5,
-  booksIn: 0,
-  addBooks (bookNumber) {
-    const tentativeBooks = bookNumber + this.booksIn
-    const isBookNumberTooHigh = this.spaces < tentativeBooks 
-    
-    if (isBookNumberTooHigh) {
-      const isThereRoomForABook = this.spaces - this.booksIn === 1
-      const remainingSpaceSingular = `Só cabe mais 1 livro`
-      const remainingSpace = this.spaces - this.booksIn
-      const remainingSpacePlural = `Só cabem mais ${remainingSpace} livros`
-      
-      return isThereRoomForABook ? remainingSpaceSingular : remainingSpacePlural
-    }
-    
-    this.booksIn = tentativeBooks
-    
-    const isBoxFull = this.spaces === this.booksIn
-    const fullBoxMessage = 'A caixa já está cheia'
-    const partiallyFilledBoxMessage = `Já há ${this.booksIn} livros na caixa`
-
-    return isBoxFull ? fullBoxMessage : partiallyFilledBoxMessage
-  }
+  booksIn: 0
 }
 
-console.log(booksBox.addBooks(1))
-console.log(booksBox.addBooks(1))
-console.log(booksBox.addBooks(1))
+const getPluralOrSingular = (quantity, singular, plural) => 
+  quantity === 1 ? singular : plural
 
-console.log(booksBox.addBooks(5))
+const getAvailableSpacesMessage = (spaces, booksIn) => {
+  const availableSpaces = spaces - booksIn
+  const fitPluralOrSingular = 
+    getPluralOrSingular(availableSpaces, 'cabe', 'cabem') 
+  const bookPluralOrSingular = 
+    getPluralOrSingular(availableSpaces, 'livro', 'livros')
+  return `Só ${fitPluralOrSingular} mais ${availableSpaces} ${bookPluralOrSingular}`
+}
 
-console.log(booksBox.addBooks(1))
-console.log(booksBox.addBooks(3))
+booksBox.addBooks = bookQuantity => {
+  const { spaces } = booksBox
+  const isBoxFull = booksBox.booksIn === spaces
+  const boxSpacesAreNotEnough = booksBox.booksIn + bookQuantity > spaces
+
+  if (isBoxFull) {
+    return 'A caixa já está cheia'
+  }
+  
+  if (boxSpacesAreNotEnough) {
+    return getAvailableSpacesMessage(spaces, booksBox.booksIn)
+  }
+
+  booksBox.booksIn += bookQuantity
+
+  const bookPluralOrSingular = 
+    getPluralOrSingular(booksBox.booksIn, 'livro', 'livros')
+  return `Já há ${booksBox.booksIn} ${bookPluralOrSingular} na caixa`
+}

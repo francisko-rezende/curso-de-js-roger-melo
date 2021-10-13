@@ -17,9 +17,17 @@
 */
 
 const request = new XMLHttpRequest()
+
 request.addEventListener('readystatechange', () => {
-  if (request.readyState === 4 && request.status === 200) {
+  const isRequestOK = request.readyState === 4 && request.status === 200
+  const isRequestNotOK = request.readyState === 4
+  if (isRequestOK) {
     console.log(request.responseText)
+    return
+  }
+
+  if (isRequestNotOK) {
+    console.log('Não foi possível obter os dados do pokémon')
   }
 })
 
@@ -44,7 +52,7 @@ request.send()
 const myInfo = {
   name: 'Francisko',
   lastName:'de Moraes Rezende',
-  sex: 'male',
+  sex: 'Masculino',
   age: 30,
   height: 1.82,
   weight: 82,
@@ -61,12 +69,12 @@ const myInfo = {
   - Após criar o método, adicione 5 anos à idade do objeto.
 */
 
-myInfo.haveBirthday = function() {
+myInfo.incrementAge = function() {
   myInfo.age++
 }
 
 for (let i = 1; i <= 5; i++) {
-  myInfo.haveBirthday()
+  myInfo.incrementAge()
 }
 
 /*
@@ -80,10 +88,14 @@ for (let i = 1; i <= 5; i++) {
     método 4x, com diferentes metragens passadas por parâmetro.
 */
 
-myInfo.increaseDistanceWalked = function(distance) {
-  myInfo.distanceWalked += distance
+myInfo.walk = function(meters) {
+  myInfo.distanceWalked += meters
   myInfo.isWalking = true
 }
+
+const meters = [7, 13, 15, 20]
+
+meters.forEach(meter => myInfo.walk(meter))
 
 /*
   05
@@ -102,20 +114,20 @@ myInfo.increaseDistanceWalked = function(distance) {
       "metro", no singular.
 */
 
-const getCorrectWordGender =  sex => 
-  sex.toLowerCase() === 'feminino' ? 'a' : 'o'
-const getSingularOrPlural = (quantity, singular, plural) => 
+const getPluralOrSingular = (quantity, singular, plural) => 
   quantity === 1 ? singular : plural
 
-myInfo.getInfo = function() {
-  const { name, lastName, sex, age,  height, weight, distanceWalked } = myInfo
-  const correctGenderArticle = getCorrectWordGender(sex)
-  const pluralOrSingularAge = getSingularOrPlural(age, 'ano', 'anos')
-  const pluralOrSingularDistance = getSingularOrPlural(distanceWalked, 'metro', 'metros')
+myInfo.introduction = function() {
+  const correctGender = myInfo.sex === 'Feminino' ? 'a' : 'o'
+  const agePluralOrSingular = getPluralOrSingular(myInfo.age, 'ano', 'anos')
+  const walkedMetersPluralOrSingular = 
+    getPluralOrSingular(myInfo.distanceWalked, 'metro', 'metros')
+  const heightMetersPluralOrSingular = 
+    getPluralOrSingular(myInfo.height, 'metro', 'metros')
 
-  return `Oi. Eu sou ${correctGenderArticle} ${name} ${lastName}, tenho ${age} ${pluralOrSingularAge}, ${height} metros de altura, 
-  peso ${weight} quilos e, só hoje, eu já caminhei ${distanceWalked} 
-  ${pluralOrSingularDistance}.`
+  return `Oi. Eu sou ${correctGender} ${myInfo.name} ${myInfo.lastName}, tenho ${myInfo.age} ${agePluralOrSingular}, ${myInfo.height} ${heightMetersPluralOrSingular} de altura, 
+  peso ${myInfo.weight} quilos e, só hoje, eu já caminhei ${myInfo.distanceWalked} 
+  ${walkedMetersPluralOrSingular}.`
 }
 
 /*
@@ -130,21 +142,17 @@ myInfo.getInfo = function() {
     - Faça isso até que 7 valores truthy sejam passados.
 */
 
-const getBoolean = value => value ? true : false
+const isTruthy = value => Boolean(value)
 
-getBoolean(false)
-getBoolean(0)
-getBoolean('')
-getBoolean(null)
-getBoolean(undefined)
-getBoolean(NaN)
+const falsyValues = [false, 0, '', null, undefined, NaN]
+const truthyValues = [true, '0', () => {}, {}, [], -1, 'false']
 
-getBoolean(true)
-getBoolean(1)
-getBoolean('djow')
-getBoolean(getBoolean)
-getBoolean(myInfo)
-getBoolean([])
+const logFalsyValues = falsyValue => console.log(isTruthy(falsyValue))
+const logTruthyValues = truthyValue => console.log(isTruthy(truthyValue))
+
+falsyValues.forEach(logFalsyValues)
+truthyValues.forEach(logTruthyValues)
+
 
 /*
   07
@@ -184,7 +192,7 @@ const getBookInfo = bookName => {
     }
   }
 
-  return bookName === undefined ? books : books[bookName]
+  return bookName === books[bookName] ? books[bookName] : books
 }
 
 console.log(getBookInfo('1984'))

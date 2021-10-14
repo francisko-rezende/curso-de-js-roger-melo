@@ -101,3 +101,163 @@ request.addEventListener('readystatechange', () => {
 request.open('GET', 'https://jsonplaceholder.typicode.com/todos')
 request.send()
 ```
+
+# Aula 03
+
+## Aula 03-01 - Correção dos exercícios da aula anterior
+
+## Aula 03-02 - Correção dos exercícios da aula anterior
+
+## Aula 03-03 - Funções de callback
+
+```javascript
+const getTodos = callback => {
+  const request = new XLMHttpRequest()
+  request.addEventListener('readystatechange', () => {
+    const isRequestOK = request.readyState === 4 && request.status === 200
+    const isRequestNotOK = request.readyState === 4
+    if (isRequestOK) {
+      callback(null, request.responseText)
+      return
+    }
+  
+    if (isRequestNotOK) {
+      callback('Não foi possível obter os dados', null)
+    }
+  })
+  
+  request.open('GET', 'https://jsonplaceholder.typicode.com/todos')
+  request.send()
+}
+
+getTodos((error, data) => {
+  console.log('Callback executado')
+
+  if (erro) {
+    console.log(error)
+    return
+  }
+
+  console.log(data)
+})
+```
+
+## Aula 03-04 - Trabalhando com JSON
+
+- JSON é um acrônimo para JavaScript Object Notation e é um formato para troca de dados que a maioria das apis retornam quando um request é feito pra elas
+- Ele parece um array com vários objetos mas **NÃO É**
+- Ele é uma string que se parece com um array de objetos JS
+- Ele precisa ser uma string porque quando rola troca de informações entre computadores e servidores, as informações trocadas precisam ser strings
+- Então o primeiro passo para trabalhar com JSON é converter os dados recebidos em objetos a fim de acessar esses dados
+- Para essa conversão usamos um objeto embutido em JS chamado `JSON`
+- Vamos continuar usando o código da aula anterior e vamos passar os dados recebidos caso o request tenha sido bem sucedido para o método `parse`
+- Em seguida passamos esse novo objeto para a nossa callback
+
+```javascript
+const data = JSON.parse(request.responseText)
+callback(null, data)
+```
+- Também podemos criar nossos próprios arquivos JSON, basta usarmos a extensão ".json"
+- Daí podemos editar o arquivo usando o VSCode
+- Lembrando que precisamos seguir o padrão de escrita de JSON, isso é, colocar objetos dentro de um array e usar aspas duplas para nomes de propriedades e strings
+- Para declarar outros objetos JSON é igual a JS, basta adicionar uma vírgula e digitar o objeto
+- Segue um exemplo
+
+```json
+[
+  {
+    "myKey": "My key value",
+    "myKey2": 7
+  },
+  {
+    "myKey": "Other value",
+    "myKey2": true
+  },
+  {
+    "myKey": "Another value",
+    "myKey2": null
+  }
+]
+```
+- Para ler esse arquivo, colocamos o path para esse arquivo ao invés do do endpoint no `.open()` do request HTTP
+
+```javascript
+request.open('GET', './todos.json')
+```
+
+```javascript
+const getTodos = callback => {
+  const request = new XLMHttpRequest()
+  request.addEventListener('readystatechange', () => {
+    const isRequestOK = request.readyState === 4 && request.status === 200
+    const isRequestNotOK = request.readyState === 4
+    if (isRequestOK) {
+      const data = JSON.parse(request.responseText)
+      callback(null, data)
+      return
+    }
+  
+    if (isRequestNotOK) {
+      callback('Não foi possível obter os dados', null)
+    }
+  })
+  
+  request.open('GET', 'https://jsonplaceholder.typicode.com/todos')
+  request.send()
+}
+
+getTodos((error, data) => {
+  console.log('Callback executado')
+
+  if (erro) {
+    console.log(error)
+    return
+  }
+
+  console.log(data)
+})
+```
+
+## Aula 03-05 - Callback Hell (Pyramid of Doom)
+
+- Até então fizemos um request e obtivemos um arquivo, mas e se tivéssemos mais arquivos pra passar por esse processo?
+- É comum criar uma fila de requests quando usamos mais de uma API, podemos esperar o resultado de uma determinada API para usarmos os dados obtidos em outro request
+- Como a callback que implementamos na aula anterior já nos informa se a request deu certo ou não, não haverá problemas em determinar se podemos partir pro próximo request
+- Vamos modificar a função `getTodos` de modo que ela receba um argumento que informe qual o endpoint que o `open` vai receber
+- Então, dentro da callback que a `getTodos` recebe vamos invocar `getTodos` de novo
+- Essa sequência de invocações resulta nos dados do primeiro request sendo exibidos primeiro e só então o próximo request vai ser executado
+- No exemplo, fazemos o processo que acabei de descrever de novo para executar um terceiro request com base nos dados obtidos do segundo request
+- Esse padrão é conhecido como callback hell ou pyramid of doom por conta da identação triangular e pela falta de legibilidade do código
+- Portanto é bom evitar esse padrão
+
+```javascript
+const getTodos = (url ,callback) => {
+  const request = new XLMHttpRequest()
+  request.addEventListener('readystatechange', () => {
+    const isRequestOK = request.readyState === 4 && request.status === 200
+    const isRequestNotOK = request.readyState === 4
+    if (isRequestOK) {
+      const data = JSON.parse(request.responseText)
+      callback(null, data)
+      return
+    }
+  
+    if (isRequestNotOK) {
+      callback('Não foi possível obter os dados', null)
+    }
+  })
+  
+  request.open('GET', url)
+  request.send()
+}
+
+getTodos('./todos.json', (error, data) => {
+  console.log(data)
+  getTodos('./todos copy.json', (error, data) => {
+    console.log(data)
+    getTodos('./todos copy 2.json', (error, data) => {
+      console.log(data)
+    })
+  })
+})
+```

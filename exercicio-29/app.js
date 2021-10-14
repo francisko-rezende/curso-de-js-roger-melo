@@ -13,59 +13,40 @@
       executado quando o request anterior for finalizado.
 */
 
-const getPokemons = (url, callback) => {
+const getPokemon = (url, callback) => {
   const request = new XMLHttpRequest()
-  request.addEventListener('readystatechange', () => {
-    const isRequestOK = request.readyState === 4 && request.status === 200
-    const isRequestNotOK = request.readyState === 4
 
-    if (isRequestOK) {
+  request.addEventListener('readystatechange', () => {
+    const isRequestOk = request.readyState === 4 && request.status === 200
+    const isRequestNotOk = request.readyState === 4
+
+    if (isRequestOk) {
       const data = JSON.parse(request.responseText)
       callback(null, data)
       return
     }
 
-    if (isRequestNotOK) {
+    if (isRequestNotOk) {
       callback('Não foi possível obter o Pokémon', null)
     }
-  })
 
+  })
+  
   request.open('GET', url)
   request.send()
 }
 
-const generateEndpoint = pokemon => `https://pokeapi.co/api/v2/pokemon/${pokemon}`
-const generateOkMessage = pokemon => `Pokémon obtido: ${pokemon}`
-const logPokemonStatus = (error, data) => {
-  if (error) {
-    console.log(error)
-    return
-  }
-  console.log(generateOkMessage(data.name))
-}
+const logPokemonData = (error, data) => error 
+  ? console.log(error) 
+  : console.log(`Pokémon obtido: ${data.name}`)
 
-getPokemons(generateEndpoint('bulbasaur'), (error, data) => {
-  if (error) {
-    console.log(error)
-    return
-  }
-  
-  console.log(generateOkMessage(data.name))
+const getPokemonUrl = pokemon => `https://pokeapi.co/api/v2/pokemon/${pokemon}`
 
-  getPokemons(generateEndpoint('charmander'), (error, data) => {
-    if (error) {
-      console.log(error)
-      return
-    }
-    console.log(generateOkMessage(data.name))
-
-    getPokemons(generateEndpoint('squirtle'), (error, data) => {
-      if (error) {
-        console.log(error)
-        return
-      }
-      console.log(generateOkMessage(data.name))
-    })
+getPokemon(getPokemonUrl('bulbasaur'), (error, data) => {
+  logPokemonData(error, data)
+  getPokemon(getPokemonUrl('charmander'), (error, data) => {
+    logPokemonData(error, data)
+    getPokemon(getPokemonUrl('squirtle'), logPokemonData)
   })
 })
 
@@ -91,18 +72,19 @@ getPokemons(generateEndpoint('bulbasaur'), (error, data) => {
   curso, onde falaremos sobre TDD. Vá se aquecendo =)
 */
 
-const map = (array, callback) => {
+const map = (array, func) => {
   let result = []
-  
-  // for (let i = 0; i < array.length; i++) {
-  //   result.push(callback(array[i]))
-  // }
-  array.forEach(element => result.push(callback(element)))
-  
+
+  const addNewItemToNewArray = item => {
+    const newItem = func(item)
+    result.push(newItem)
+  }
+
+  array.forEach(addNewItemToNewArray)
   return result
 }
 
-// console.log(map([1, 2, 3], number => number * 2)) // [2, 4, 6];
+console.log(map([1, 2, 3], number => number * 2)) // [2, 4, 6];
 // console.log(map([1, 2, 3], number => number * 3)) // [3, 6, 9];
 
 /*
@@ -131,7 +113,11 @@ const person = {
 */
 
 const x = 'x'
-{const x = 'y'}
+
+const getX = () => {
+  const x = 'y'
+  return x
+}
 
 /*
   05
@@ -158,8 +144,20 @@ const getFullName = ({ firstName, lastName }) => `${firstName} ${lastName}`
   - Exiba o hexadecimal de 8 cores diferentes usando a função criada acima.
 */
 
-const colors = ['red', 'blue', 'green', 'yellow', 'purple']
+const convertToHex = color => {
+  const colors = {
+    black: '#000000',
+    brown: '#A52A2A',
+    red: '#FF0000',
+    'royal blue': '#4169E1'
+  }
+  return colors[color]
+    ? `O hexadecimal para a cor ${color} é ${colors[color]}`
+    : `Não temos o equivalente hexadecimal para ${color}`
+}
 
+const colors = ['red', 'blue', 'yellow', 'black', 'brown', 'white', 'royal blue', 'magenta']
+colors.forEach(color => console.log(convertToHex(color)))
 
 
 /*
@@ -186,13 +184,11 @@ const people = [
   { id: 73, name: 'Aline', age: 19, federativeUnit: 'Brasília' }
 ]
 
-const ageFreqs = people.reduce((acc, { age }) => {
-  if (acc.hasOwnProperty(age)) {
-    acc[age]++
-    return acc
-  }
-  acc[age] = 1
+const createOrIncrementAgeFrequency = (acc, { age }) => {
+  acc[age] = acc[age] + 1 || 1
   return acc
-}, {})
+}
 
-console.log(ageFreqs);
+const agesFrequency = people.reduce(createOrIncrementAgeFrequency, {})
+
+console.log(agesFrequency)

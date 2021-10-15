@@ -209,7 +209,7 @@ const getTodos = callback => {
 getTodos((error, data) => {
   console.log('Callback executado')
 
-  if (erro) {
+  if (error) {
     console.log(error)
     return
   }
@@ -260,4 +260,152 @@ getTodos('./todos.json', (error, data) => {
     })
   })
 })
+```
+# Aula 04
+
+## Aula 04-01 - Ćorreção dos exercícios da última aula
+
+## Aula 04-02 - Correção dos exercícios da última aula
+
+## Aula 04-03 - Introdução a promises
+
+- Conforme foi dito na aula anterior, aninhar diversas callbacks de requests não é uma boa prática pois torna o código difícil de entender e de manter
+- Usamos promises para evitar esse padrão
+- Criamos promises assim `new Promise()`
+- **Promises são objetos que representam o sucesso ou a falha de uma operação assíncrona**
+- Normalmente consumimos promises geradas por alguém ou por uma biblioteca
+- Ainda assim veremos como rola o processo de criação de promises por baixo dos panos
+- `new Promise()` cria uma nova promise, que pode ter dois resultados: resolved ou rejected
+  - resolved significa que os dados que queríamos foram obtidos
+  - rejected significa que algum erro aconteceu e a promise foi rejeitada
+- Então, o construtor deve receber uma função que recebe dois parâmetros, resolve e reject `new Promise((resolve, reject) => {})`
+- Esses dois parâmetros são funções embutidas da API de promises que recebemos como parâmetros na função
+- Apesar de podermos usar outros nomes para esses parâmetros, nomeá-los como resolve e reject é um convenção e portanto é bom seguir
+- Geralmente buscamos os dados dentro da função através de requisições e quando essa busca é bem sucedida, invocamos a função resolve e passamos os dados como argumento
+  - Ou seja, a resolve é invocada quando a operação assíncrona for bem sucedida
+- Se a requisição for mal sucedida, reject é invocada
+- Então se usarmos o código abaixo, obtemos uma promise com o estado fulfilled, o que significa que operação foi bem sucedida
+- Para acessar os dados encapsulados na promise, usamos o método `then()`
+  - Fica assim `getData().then()`
+- O `then()` recebe uma função como argumento, que por sua vez recebe um parâmetro `value` que recebe o valor que é passado como argumento do `resolve` (no caso `'dados aqui'`)
+- Então o snippet abaixo exibe 'dados aqui' no console
+
+```javascript
+const getData = () => {
+  return new Promise((resolve, reject) => {
+    resolve('dados aqui')
+  })
+}
+
+getData()
+  .then(value => {
+    console.log(value)
+  })
+```
+- E como ocorre o tratamento de erros em promises?
+- Usando o método `catch()`, que é encadeado no `then()`
+- É com esse método que determinamos o que fazer quando o resultado da operação não for um sucesso
+- O catch só é executado em duas situações
+  - Quando a função `reject`, dentro da função da criação da promise é invocada
+  - Quando código dentro de algum `then()` lança um erro
+- Assim como `resolve()`, o que for passado como argumento para `reject()` na criação da promise vai ser repassado como argumento para a callback que vai como parâmetro no `catch()`
+
+```javascript
+const getData = () => {
+  return new Promise((resolve, reject) => {
+    resolve('dados aqui')
+    reject('erro aqui')
+  })
+}
+
+getData()
+  .then(value => console.log(value))
+  .catch(error => console.log(error))
+```
+- Agora que a sintaxe de criação de promises está explicada, vamos mudar a função `getTodos` para que ela retorne uma promise
+
+```javascript
+const getTodos = url =>  new Promise((resolve, reject) => {
+  const request = new XLMHttpRequest()
+  
+  request.addEventListener('readystatechange', () => {
+    const isRequestOK = request.readyState === 4 && request.status === 200
+    const isRequestNotOK = request.readyState === 4
+    if (isRequestOK) {
+      const data = JSON.parse(request.responseText)
+      resolve(data)
+    }
+  
+    if (isRequestNotOK) {
+      reject('Não foi possível obter os dados')
+    }
+  })
+  
+  request.open('GET', url)
+  request.send()
+})
+
+getTodos('https://pokeapi.co/api/v2/pokemon/1')
+  .then(pokemon => console.log(pokemon))
+  .catch(error => console.log(error))
+```
+
+## Aula 04-04 - Encadeando promises
+
+- Podemos encadear promises e assim fazer operações assíncronas sequenciais
+- Para fazer essas operações assíncronas, retornamos a invocação da função `getPokemon()` (antiga `getTodos()`) dentro do `then()`
+- Como estamos retornando uma promise precisamos usar mais um `then()` para acessar os dados encapsulados na promise
+- Portanto vamos encadear um outro `then()` no `then()` inicial
+- Esse segundo then vai receber uma callback como parâmetro que vai receber os dados da segunda promise
+- Baste repetir esses passos para encadear quantas operações forem necessárias
+- Lembrando que o `catch()` vai ser invocado caso o reject (lá da função de criação da promise) for invocada ou se qualquer uma das invocações de `then()` seja mal sucedida
+- Ou seja, apenas um `catch()` é o suficiente para lidar com erros
+- No caso do último `then`, como só estamos exibindo os dados no console, podemos passar apenas `console.log` como argumento para o `then`
+
+```javascript
+getPokemon('https://pokeapi.co/api/v2/pokemon/1')
+  .then(bulbasaur => {
+    console.log(bulbasaur)
+    return getPokemon('https://pokeapi.co/api/v2/pokemon/4')
+  })
+  .then(charmander => {
+    console.log(charmander)
+    return getPokemon('https://pokeapi.co/api/v2/pokemon/7')
+  })
+  .then(console.log) // antes era squirtle => console.log(squirtle)
+  .catch(error => console.log(error))
+```
+
+```javascript
+const getPokemon = url =>  new Promise((resolve, reject) => {
+  const request = new XLMHttpRequest()
+  
+  request.addEventListener('readystatechange', () => {
+    const isRequestOK = request.readyState === 4 && request.status === 200
+    const isRequestNotOK = request.readyState === 4
+    if (isRequestOK) {
+      const data = JSON.parse(request.responseText)
+      resolve(data)
+    }
+  
+    if (isRequestNotOK) {
+      reject('Não foi possível obter os dados')
+    }
+  })
+  
+  request.open('GET', url)
+  request.send()
+})
+
+getPokemon('https://pokeapi.co/api/v2/pokemon/1')
+  .then(bulbasaur => {
+    console.log(bulbasaur)
+    getPokemon('https://pokeapi.co/api/v2/pokemon/4')
+  })
+  .then(charmander => {
+    console.log(charmander
+    getPokemon('https://pokeapi.co/api/v2/pokemon/7)
+  })
+  .then(console.log)
+  .catch(error => console.log(error))
 ```

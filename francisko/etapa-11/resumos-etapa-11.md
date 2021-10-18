@@ -263,7 +263,7 @@ getTodos('./todos.json', (error, data) => {
 ```
 # Aula 04
 
-## Aula 04-01 - Ćorreção dos exercícios da última aula
+## Aula 04-01 - Correção dos exercícios da última aula
 
 ## Aula 04-02 - Correção dos exercícios da última aula
 
@@ -408,4 +408,69 @@ getPokemon('https://pokeapi.co/api/v2/pokemon/1')
   })
   .then(console.log)
   .catch(error => console.log(error))
+```
+
+# Aula 05
+
+## Aula 05-01 - Correção dos exercícios da aula anterior
+
+## Aula 05-02 - Correção dos exercícios da aula anterior
+
+## Aula 05-03 - A fetch API
+
+- A fetch API é uma interface nativa do JS que nos permite fazer requests HTTP escrevendo menos do que escreveríamos usando objetos xlmhttp
+-  Ela usa promises por baixo do panos, o que facilita escrever código tanto pra quando as requests dão certo quanto pra quando as requests dão errado
+- Para usar essa API, usamos a função `fetch('endpoint')`, que recebe o endpoint para o qual queremos fazer o request e obtemos a resposta com os dados
+- Essa invocação retorna uma promise
+  - Lembrando que promises têm dois resultados possíveis: resolved (dados foram obtidos) e rejected (deu algum bizú e a promise foi rejeitada)
+- Então encadeamos os métodos que são usados pra tratar promises
+  - usamos `then()` para acessar os dados das promises bem sucedidas
+  - usamos `catch()` para acessar os dados das promises mal sucedidas
+- Aqui, o catch continua mandando uma resposta ainda que o request tenha sido mal sucedido, isso fica claro nos valores das propriedades do objeto retornada
+- Isso rola porque a fetch só rejeita a promises devido a erros de conexão na rede, problemas na url continuam retornando um objeto response
+- Pra lidar com isso podemos checar se o status do response é 200 e só então fazer algo com os dados ou com erro (caso o status seja 404 por exemplo)
+- Se rolar um erro na rede, aí o catch vai ser executado direto
+- O objeto response é criado pela fetch e dá várias informações sobre a request, como o status, se deu tudo certo (ok), e a url. **Ele não mostra os dados** retornados
+- Esse objeto tem um método `json`, que usamos pra obter os dados, algo como o quer fizemos usando `JSON.parse()`
+- Esse método gera uma promise, então retornamos essa promise como resultado do primeiro `then()` e em seguida encadeamos outro `then()`
+- Assim, sabemos que o valor da promise resolvida que o primeiro `then()` retorna vai ser recebido pelo segundo `then()`
+
+```javascript
+fetch('https://jsonplaceholder.typicode.com/users')
+  .then(response => {
+    return response.json()
+  })
+  .then(users => console.log(users))
+  .catch(error => console.log(error))
+```
+
+## Aula 05-04 - Async/await
+
+- Async/await é um tipo de syntax sugar que usam promises por baixo dos panos e reduzem ainda mais nosso código
+- Além de ser mais sucinto, o código escrito usando essas palavras chave é lido como se fosse síncrono
+- No código da aula anterior nós encadeamos promises, o que dificulta a leitura e manutenção de código escrito assim
+- Quando usamos async/await, setamos nosso código assíncrono dentro de funções e usar a palavra *await* dentro dessa função pra lidar com promises de uma forma mais legível
+- Assim, evitamos configurar explicitamente o encadeamento de promises
+- O primeiro passo para usar esse padrão é declarar uma função e usar a palavra *async* antes dessa função
+- Isso torna essa função assíncrona, o que significa que quando ela for invocada ela vai retornar uma promise independente do seu conteúdo
+- Essa função vai executar nosso código assíncrono, vamos fazer um request e obter os dados como resposta desse request sem que a página precise ser recarregada
+- Pra isso usaremos o fetch api e antes dessa invocação inserimos a palavra-chave *await*
+- Essa invocação será atribuída à constante "response"
+- *await* só pode ser usada dentro de funções assíncronas (criadas usando `async`)
+- Quando usamos esse padrão, o código abaixo da requisição (do `fetch`) só vai ser executado quando a resposta da requisição chegar
+- Ou seja, a await pausa a execução do resto da função até que a resposta da invocação do fetch for resolvida
+- Encadeamos o método `json` para obter os dados da resposta do request
+  - Novamente, esse método pega a promise resolvida e parseia o conteúdo dessa promise para um array de objetos *mas* acaba retornando outra promise. E agora José?
+- Armazenaremos esses dados na const "users" que recebe `await response.json()`
+- Usamos esse outro `await` pois `response.json()` retorna uma promise com a resposta parseada em um array de objetos e quando esse promise for resolvida, o `await` atribui para a const *users* o valor resolvido da promise (ou seja, o array de objetos)
+- Lembrando, funções assíncronas retornam uma promise com os valores retornados pela função encapsulados
+- Para usar esses valores podemos ou encadear um `then()` ou declarar uma outra função async que contém uma const com a declaração da `getUsers()` com um await na frente da declaração já que `getUsers()` retorna uma promise
+
+```javascript
+const getUsers = async () => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/users')
+  const users = await response.json()
+  return users
+  // também pode ser return await.json()
+}
 ```

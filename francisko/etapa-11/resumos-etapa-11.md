@@ -474,3 +474,106 @@ const getUsers = async () => {
   // também pode ser return await.json()
 }
 ```
+
+# Aula 06
+
+## Aula 06-01 - Correção dos exercícios da aula anterior
+
+## Aula 06-02 - Correção dos exercícios da aula anterior
+
+## Aula 06-03 - Requests paralelos vs. Sequenciais
+
+- Esse código
+
+```javascript
+const getPokemon = async () => {
+  const bulbasaur = await fetch('https://pokeapi.co/api/v2/pokemon/bulbasaur')
+  const charmander = await fetch('https://pokeapi.co/api/v2/pokemon/charmander')
+  const squirtle = await fetch('https://pokeapi.co/api/v2/pokemon/squirtle')
+
+  console.log(await bulbasaur)
+  console.log(await charmander)
+  console.log(await squirtle)
+}
+
+getPokemon()
+```
+- Gera requests HTTP *sequenciais*, os fetchs mais abaixo só são executados quando os fetchs acima são resolvidos
+  - Lembrando que o await pausa a execução das linhas abaixo dele enquanto a promise não for resolvida ou executada
+- O lance é que, nesse caso, esses requests não precisam ser sequenciais já que um request não depende de informações do outro
+- Para tornar esses requests paralelos, começamos removendo os *await*s das *fetch*, o que faz com que os requests não ocorram praticamente ao mesmo tempo
+- Para obter os valores das promises que são os objetos dos requests usamos `Promise.all()`. Esse método recebe um array de promises e, quando essas promises forem resolvidas, ele retorna uma única promise que contém um array com os valores das promises resolvidas
+- Se alguma promise recebida pelo `Promise.all()`, o método retorna uma promise rejeitada, que contém a mensagem e o erro que causou a rejeição
+- Então, inserimos um await antes do `Promise.all()` para que possamos acessar o conteúdo encapsulado na promise desse método e armazenamos isso tudo numa constante
+- Essa constante recebe um array com as respostas, para visualizar o conteúdo dessas respostas, encadeamos o método `forEach`
+- Esse `forEach` recebe uma callback assíncrona com um `await` antes da invocação de um `console.log()`, que, por sua vez, recebe cada uma das respostas com o método `json()` encadeado
+  
+```javascript
+const getPokemon = async () => {
+  const bulbasaur = fetch('https://pokeapi.co/api/v2/pokemon/bulbasaur')
+  const charmander = fetch('https://pokeapi.co/api/v2/pokemon/charmander')
+  const squirtle = fetch('https://pokeapi.co/api/v2/pokemon/squirtle')
+
+  const responses = await Promise.all([bulbasaur, charmander, squirtle])
+  responses.forEach(async response => console.log(await response.json()))
+}
+
+getPokemon()
+```
+## Aula 06-04 - Tratando erros com try/catch
+
+- Devido a sua natureza síncrona, erros em JS podem fazer com que a execução da sua aplicação pare completamente
+- Podemos usar try/catch, que é uma cláusula que tenta executar um código e, se ocorrer algum erro, ela passa o erro para o part 'catch' e continua executando o código
+- Podemos usar as informações obtidas no catch para tratar o erro ocorrido
+- Objetos de erro têm as propriedades `name` e `message`, que armazenam o nome e a mensagem do erro
+- Usamos essa cláusula quando queremos fazer algo com o objeto de erro
+- O try/catch exige mais recursos do que ifs portanto é importante usar try/catch com cautela
+
+```javascript
+try {
+  console.log(oi)
+} catch (error) {
+  if (error.name === 'ReferenceError' && error.message === 'oi is not defined') {
+    const oi = 'const oi criada'
+    console.log(oi)
+  }
+}
+console.log('oi')
+```
+
+## Aula 06-05 - Try/catch em requests e erros personalizados
+
+- Começamos refatorando o código abaixo
+
+```javascript
+
+```
+- Fica assim
+
+```javascript
+const getUsers = async () => {
+  return await 
+    (await (fetch('https://jsonplaceholder.typicode.com/users')))
+    .json()
+}
+
+const logUsers = async () => {
+  const users = await getUsers()
+  console.log(users)
+}
+
+logUsers()
+```
+- Se estivéssemos usando `then()`, encadearíamos `catch()` para tratar erros mas como funções assíncronas simulam código síncrono, vamos usar try/catch
+- Então movemos o código que esperamos que rode pra dentro do try
+- No catch nós apenas vamos logar potenciais erros
+- Um possível problema com esse padrão é o fato da fetch só retornar erros quando há problemas de conexão
+- Por conta disso, erros no path acabam sendo interpretados como erros no parseamento do arquivo json
+- Para evitar esse problema, checamos o status do request (se o status é 200)
+- Uma forma que ainda não vimos de fazer isso é através da propriedade `ok`, da propriedade `status` do request. Essa propriedade armazena um boolean que indica se o status do request está entre 200 e 299, que são os status que indicam que tudo correu bem com o request
+- Então, dentro desse if lançamos um erro: `throw new Error()`
+- Isso faz com que qualquer código abaixo desse seja ignorado e o erro seja passado como parâmetro pro catch e o bloco do catch é executado
+- *Quando lançamos erros precisamos de um catch para lidar com esse erro*
+- O `Error` é um tipo de erro genérico mas podemos usar outros erros mais específicos
+- O MDN tem mais informações sobre tipos de erro 
+- Podemos inserir uma mensagem como argumento no `Error` explicando o que rolou, assim temos erros personalizados e sem travar o código

@@ -23,35 +23,35 @@
 
 // const key = ''
 
+const form = document.querySelector('form')
+const gifsContainer = document.querySelector('div')
 
-const fetchGif = async (query, key) => {
-  const gifData = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${key}&limit=1&q=${query}`)
-  return await gifData.json()
-}
-
-const createGifImg = url => {
-  const gifImg = document.createElement('img')
-  gifImg.setAttribute('src', url)
-  return gifImg
-}
-
-const insertGif = async query => {
-  const gif = await fetchGif(query, key)
-  const gifUrl = gif.data[0].images['fixed_width_downsampled'].url
-  const gifImg = createGifImg(gifUrl)
-
-  output.prepend(gifImg)
-}
-
-const searchForm = document.querySelector('form')
-const output = document.querySelector('.out')
-
-searchForm.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault()
-  const queryValue = event.target.search.value.trim().toLowerCase()
 
-  insertGif(queryValue)
+  const inputValue = event.target.search.value
+  const APIKey = ''
+  const url = `https://api.giphy.com/v1/gifs/search?api_key=${APIKey}&limit=1&q=${inputValue}`
 
-  event.target.reset()
-  event.target.focus()
+  try {
+    const response = await fetch(url)
+
+    if(!response.ok) {
+      throw new Error('Não foi possível obter os dados')
+    }
+
+    const GIFData = await response.json()
+    const downsizedGIFUrl = GIFData.data[0].images.downsized.url
+    const img = document.createElement('img')
+    const altText = GIFData.data[0].title
+
+    img.setAttribute('src', downsizedGIFUrl)
+    img.setAttribute('alt', altText)
+
+    gifsContainer.insertAdjacentElement('afterbegin', img)
+    
+    event.target.reset()
+  } catch (error) {
+    alert(`Erro: ${error.message}`)
+  }
 })

@@ -498,7 +498,7 @@ const getPokemon = async () => {
 
 getPokemon()
 ```
-- Gera requests HTTP *sequenciais*, os fetchs mais abaixo só são executados quando os fetchs acima são resolvidos
+- Para requests HTTP *sequenciais*, os fetchs mais abaixo só são executados quando os fetchs acima são resolvidos
   - Lembrando que o await pausa a execução das linhas abaixo dele enquanto a promise não for resolvida ou executada
 - O lance é que, nesse caso, esses requests não precisam ser sequenciais já que um request não depende de informações do outro
 - Para tornar esses requests paralelos, começamos removendo os *await*s das *fetch*, o que faz com que os requests não ocorram praticamente ao mesmo tempo
@@ -507,15 +507,29 @@ getPokemon()
 - Então, inserimos um await antes do `Promise.all()` para que possamos acessar o conteúdo encapsulado na promise desse método e armazenamos isso tudo numa constante
 - Essa constante recebe um array com as respostas, para visualizar o conteúdo dessas respostas, encadeamos o método `forEach`
 - Esse `forEach` recebe uma callback assíncrona com um `await` antes da invocação de um `console.log()`, que, por sua vez, recebe cada uma das respostas com o método `json()` encadeado
-  
+
 ```javascript
+//Requests sequenciais
+getPokemon = async () => {
+  const bulbasaur = await fetch('https://pokeapi.co/api/v2/pokemon/bulbasaur')
+  const charmander = await fetch('https://pokeapi.co/api/v2/pokemon/charmander')
+  const squirtle = await fetch('https://pokeapi.co/api/v2/pokemon/squirtle')
+
+  console.log(await bulbasaur.json())
+  console.log(await charmander.json())
+  console.log(await squirtle.json())
+}
+```
+
+```javascript
+//requests paralelos
 const getPokemon = async () => {
   const bulbasaur = fetch('https://pokeapi.co/api/v2/pokemon/bulbasaur')
   const charmander = fetch('https://pokeapi.co/api/v2/pokemon/charmander')
   const squirtle = fetch('https://pokeapi.co/api/v2/pokemon/squirtle')
 
-  const responses = await Promise.all([bulbasaur, charmander, squirtle])
-  responses.forEach(async response => console.log(await response.json()))
+  const results = await Promise.all([bulbasaur, charmander, squirtle])
+  results.forEach(async response => console.log(await response.json()))
 }
 
 getPokemon()
@@ -523,11 +537,12 @@ getPokemon()
 ## Aula 06-04 - Tratando erros com try/catch
 
 - Devido a sua natureza síncrona, erros em JS podem fazer com que a execução da sua aplicação pare completamente
+- Quando há erros no código, as linhas abaixo da linha que contém o erro não são executadas
 - Podemos usar try/catch, que é uma cláusula que tenta executar um código e, se ocorrer algum erro, ela passa o erro para o part 'catch' e continua executando o código
 - Podemos usar as informações obtidas no catch para tratar o erro ocorrido
 - Objetos de erro têm as propriedades `name` e `message`, que armazenam o nome e a mensagem do erro
 - Usamos essa cláusula quando queremos fazer algo com o objeto de erro
-- O try/catch exige mais recursos do que ifs portanto é importante usar try/catch com cautela
+- O try/catch exige mais recursos do que cláusulas `if`, portanto é importante usar try/catch com cautela
 
 ```javascript
 try {
@@ -546,14 +561,53 @@ console.log('oi')
 - Começamos refatorando o código abaixo
 
 ```javascript
+const getUsers = async () => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/users'))
+  return await response.json()
+}
 
+const logUsers = async () => {
+  const users = await getUsers()
+  console.log(users)
+}
+
+logUsers()
 ```
-- Fica assim
+- Podemos usar um `then()`:
+
+```javascript
+const getUsers = async () => await 
+  fetch('https://jsonplaceholder.typicode.com/users')
+  .then(response => json())
+
+const logUsers = async () => {
+  const users = await getUsers()
+  console.log(users)
+}
+
+logUsers()
+```
+- Uma outra alternativa é usar a precedência da execução das operações através de parênteses
+
+```javascript
+const getUsers = async () => await 
+  (fetch('https://jsonplaceholder.typicode.com/users'))
+  .json()
+
+const logUsers = async () => {
+  const users = await getUsers()
+  console.log(users)
+}
+
+logUsers()
+```
+- Agora vamos ver como usar try/catch em requests e como lançar erros personalizados
+- Eis nosso código inicial (que não trata erros de forma alguma):
 
 ```javascript
 const getUsers = async () => {
   return await 
-    (await (fetch('https://jsonplaceholder.typicode.com/users')))
+    (fetch('https://jsonplaceholder.typicode.com/users'))
     .json()
 }
 
@@ -564,16 +618,59 @@ const logUsers = async () => {
 
 logUsers()
 ```
+
 - Se estivéssemos usando `then()`, encadearíamos `catch()` para tratar erros mas como funções assíncronas simulam código síncrono, vamos usar try/catch
 - Então movemos o código que esperamos que rode pra dentro do try
 - No catch nós apenas vamos logar potenciais erros
+
+```javascript
+const getUsers = async () => {
+  try {
+    return await 
+      (fetch('https://jsonplaceholder.typicode.com/users'))
+      .json()
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+const logUsers = async () => {
+  const users = await getUsers()
+  console.log(users)
+}
+
+logUsers()
+```
 - Um possível problema com esse padrão é o fato da fetch só retornar erros quando há problemas de conexão
 - Por conta disso, erros no path acabam sendo interpretados como erros no parseamento do arquivo json
 - Para evitar esse problema, checamos o status do request (se o status é 200)
 - Uma forma que ainda não vimos de fazer isso é através da propriedade `ok`, da propriedade `status` do request. Essa propriedade armazena um boolean que indica se o status do request está entre 200 e 299, que são os status que indicam que tudo correu bem com o request
 - Então, dentro desse if lançamos um erro: `throw new Error()`
-- Isso faz com que qualquer código abaixo desse seja ignorado e o erro seja passado como parâmetro pro catch e o bloco do catch é executado
+- Isso faz com que qualquer código abaixo desse seja ignorado e o erro seja passado como parâmetro pro catch e o bloco do catch, que então é executado
 - *Quando lançamos erros precisamos de um catch para lidar com esse erro*
 - O `Error` é um tipo de erro genérico mas podemos usar outros erros mais específicos
-- O MDN tem mais informações sobre tipos de erro 
+- O [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) tem mais informações sobre tipos de erro 
 - Podemos inserir uma mensagem como argumento no `Error` explicando o que rolou, assim temos erros personalizados e sem travar o código
+
+```javascript
+const getUsers = async () => {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/users')
+
+    if (!response.ok) {
+      throw new Error('Não foi possível obter os dados')
+    }
+
+    return response.json()
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+const logUsers = async () => {
+  const users = await getUsers()
+  console.log(users)
+}
+
+logUsers()
+```

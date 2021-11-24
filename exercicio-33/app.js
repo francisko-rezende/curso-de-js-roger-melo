@@ -5,7 +5,11 @@
   - Solucione esse problema sem declarar uma constante "book".
 */
 
-// console.log(book)
+try {
+  console.log(book)
+} catch ({ name, message }) {
+  
+}
 
 /*
   02
@@ -16,6 +20,13 @@
     - O 2º item é o 1º item do array recebido por argumento;
   - Implemente a função da forma mais concisa que você conseguir.
 */
+
+const getThirdAndFirstItems = array => {
+  ([firstItem, , thirdItem] = array)
+  return [thirdItem, firstItem]
+}
+
+// console.log(getThirdAndFirstItems([1, 2, 3]))
 
 /*
   03
@@ -30,6 +41,8 @@ const topics = [
   { id: 3, name: 'Carreiras'}
 ]
 
+const [, , { name }] = topics
+
 /*
   04
 
@@ -39,6 +52,8 @@ const topics = [
 */
 
 const colors = ['#FF00FF', ['#FF0D0D', '#0AFA00', '#011EFA'], '#7BF0FF']
+
+const [, [red, green, blue]] = colors
 
 /*
   05
@@ -53,6 +68,12 @@ const colors = ['#FF00FF', ['#FF0D0D', '#0AFA00', '#011EFA'], '#7BF0FF']
     - Atribua "desconhecido" como valor default da const do destructuring;
     - Faça a função retornar "Olá, meu nome é [NOME]!".
 */
+
+const greet = (obj, string) => {
+  ({ name: string = 'desconhecido'} = obj)
+  
+  return `Olá, meu nome é ${string}`
+}
 
 // console.log(greet({ name: 'Roger' }, 'name'))
 // console.log(greet({}, 'personName'))

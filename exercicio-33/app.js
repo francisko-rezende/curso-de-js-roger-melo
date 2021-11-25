@@ -5,11 +5,8 @@
   - Solucione esse problema sem declarar uma constante "book".
 */
 
-try {
-  console.log(book)
-} catch ({ name, message }) {
-  
-}
+// A solução é mudar a ordem de carregamento dos scripts. index.js deve vir 
+// antes pois possui a definição da const book
 
 /*
   02
@@ -21,10 +18,7 @@ try {
   - Implemente a função da forma mais concisa que você conseguir.
 */
 
-const getThirdAndFirstItems = array => {
-  ([firstItem, , thirdItem] = array)
-  return [thirdItem, firstItem]
-}
+const swap = ([first, , third]) => [third, first]
 
 // console.log(getThirdAndFirstItems([1, 2, 3]))
 
@@ -69,14 +63,13 @@ const [, [red, green, blue]] = colors
     - Faça a função retornar "Olá, meu nome é [NOME]!".
 */
 
-const greet = (obj, string) => {
-  ({ name: string = 'desconhecido'} = obj)
-  
-  return `Olá, meu nome é ${string}`
+const greet = (obj, dynamicName) => {
+  const { [dynamicName]: name =  'desconhecido' } = obj
+  return `Olá, meu nome é ${name}`
 }
 
-// console.log(greet({ name: 'Roger' }, 'name'))
-// console.log(greet({}, 'personName'))
+console.log(greet({ name: 'Roger' }, 'name'))
+console.log(greet({}, 'personName'))
 
 /*
   06

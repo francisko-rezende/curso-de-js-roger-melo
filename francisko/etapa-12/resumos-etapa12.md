@@ -183,3 +183,183 @@ const getCityWeather = async cityName => {
   }
 }
 ```
+## Aula 02-01 - Correção dos exercícios da aula 01 da etapa 12
+
+## Aula 02-02 - Correção dos exercícios da aula 01 da etapa 12
+
+## Aula 02-03 - Correção dos exercícios da aula 01 da etapa 12
+
+## Aula 02-04 - Obtendo as informações que serão exibidas na interface
+
+- Nessa aula atualizaremos a tela com informações da cidade quando o usuário inserir o nome da cidade no input do app
+- Implementaremos essa feature no `app.js`
+- Começamos adicionando um evento do tipo submit no form
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', event => {
+  event.preventDefault()
+})
+```
+
+- Em seguida vamos obter o valor do input
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+})
+```
+
+- Então vamos resetar o input
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+  event.target.reset()
+})
+```
+
+- Agora vamos exibir as informações do clima da cidade na tela. Pra isso, precisamos fazer os requests pra API
+- Vamos armazenas o objeto com as informações da cidade no objeto `cityData`
+- Note que podemos usar as funções declaradas em `weather.js` dentro de `app.js` pois aquele foi "importado" antes desse
+- Como `getCityData` retorna uma promise, vamos transformar a callback em uma função assíncrona
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', async event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+  const cityData = await getCityData(inputValue)
+  event.target.reset()
+})
+```
+
+- Precisamos de duas informações do `cityData`: o identificador da cidade (Key) e o nome da cidade
+- Pra obtê-las, vamos fazer um destructuring no `cityData`
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', async event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+  const {Key, LocalizedName} = await getCityData(inputValue)
+
+  event.target.reset()
+})
+```
+- Com o código da cidade em mãos, podemos executar o segundo request que é feito através da `getWeatherData()`
+- Vamos armazenar essas informações no obj `cityWeather`, que recebe uma invocação da `getCityWeather(Key)`
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', async event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+  const {Key, LocalizedName} = await getCityData(inputValue)
+  const cityWeather = await getCityWeather(LocalizedName)
+
+  event.target.reset()
+})
+```
+
+- O lance é que `getCityWeather` recebe `cityName` como parâmetro pois dentro dela tem uma invocação da `getCityData` pra obtermos a `Key`
+- Então, `getCityWeather` faz dois requests, um para obter a `Key` e outro para obter os dados do tempo da cidade
+- Como já estamos obtendo a `Key` no arquivo `app.js`, podemos modificar `getCityWeather` para que ela use a `Key` que já temos e então faça só um request para obter o tempo da cidade
+- Então removemos o primeiro request e mudamos passamos `cityKey` (que contém o valor de `Key`) como parâmetro
+- Depois removendo o bloco de `getCityWeather` para usar o retorno implícito e removemos o `async` já que função vai retornar uma promise que vamos desencapsular quando invocarmos a função
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', async event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+  const [{Key, LocalizedName}] = await getCityData(inputValue)
+  const [{weatherText, Temperature}] = await getCityWeather(Key)
+
+  event.target.reset()
+})
+```
+
+```javascript
+const getCityWeather = cityKey => fetchData(getWeatherUrl(cityKey))
+```
+
+- Observe que `getWeatherUrl` recebia um objeto por parâmetro que passava por um destructuring assingment para obtermos `Key`
+- Agora, podemos usar `Key` direto no parâmetro dessa função
+
+```javascript
+const getWeatherUrl = cityKey => 
+`${baseUrl}currentconditions/v1/${cityKey}?apikey=${APIKey}&language=pt-br`
+```
+
+- Vamos substituir o placeholder "Clima" pela prop "WeatherText" e o placeholder de temperatura pela temperatura
+
+## Aula 02-05 - Inserindo na interface as informações da API
+
+- Inciamos inserindo a prop "data-js" no `h5` e nas `divs` dentro da div que exibe as informações de clima
+- Essas props vão ser usadas para manipular/selecionar essas tags
+- Essas tags receberão:
+  - data-js="city-weather"
+  - data-js="city-name"
+  - data-js="city-temperature"
+- Então criamos as referências para esses elementos
+
+```javascript
+const cityNameContainer = document.querySelector('[data-js="city-name"]')
+const cityWeatherContainer = document.querySelector('[data-js="city-weather"]')
+const cityTemperatureContainer =  document.querySelector('[data-js="city-temperature"]')
+```
+
+- Em seguida basta adicionar os dados obtidos à prop textContent dessas referências dentro da callback do eventListener do envio do form
+
+```javascript
+const cityForm = document.querySelector('[data-js="change-location"]')
+
+cityForm.addEventListener('submit', async event => {
+  event.preventDefault()
+
+  const inputValue = event.target.city.value
+  const [{Key, LocalizedName}] = await getCityData(inputValue)
+  const [{WeatherText, Temperature}] = await getCityWeather(Key)
+
+  cityNameContainer.textContent = `LocalizedName`
+  cityWeatherContainer.textContent = `WeatherText`
+  cityTemperatureContainer.textContent = `Temperature`
+
+  event.target.reset()
+})
+```
+- Agora vamos ocultar a imagem que representa o estado do tempo antes do envio do form
+- Adicionamos a prop `data-js="city-card"` à div em questão, adicionamos a classe `d-none` e removemos essa classe à partir do primeiro envio do form
+- Fazemos isso usando o método `contains`, que funciona tipo o `includes` mas que funciona em DOMToken lists (que é o que a prop classList retorna)
+- Então usamos o que eu descrevi acima como a checagem de um bloco if que remove essa classe
+
+## Aula 02-06 - Inserindo na interface os ícones e imagens
+
+- Agora vamos inserir o ícone representando o estado do tempo e uma imagem que representa a cidade
+- Começamos pegando a referência da div que contém esses elementos
+- Temos que decidir se a imagem vai representar dia ou noite, tomamos essa decisão através da propriedade `DayTime`, do objeto retornado por `getCityWeather`
+- Daí usamos essa prop (que contém um boolean) pra fazer um bloco if/else
+- Dependendo se for dia ou noite, vamos inserir um src diferente na tag img, que acessamos usando `timeImg.src =`
+- Vamos usar o caminho absoluto para os arquivos svg para tornar o caminho mais robusto: mesmo se mudarmos o app.js de lugar ainda vamos ter acesso aos svgs
+- Com isso pronto, vamos atrás de inserir um ícone que representa o estado atual do tempo no local pesquisado
+- Vamos usar a propriedade `WeatherIcon`, que vem no obj retornado por `getCityWeather` (usamos um destructuring assignment para obter os dados)
+- O Roger já baixou todos os ícones oferecidos pela API e os deixou disponível
+- Daí é só pegar a referência do ícone, criar uma tag img que recebe o caminho até o ícone em questão e inserir essa tag na div apropriada

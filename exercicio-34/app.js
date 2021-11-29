@@ -12,6 +12,21 @@
     versão deve fazer o mesmo que a função anterior faz, mas de forma diferente.
 */
 
+const reverseString = string => {
+  let reversedString = ''
+  for (let i = 0; i < string.length; i++) {
+    reversedString = string[i] + reversedString
+  }
+  return reversedString
+}
+
+const anotherReverseString = string => Array.from(string).reverse().join('')
+
+
+console.log(anotherReverseString('cba'))
+
+
+
 /*
   02
   
@@ -19,13 +34,19 @@
 */
 
 const numbers = [5, 20, 7, 32, 47, 15, 83, 91, 27, 33]
-let foundNumber = false
 
-numbers.forEach(number => {
-  if (number === 15) {
-    foundNumber = true
-  }
-})
+const findNumber = (array, number) => array.some(item => item === number)
+
+const foundNumber = findNumber(numbers, 15)
+// let foundNumber = false
+
+// const findNumber = number => {
+//   if (number === 15) {
+//     foundNumber = true
+//   }
+// }
+
+// numbers.forEach(findNumber)
 
 console.log(foundNumber)
 

@@ -5,6 +5,8 @@
     e retorna o valor da key parseado para objeto javascript.
 */
 
+const parseLocalStorageValue = key => JSON.parse(localStorage.getItem(key))
+
 /*
   02
 
@@ -21,7 +23,7 @@
 const input = document.querySelector('[data-js="input"]')
 
 input.addEventListener('input', event => {
-  console.log(event.target.value)
+  console.log(typeof event.target.valueAsNumber)
 })
 
 /*
@@ -38,6 +40,9 @@ input.addEventListener('input', event => {
   - Descomente o código abaixo. A primeira invocação da combineOperations deve 
     retornar 60 e a segunda invocação, 10.
 */
+
+const combineOperations = (initialValue, array) => 
+  array.reduce((acc, func) => func(acc), initialValue)
 
 function add100 (num) {
   return num + 100
@@ -101,7 +106,7 @@ const searchAlbum = {
   genre: 'Rock'
 }
 
-if (albums.includes(searchAlbum)) {
+if (albums.some(({ title }) => title === searchAlbum.title)) {
   console.log(`${JSON.stringify(searchAlbum)} existe no array albums.`)
 }
 
@@ -122,6 +127,10 @@ const obj = {
   prop8: { a: 'x', b: 'y' },
 }
 
+const objCopy = JSON.parse(JSON.stringify(obj))
+
+console.log(objCopy, obj)
+
 /*
   06
 
@@ -132,6 +141,18 @@ const obj = {
 
   Dica: pesquise por Object.entries.
 */
+
+const createHTML = (name, obj) => {
+  const newElement = document.createElement(name)
+  const attributes = Object.entries(obj)
+  
+  attributes.forEach(([key, value]) => {
+    newElement.setAttribute(key, value)
+  })
+
+  return newElement
+}
+
 
 /*
   07

@@ -5,7 +5,15 @@
     e retorna o valor da key parseado para objeto javascript.
 */
 
-const parseLocalStorageValue = key => JSON.parse(localStorage.getItem(key))
+const myObj = { x: 'X', y: 'y' }
+const myObjAsJSON = JSON.stringify(myObj)
+
+localStorage.setItem('myKey', myObjAsJSON)
+
+const getObjectFromLocalStorage = keyName => {
+  const keyValue = localStorage.getItem(keyName)
+  return JSON.parse(keyValue)
+}
 
 /*
   02
@@ -20,11 +28,11 @@ const parseLocalStorageValue = key => JSON.parse(localStorage.getItem(key))
   Dica: pesquise por valueAsNumber.
 */
 
-const input = document.querySelector('[data-js="input"]')
+// const input = document.querySelector('[data-js="input"]')
 
-input.addEventListener('input', event => {
-  console.log(typeof event.target.valueAsNumber)
-})
+// input.addEventListener('input', event => {
+//   console.log(event.target.valueAsNumber)
+// })
 
 /*
   03
@@ -41,28 +49,20 @@ input.addEventListener('input', event => {
     retornar 60 e a segunda invocação, 10.
 */
 
-const combineOperations = (initialValue, array) => 
-  array.reduce((acc, func) => func(acc), initialValue)
 
-function add100 (num) {
-  return num + 100
-}
+const add100 = num => num + 100
 
-function divByFive (num) {
-  return num / 5
-}
+const divByFive = num => num / 5
 
-function multiplyByThree (num) {
-  return num * 3
-}
+const multiplyByThree = num => num * 3
 
-function multiplyFive (num) {
-  return num * 5
-}
+const multiplyFive = num => num * 5
 
-function addTen (num) {
-  return num + 10
-}
+const addTen = num => num + 10
+
+
+const combineOperations = (initValue, arrOfFuncs) => 
+   arrOfFuncs.reduce((acc, func) => func(acc), initValue)
 
 // console.log(combineOperations(0, [add100, divByFive, multiplyByThree]))
 // console.log(combineOperations(0, [divByFive, multiplyFive, addTen]))
@@ -106,9 +106,12 @@ const searchAlbum = {
   genre: 'Rock'
 }
 
-if (albums.some(({ title }) => title === searchAlbum.title)) {
-  console.log(`${JSON.stringify(searchAlbum)} existe no array albums.`)
-}
+const searchAlbumExistsInArray = albums
+  .some(album => album.id === searchAlbum.id)
+
+// if (searchAlbumExistsInArray) {
+//   console.log(`${JSON.stringify(searchAlbum)} existe no array albums.`)
+// }
 
 /*
   05
@@ -127,9 +130,10 @@ const obj = {
   prop8: { a: 'x', b: 'y' },
 }
 
-const objCopy = JSON.parse(JSON.stringify(obj))
+const objAsJSON = JSON.stringify(obj, null, 2)
+const objCopy = JSON.parse(objAsJSON)
 
-console.log(objCopy, obj)
+const objCopySpread = { ...obj }
 
 /*
   06
@@ -142,17 +146,25 @@ console.log(objCopy, obj)
   Dica: pesquise por Object.entries.
 */
 
-const createHTML = (name, obj) => {
-  const newElement = document.createElement(name)
-  const attributes = Object.entries(obj)
-  
-  attributes.forEach(([key, value]) => {
-    newElement.setAttribute(key, value)
-  })
+const createElement = (elementName, attributes) => {
+  const element = document.createElement(elementName)
+  const attributesAsArray = Object.entries(attributes)
 
-  return newElement
+  attributesAsArray.forEach(([key, value]) => element.setAttribute(key, value))
+
+  return element
 }
 
+const input = createElement('input', {
+  type: 'radio',
+  id: 'input1',
+  name: 'main',
+  value: 'principal',
+  for: 'input1',
+  'data-js': 'input1'
+})
+
+console.log(input)
 
 /*
   07

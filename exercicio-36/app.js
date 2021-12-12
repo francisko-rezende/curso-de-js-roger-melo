@@ -12,7 +12,7 @@ const numbers = [50, 100, 50]
 
 const sum = (x, y, z) => x + y + z
 
-console.log(sum(numbers))
+// console.log(sum(...numbers))
 
 /*
   02
@@ -22,6 +22,11 @@ console.log(sum(numbers))
   - Utilizando (também) o spread operator, exiba no console o seu nome com 
     apenas a primeira letra maiúscula.
 */
+
+const firstName = 'francisko'
+// console.log([firstName[0].toUpperCase(), ...firstName.slice(1)].join(''))
+// console.log(...firstName.replace(`${firstName[0]}`, `${firstName[0].toUpperCase()}`))
+
 
 /*
   03
@@ -34,12 +39,15 @@ console.log(sum(numbers))
 
 const randomNumber = Math.round(Math.random() * 100)
 
+const isRandomNumLessThan50 = randomNumber > 50
+
 const obj = {
   a: 1,
-  b: 2
+  b: 2,
+  [isRandomNumLessThan50 ? 'c' : 'd']: isRandomNumLessThan50 ? 3 : 4
 }
 
-console.log(obj)
+// console.log(obj)
 
 /*
   04
@@ -48,22 +56,20 @@ console.log(obj)
     criado permaneça intacto.
 */
 
-const h = w => {
-  w.d = 3
-}
+const h = w =>  w.d = 3
 
-const q = f => {
-  h(f)
-}
 
-const i = b => {
-  q(b)
-}
+const q = f =>  h(f)
+
+
+const i = b =>  q(b)
 
 const v = { k: 't' }
 
-i(v)
-console.log(v)
+const vCopy = {...v}
+i(vCopy)
+
+// console.log(v, vCopy)
 
 /*
   05
@@ -96,6 +102,11 @@ const timestamps = [
   }
 ]
 
+const newTimeStamps = timestamps.reduce((acc, { date, value }) => {
+  acc[date] = value
+  return acc
+}, {})
+// console.log(newTimeStamps)
 /*
   06
 
@@ -118,6 +129,17 @@ const timestamps = [
 
 let accumulator = 0
 const oddNumbers = [51, 97, 65, 23]
+
+const forEach = (array, func) => {
+  for (let i = 0; i < array.length; i++) {
+    func(array[i], i, array)
+  }
+}
+
+// forEach(oddNumbers, number => accumulator += number)
+// console.log()
+// forEach(oddNumbers, (item, index, array) => console.log(`"${item}" é o ${index + 1}º item do array 
+// [${array.join(', ')}]`))
 
 /*
   07
@@ -147,3 +169,53 @@ const oddNumbers = [51, 97, 65, 23]
     3 No passo 3.4, se o slide exibido atualmente não corresponder ao index do 
       1º slide, o slide anterior deve ser exibido.
 */
+
+const buttonNext = document.querySelector('[data-js="carousel__button--next"]')
+const buttonPrev = document.querySelector('[data-js="carousel__button--prev"]')
+const slides = document.querySelectorAll('[data-js=carousel__item')
+
+let slideIndex;
+
+const getCurrentSlideIndex = () => {
+  return [...slides].findIndex(slide => 
+    [...slide.classList].includes('carousel__item--visible'))
+}
+
+const showSlide = index => 
+  [...slides][index].classList.add('carousel__item--visible')
+
+const hideSlides = () => {
+  [...slides].forEach(slide => { 
+    slide.classList.remove('carousel__item--visible')
+    slide.classList.add('carousel__item--invisible')
+  })
+}
+
+buttonNext.addEventListener('click', () => {
+  slideIndex = getCurrentSlideIndex()
+  const isLastSlide = slideIndex === [...slides].length - 1
+  
+  hideSlides()
+
+  if (isLastSlide) {
+    showSlide(0)
+    return
+  }
+
+  showSlide(++slideIndex)
+})
+
+buttonPrev.addEventListener('click', () => {
+  slideIndex = getCurrentSlideIndex()
+  const isFirstSlide = slideIndex === 0
+  const lastSlideIndex = Array.from(slides).length - 1
+
+  hideSlides()
+
+  if (isFirstSlide) {
+    showSlide(lastSlideIndex)
+    return
+  }
+
+  showSlide(--slideIndex)
+})

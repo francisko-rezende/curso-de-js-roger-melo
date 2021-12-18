@@ -24,7 +24,8 @@ const sum = (x, y, z) => x + y + z
 */
 
 const firstName = 'francisko'
-// console.log([firstName[0].toUpperCase(), ...firstName.slice(1)].join(''))
+const capitalizedName = [firstName[0].toUpperCase(), ...firstName.slice(1)].join('')
+// console.log(capitalizedName)
 // console.log(...firstName.replace(`${firstName[0]}`, `${firstName[0].toUpperCase()}`))
 
 
@@ -39,12 +40,10 @@ const firstName = 'francisko'
 
 const randomNumber = Math.round(Math.random() * 100)
 
-const isRandomNumLessThan50 = randomNumber > 50
-
 const obj = {
   a: 1,
   b: 2,
-  [isRandomNumLessThan50 ? 'c' : 'd']: isRandomNumLessThan50 ? 3 : 4
+  ...(randomNumber > 50 ? { c: 3 } : { d: 4 })
 }
 
 // console.log(obj)
@@ -56,20 +55,16 @@ const obj = {
     criado permaneça intacto.
 */
 
-const h = w =>  w.d = 3
+const third = obj => ({
+  ...obj,
+  d: 3
+})
 
+const second = obj => third(obj)
+const first = obj => second(obj)
 
-const q = f =>  h(f)
-
-
-const i = b =>  q(b)
-
-const v = { k: 't' }
-
-const vCopy = {...v}
-i(vCopy)
-
-// console.log(v, vCopy)
+const object = { k: 't' }
+const object2 = first(object)
 
 /*
   05
@@ -102,7 +97,7 @@ const timestamps = [
   }
 ]
 
-const newTimeStamps = timestamps.reduce((acc, { date, value }) => {
+const values = timestamps.reduce((acc, { date, value }) => {
   acc[date] = value
   return acc
 }, {})
@@ -131,16 +126,26 @@ let accumulator = 0
 const oddNumbers = [51, 97, 65, 23]
 
 const forEach = (array, func) => {
-  for (let i = 0; i < array.length; i++) {
-    func(array[i], i, array)
+  for (let index = 0; index < array.length; index++) {
+    const item = array[index]
+    func(item, index, array)
   }
 }
 
-// forEach(oddNumbers, number => accumulator += number)
-// console.log()
-// forEach(oddNumbers, (item, index, array) => console.log(`"${item}" é o ${index + 1}º item do array 
-// [${array.join(', ')}]`))
+const logMessage = (item, index, array) => {
+  const message = 
+  `"${item}" é o ${index + 1}º item do array [${array.join(', ')}]`
 
+  console.log(message)
+}
+
+const sumArrayItems = item => {
+  accumulator += item
+}
+
+// forEach(oddNumbers, sumArrayItems)
+// forEach(oddNumbers, logMessage)
+// console.log(accumulator)
 /*
   07
 
@@ -170,52 +175,30 @@ const forEach = (array, func) => {
       1º slide, o slide anterior deve ser exibido.
 */
 
-const buttonNext = document.querySelector('[data-js="carousel__button--next"]')
-const buttonPrev = document.querySelector('[data-js="carousel__button--prev"]')
-const slides = document.querySelectorAll('[data-js=carousel__item')
+const slides = document.querySelectorAll('[data-js="carousel__item"]')
+const nextButton = document.querySelector('[data-js="carousel__button--next"]')
+const prevButton = document.querySelector('[data-js="carousel__button--prev"]')
 
-let slideIndex;
+let lastSlideIndex = slides.length - 1
+let currentSlideIndex = 0
 
-const getCurrentSlideIndex = () => {
-  return [...slides].findIndex(slide => 
-    [...slide.classList].includes('carousel__item--visible'))
+const manipulateSlideClasses = correctSlideIndex => {
+  slides.forEach(slide => slide.classList.remove("carousel__item--visible"))
+  slides[correctSlideIndex].classList.add("carousel__item--visible")
 }
 
-const showSlide = index => 
-  [...slides][index].classList.add('carousel__item--visible')
+nextButton.addEventListener('click', () => {
+  const correctSlideIndex = currentSlideIndex === lastSlideIndex
+    ? currentSlideIndex = 0
+    : ++currentSlideIndex
 
-const hideSlides = () => {
-  [...slides].forEach(slide => { 
-    slide.classList.remove('carousel__item--visible')
-    slide.classList.add('carousel__item--invisible')
-  })
-}
-
-buttonNext.addEventListener('click', () => {
-  slideIndex = getCurrentSlideIndex()
-  const isLastSlide = slideIndex === [...slides].length - 1
-  
-  hideSlides()
-
-  if (isLastSlide) {
-    showSlide(0)
-    return
-  }
-
-  showSlide(++slideIndex)
+  manipulateSlideClasses(correctSlideIndex)
 })
 
-buttonPrev.addEventListener('click', () => {
-  slideIndex = getCurrentSlideIndex()
-  const isFirstSlide = slideIndex === 0
-  const lastSlideIndex = Array.from(slides).length - 1
+prevButton.addEventListener('click', () => {
+  const correctSlideIndex = currentSlideIndex === 0 
+    ? currentSlideIndex = lastSlideIndex
+    : --currentSlideIndex
 
-  hideSlides()
-
-  if (isFirstSlide) {
-    showSlide(lastSlideIndex)
-    return
-  }
-
-  showSlide(--slideIndex)
+  manipulateSlideClasses(correctSlideIndex)
 })

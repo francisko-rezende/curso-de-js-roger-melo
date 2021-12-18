@@ -13,12 +13,12 @@ class Animal {
 
 class Rabbit extends Animal {
   constructor (name) {
-    this.name = name
+    super(name)
     this.created = new Date()
   }
 }
 
-// let rabbit = new Rabbit('White Rabbit')
+let rabbit = new Rabbit('White Rabbit')
 
 /*
   02
@@ -27,11 +27,27 @@ class Rabbit extends Animal {
     funcione.
 */
 
-// const counter = new Counter()
+class Counter {
+  constructor () {
+    this.value = 0
+  }
 
-// counter.getValue()
-// counter.increment()
-// counter.getValue()
+  getValue () {
+    return this.value
+  }
+
+  increment () {
+    this.value++
+  }
+}
+
+const counter = new Counter()
+
+counter.getValue()
+counter.increment()
+counter.getValue()
+
+
 
 /*
   03
@@ -49,6 +65,7 @@ const values = [
   NaN,
   () => {}
 ]
+const truthyValues = values.filter(value => Boolean(value))
 
 /*
   04
@@ -60,62 +77,55 @@ const values = [
     funcione.
 */
 
-// class Clock {
-//   constructor ({ template }) {
-//     this.template = template
-//   }
+const formatTimeUnit = unit => unit < 10 ? `0${unit}` : unit
+class Clock {
+  constructor ({ template }) {
+    this.template = template
+  }
 
-//   render () {
-//     const date = new Date()
-//     let hours = date.getHours()
-//     let minutes = date.getMonth()
-//     let seconds = date.getSeconds()
+  render () {
+    const date = new Date()
+    let hours = date.getHours()
+    let minutes = date.getMonth()
+    let seconds = date.getSeconds()
 
-//     if (hours < 10) {
-//       hours = `0${hours}`
-//     }
+    hours = formatTimeUnit(hours)
+    minutes = formatTimeUnit(minutes)
+    seconds = formatTimeUnit(seconds)
 
-//     if (minutes < 10) {
-//       minutes = `0${minutes}`
-//     }
+    const formattedTime = this.template
+      .replace('h', hours)
+      .replace('m', minutes)
+      .replace('s', seconds)
 
-//     if (seconds < 10) {
-//       seconds = `0${seconds}`
-//     }
+    console.log(formattedTime)
+  }
 
-//     const formattedTime = this.template
-//       .replace('h', hours)
-//       .replace('m', minutes)
-//       .replace('s', seconds)
+  start () {
+    this.render()
+    this.timer = setInterval(() => this.render(), 1000)
+  }
 
-//     console.log(formattedTime)
-//   }
+  stop () {
+    clearInterval(this.timer)
+  }
+}
 
-//   start () {
-//     this.render()
-//     this.timer = setInterval(() => this.render(), 1000)
-//   }
-
-//   stop () {
-//     clearInterval(this.timer)
-//   }
-// }
-
-// class ExtendedClock extends Clock {
-//   constructor ({ options }) {
-//     super(options)
+class ExtendedClock extends Clock {
+  constructor (options) {
+    super(options)
     
-//     let { precision = 1000 } = options
-//     this.precision = precision
-//   }
+    let { precision = 1000 } = options
+    this.precision = precision
+  }
 
-//   start () {
-//     this.render()
-//     this.timer = setInterval(() => this.render(), this.precision)
-//   }
-// }
+  start () {
+    this.render()
+    this.timer = setInterval(() => this.render(), this.precision)
+  }
+}
 
-// const clock = ExtendedClock({ template: 'h:m:s', precision: 1000 })
+const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
 
 // clock.start()
 
@@ -127,7 +137,14 @@ const values = [
     caracteres que o textarea contém.
 */
 
+const textArea = document.querySelector('[data-js="textarea"]')
+const paragraph = document.querySelector('[data-js="paragraph"]')
 
+textArea.addEventListener('input', event => {
+  const textAreaInputLength = event.target.value.length
+
+  paragraph.textContent = textAreaInputLength
+})
 
 /*
   06
@@ -155,3 +172,28 @@ const values = [
     vídeo de correção dos exercícios um link para a aula de introdução ao 
     reduce e um link para a documentação do método no MDN.
 */
+
+const reduce = (arr, func, initialValue) => {
+  let acc = initialValue === undefined ? arr[0] : initialValue
+
+  for (let index = 0; index < arr.length; index++) {
+    const item = arr[index]
+    acc = func(acc, item, index, arr)
+  }
+
+  return acc
+}
+
+// console.log(reduce([1, 2, 3], (acc, item) => acc + item, 0))
+// console.log(reduce([2, 3, 4], (acc, item) => acc + item, 0))
+// console.log(reduce(
+//   [1, 2],
+//   (acc, item) => {
+//     acc['number-' + item] = item
+//     return acc
+//   },
+//   {}
+// ))
+
+// console.log(reduce([1, 2], (acc, item, index) => acc + index, 0))
+// console.log(reduce([1, 2], (acc, item, index, array) => acc + array[index], 0))

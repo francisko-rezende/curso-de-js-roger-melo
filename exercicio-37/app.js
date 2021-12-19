@@ -12,10 +12,7 @@ class Animal {
 }
 
 class Rabbit extends Animal {
-  constructor (name) {
-    super(name)
-    this.created = new Date()
-  }
+    created = new Date()
 }
 
 let rabbit = new Rabbit('White Rabbit')
@@ -28,26 +25,22 @@ let rabbit = new Rabbit('White Rabbit')
 */
 
 class Counter {
-  constructor () {
-    this.value = 0
-  }
+    #count = 0
 
-  getValue () {
-    return this.value
-  }
+    get value () {
+      return this.#count
+    }
 
-  increment () {
-    this.value++
-  }
+    increment () {
+      this.#count++
+    }
 }
 
 const counter = new Counter()
 
-counter.getValue()
+// console.log(counter.value)
 counter.increment()
-counter.getValue()
-
-
+// console.log(counter.value)
 
 /*
   03
@@ -67,6 +60,8 @@ const values = [
 ]
 const truthyValues = values.filter(value => Boolean(value))
 
+const truthyValues = values.filter(Boolean)
+
 /*
   04
 
@@ -77,33 +72,43 @@ const truthyValues = values.filter(value => Boolean(value))
     funcione.
 */
 
-const formatTimeUnit = unit => unit < 10 ? `0${unit}` : unit
+const formatTimeUnits = units => units
+  .map(unit =>  unit < 10 ? `0${unit}` : unit)
+
+const getTime = () => {
+  const date = new Date()
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+
+  return [hours, minutes, seconds]
+}
+
+const getFormattedTime = (template) => {
+    const [hours, minutes, seconds] = getTime()
+    const formattedTime = formatTimeUnits([hours, minutes, seconds])
+
+    return template
+      .split(':')
+      .map((_, index) => formattedTime[index])
+      .join(':')
+}
+
 class Clock {
   constructor ({ template }) {
     this.template = template
   }
 
   render () {
-    const date = new Date()
-    let hours = date.getHours()
-    let minutes = date.getMonth()
-    let seconds = date.getSeconds()
-
-    hours = formatTimeUnit(hours)
-    minutes = formatTimeUnit(minutes)
-    seconds = formatTimeUnit(seconds)
-
-    const formattedTime = this.template
-      .replace('h', hours)
-      .replace('m', minutes)
-      .replace('s', seconds)
-
+    const formattedTime = getFormattedTime(this.template)
     console.log(formattedTime)
   }
 
   start () {
+    const oneSecond = 1000
+
     this.render()
-    this.timer = setInterval(() => this.render(), 1000)
+    this.timer = setInterval(() => this.render(), oneSecond)
   }
 
   stop () {
@@ -115,7 +120,7 @@ class ExtendedClock extends Clock {
   constructor (options) {
     super(options)
     
-    let { precision = 1000 } = options
+    const { precision = 1000 } = options
     this.precision = precision
   }
 
@@ -125,7 +130,7 @@ class ExtendedClock extends Clock {
   }
 }
 
-const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
+// const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
 
 // clock.start()
 
@@ -138,13 +143,17 @@ const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
 */
 
 const textArea = document.querySelector('[data-js="textarea"]')
-const paragraph = document.querySelector('[data-js="paragraph"]')
+const counterParagraph = document.querySelector('[data-js="paragraph"]')
 
-textArea.addEventListener('input', event => {
-  const textAreaInputLength = event.target.value.length
+const showCounterParagraph = e => {
+  const currentLength = e.target.value.length
+  const maxLength = e.target.getAttribute('maxLength')
 
-  paragraph.textContent = textAreaInputLength
-})
+  counterParagraph.textContent = 
+    `${currentLength}/${maxLength}`
+}
+
+textArea.addEventListener('input', showCounterParagraph)
 
 /*
   06
@@ -174,26 +183,28 @@ textArea.addEventListener('input', event => {
 */
 
 const reduce = (arr, func, initialValue) => {
-  let acc = initialValue === undefined ? arr[0] : initialValue
-
-  for (let index = 0; index < arr.length; index++) {
-    const item = arr[index]
-    acc = func(acc, item, index, arr)
+  let acc = initialValue
+  
+  const accumulateCallbackReturn = (item, index, array) => {
+    acc = func(acc, item, index, array)
   }
+
+  arr.forEach(accumulateCallbackReturn)
 
   return acc
 }
 
-// console.log(reduce([1, 2, 3], (acc, item) => acc + item, 0))
-// console.log(reduce([2, 3, 4], (acc, item) => acc + item, 0))
-// console.log(reduce(
-//   [1, 2],
-//   (acc, item) => {
-//     acc['number-' + item] = item
-//     return acc
-//   },
-//   {}
-// ))
+const createItemBasedProperties = (acc, item) => {
+  acc['number-' + item] = item
+  return acc
+}
 
-// console.log(reduce([1, 2], (acc, item, index) => acc + index, 0))
-// console.log(reduce([1, 2], (acc, item, index, array) => acc + array[index], 0))
+const sumItems = (acc, item) => acc + item
+const sumItemsPlusIndex = (acc, _, index) => acc + index
+const sumItemsUsingArrayParam = (acc, _ ,index, array) => acc + array[index]
+
+console.log(reduce([1, 2, 3], sumItems, 0))
+console.log(reduce([2, 3, 4], sumItems, 0))
+console.log(reduce([1, 2], createItemBasedProperties, {}))
+console.log(reduce([1, 2], sumItemsPlusIndex, 0))
+console.log(reduce([1, 2], sumItemsUsingArrayParam, 0))

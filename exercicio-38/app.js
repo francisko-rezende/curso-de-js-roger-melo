@@ -10,6 +10,51 @@
   - Teste o método getColor do prototype dos carros.
 */
 
+const obj = {
+  getColor() {
+    return this.color
+  }
+}
+
+// Classe
+
+class Car {
+}
+
+Car.prototype.getColor = obj.getColor
+
+const blueCar = new Car()
+const yellowCar = new Car()
+
+blueCar.color = 'blue'
+yellowCar.color = 'yellow'
+
+// Função construtora
+
+// function Car () {
+// }
+
+// Car.prototype.getColor = obj.getColor
+
+// const blueCar = new Car()
+// const yellowCar = new Car()
+
+// blueCar.color = 'blue'
+// yellowCar.color = 'yellow'
+
+// Factory function
+
+// const createCar = () => ({getColor: obj.getColor})
+
+// const blueCar = createCar()
+// const yellowCar = createCar()
+
+// blueCar.color = 'blue'
+// yellowCar.color = 'yellow'
+
+// console.log(blueCar, yellowCar)
+// console.log(blueCar.getColor(), yellowCar.getColor())
+
 
 
 /*
@@ -27,14 +72,17 @@
 const movie = {
   title: 'Forrest Gump',
   director: 'Robert Zemeckis',
-  starringRole: 'Tom Hanks'
+  starringRole: 'Tom Hanks',
+  getSummary () {
+    return `${this.title} foi dirigido por ${this.director} e tem ${this.starringRole} no papel principal.`
+  }
 }
 
-function getSummary () {
-  return `${this.title} foi dirigido por ${this.director} e tem ${this.starringRole} no papel principal.`
-}
+// const getSummary = ({ title, director, starringRole }) => 
+//   `${title} foi dirigido por ${director} e tem ${starringRole} no papel principal.`
 
-console.log(getSummary())
+
+// console.log(movie.getSummary())
 
 /*
   03
@@ -48,15 +96,20 @@ console.log(getSummary())
   - Descomente o código e crie a função.
 */
 
-/*
-console.log(
-  arrayToObj([
-    ['prop1', 'value1'], 
-    ['prop2', 'value2'],
-    ['prop3', 'value3']
-  ])
-)
-*/
+const createObj = (acc, [prop, value]) => {
+  acc[prop] = value
+  return acc
+}
+
+const arrayToObj = array => array.reduce(createObj, {})
+
+// console.log(
+//   arrayToObj([
+//     ['prop1', 'value1'], 
+//     ['prop2', 'value2'],
+//     ['prop3', 'value3']
+//   ])
+// )
 
 /*
   04
@@ -86,43 +139,81 @@ const getFormattedTime = template => {
     .join(':')
 }
 
-class Clock {
-  constructor ({ template }) {
-    this.template = template
-  }
 
-  render () {
-    const formattedTime = getFormattedTime(this.template)
-    console.log(formattedTime)
-  }
-
-  start () {
-    const oneSecond = 1000
-
-    this.render()
-    this.timer = setInterval(() => this.render(), oneSecond)
-  }
-
-  stop () {
-    clearInterval(this.timer)
-  }
-}
-
-class ExtendedClock extends Clock {
-  constructor (options) {
-    super(options)
+const getClock = ({ template }) => {
+  return {
+    template: template,
     
-    const { precision = 1000 } = options
-    this.precision = precision
-  }
+    render () {
+      const formattedTime = getFormattedTime(template)
+      console.log(formattedTime)
+    },
 
-  start () {
-    this.render()
-    this.timer = setInterval(() => this.render(), this.precision)
+    start () {
+      const oneSecond = 1000
+      this.render()
+      this.timer = setInterval(() => this.render(), oneSecond)
+    },
+
+    stop () {
+      clearInterval(this.timer)
+    }
   }
 }
 
-const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
+const getExtendedClock = (obj) => {
+  const clock = getClock(obj)
+  const { precision = 1000 } = obj
+  
+  return {
+    ...clock,
+    precision,
+
+    start () {
+      this.render()
+      this.timer = setInterval(() => this.render(), precision)
+    }
+
+  }
+}
+// class Clock {
+//   constructor ({ template }) {
+//     this.template = template
+//   }
+
+//   render () {
+//     const formattedTime = getFormattedTime(this.template)
+//     console.log(formattedTime)
+//   }
+
+//   start () {
+//     const oneSecond = 1000
+
+//     this.render()
+//     this.timer = setInterval(() => this.render(), oneSecond)
+//   }
+
+//   stop () {
+//     clearInterval(this.timer)
+//   }
+// }
+
+// class ExtendedClock extends Clock {
+//   constructor (options) {
+//     super(options)
+    
+//     const { precision = 1000 } = options
+//     this.precision = precision
+//   }
+
+//   start () {
+//     this.render()
+//     this.timer = setInterval(() => this.render(), this.precision)
+//   }
+// }
+
+// const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
+const clock = getExtendedClock({ template: 'h:m:s', precision: 1000 })
 
 // clock.start()
 
@@ -165,7 +256,18 @@ const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
         - download, com o valor 'table.csv'.
 */
 
+const rows = document.querySelectorAll('tr')
+const exportButton = document.querySelector('[data-js="export-table-btn"]')
+let csvData = []
 
+rows.forEach((row) => {
+  csvData.push([...row.cells].map((cell) => cell.textContent).join(','))
+})
+
+csvData = csvData.join('\n')
+
+// exportButton.setAttribute('href', `data:text/csvcharset=utf-8,${encodeURIComponent(csvData)}`)
+// exportButton.setAttribute('download', 'table.csv')
 
 /*
   06
@@ -222,3 +324,90 @@ const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
   PS: o desafio aqui é você implementar essa aplicação sozinho(a) e enviá-la 
   para análise antes de ver as próximas aulas, ok? =)
 */
+
+
+const conversionSourceCurrencySelect = document.querySelector('[data-js="currency-one"]')
+const conversionTargetCurrencySelect = document.querySelector('[data-js="currency-two"]')
+const convertedValueParagraph = document.querySelector('[data-js="converted-value"]')
+const currencyOneTimes = document.querySelector('[data-js="currency-one-times"]')
+const conversionPrecisionParagraph = document.querySelector('[data-js="conversion-precision"]')
+
+const APIKey = '9e3a6fd942b2712ab9af7ee0'
+let conversionRates = null
+
+const generateOptionElement = (currency, conversionRate, isSelected) =>
+  isSelected 
+    ? `<option value="${currency}"  data-conversion-rate="${conversionRate}" selected>${currency}</option>`
+    : `<option value="${currency}" data-conversion-rate="${conversionRate}" >${currency}</option>`
+
+const insertCurrencyOptionIntoDOM = ([currency, conversionRate]) => {
+  const isUSD = currency === 'USD'
+  const isBRL = currency === 'BRL'
+
+  conversionSourceCurrencySelect.innerHTML += isUSD 
+  ? generateOptionElement(currency, conversionRate, true) 
+  : generateOptionElement(currency, conversionRate, false)
+  
+  conversionTargetCurrencySelect.innerHTML += isBRL 
+  ? generateOptionElement(currency, conversionRate, true) 
+  : generateOptionElement(currency, conversionRate, false)
+}
+
+const generateUrl = (key, currency) => 
+  `https://v6.exchangerate-api.com/v6/${key}/latest/${currency}`
+
+const updateConversionRates = async (url) => {
+  const request = await fetch(url)
+  const data =  await request.json()
+
+  conversionRates = data.conversion_rates
+}
+
+const populateCurrencySelectors = (conversionRates) => {
+  Object.entries(conversionRates).forEach(insertCurrencyOptionIntoDOM)
+}
+
+const updateDisplayedInfo = () => {
+  const targetCurrency = conversionTargetCurrencySelect.value
+  const sourceCurrency = conversionSourceCurrencySelect.value
+  const conversionRate = conversionRates[targetCurrency]
+  const formattedConversionResult = conversionRate.toFixed(2)
+  
+  convertedValueParagraph.textContent = `${formattedConversionResult}`
+  conversionPrecisionParagraph.textContent = 
+    `1 ${sourceCurrency} = ${conversionRate} ${targetCurrency}`
+}
+
+const showConversionInfo = async (currency) => {
+  const url = generateUrl(APIKey, currency)
+  await updateConversionRates(url)
+
+  const isSourceCurrencySelectorEmpty = 
+    conversionSourceCurrencySelect.childElementCount === 0
+
+  if (isSourceCurrencySelectorEmpty) {
+    populateCurrencySelectors(conversionRates)
+  }
+
+  updateDisplayedInfo()
+}
+
+showConversionInfo('USD')
+
+currencyOneTimes.addEventListener('input', event => {
+  const multiplier = event.target.value
+  const targetCurrency = conversionTargetCurrencySelect.value 
+  const conversionRate = conversionRates[targetCurrency]
+  const formattedConversionResult = (multiplier * conversionRate).toFixed(2)
+
+  convertedValueParagraph.textContent = `${formattedConversionResult}`
+})
+
+conversionTargetCurrencySelect.addEventListener('input', () => {
+  updateDisplayedInfo()
+})
+
+conversionSourceCurrencySelect.addEventListener('input', event => {
+  const newCurrency = event.target.value
+  showConversionInfo(newCurrency)
+})

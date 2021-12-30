@@ -10,7 +10,20 @@
   - Teste o método getColor do prototype dos carros.
 */
 
+const carProto = {
+  getColor() {
+    return this.color
+  }
+}
 
+let firstCar = Object.create(carProto)
+let secondCar = Object.create(carProto)
+
+firstCar.color = 'azul'
+secondCar.color = 'vermelho'
+
+// console.log(firstCar.getColor(), secondCar.getColor())
+// console.log(carProto.isPrototypeOf(firstCar), carProto.isPrototypeOf(secondCar))
 
 /*
   02
@@ -31,10 +44,11 @@ const movie = {
 }
 
 function getSummary () {
-  return `${this.title} foi dirigido por ${this.director} e tem ${this.starringRole} no papel principal.`
+  const { title, director, starringRole } = this
+  return `${title} foi dirigido por ${director} e tem ${starringRole} no papel principal.`
 }
 
-console.log(getSummary())
+// console.log(getSummary.apply(movie))
 
 /*
   03
@@ -48,15 +62,21 @@ console.log(getSummary())
   - Descomente o código e crie a função.
 */
 
-/*
-console.log(
-  arrayToObj([
-    ['prop1', 'value1'], 
-    ['prop2', 'value2'],
-    ['prop3', 'value3']
-  ])
-)
-*/
+const createObj = (acc, [key, value]) => {
+  acc[key] = value
+  return acc
+}
+
+const arrayToObj = arr => arr.reduce(createObj, {})
+
+// console.log(
+//   arrayToObj([
+//     ['prop1', 'value1'], 
+//     ['prop2', 'value2'],
+//     ['prop3', 'value3']
+//   ])
+// )
+
 
 /*
   04
@@ -64,8 +84,9 @@ console.log(
   - Refatore as classes abaixo para factory functions.
 */
 
-const formatTimeUnits = units => units
-  .map(unit => unit < 10 ? `0${unit}` : unit)
+const concatenateZero = unit => unit < 10 ? `0${unit}` : unit
+
+const formatTimeUnits = units => units.map(concatenateZero)
 
 const getTime = () => {
   const date = new Date()
@@ -79,51 +100,44 @@ const getTime = () => {
 const getFormattedTime = template => {
   const [hours, minutes, seconds] = getTime()
   const formattedTime = formatTimeUnits([hours, minutes, seconds])
+  const getTimeAsArray = (_, index) => formattedTime[index]
 
   return template
     .split(':')
-    .map((_, index) => formattedTime[index])
+    .map(getTimeAsArray)
     .join(':')
 }
 
-class Clock {
-  constructor ({ template }) {
-    this.template = template
-  }
-
+const makeClock = ({ template }) => ({
+  template,
   render () {
     const formattedTime = getFormattedTime(this.template)
     console.log(formattedTime)
-  }
-
+  },
   start () {
     const oneSecond = 1000
 
     this.render()
     this.timer = setInterval(() => this.render(), oneSecond)
-  }
-
+  },
   stop () {
     clearInterval(this.timer)
   }
-}
+})
 
-class ExtendedClock extends Clock {
-  constructor (options) {
-    super(options)
-    
-    const { precision = 1000 } = options
-    this.precision = precision
-  }
-
+const makeExtendedClock = ({ template, precision = 1000 }) => ({
+  precision,
+  ...makeClock({ template }),
   start () {
     this.render()
     this.timer = setInterval(() => this.render(), this.precision)
   }
-}
+})
 
-const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
 
+const extendedClock = makeExtendedClock({ template: 'h:m:s', precision: 1000 })
+// extendedClock.start()
+// extendedClock.stop()
 // clock.start()
 
 /*
@@ -165,7 +179,37 @@ const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
         - download, com o valor 'table.csv'.
 */
 
+const tableRows = document.querySelectorAll('tr')
+const exportBtn = document.querySelector('[data-js="export-table-btn"]')
 
+const getCellText = ({ textContent }) => textContent
+
+const getStringWithCommas = (row) =>
+Array.from(row.cells)
+  .map(getCellText)
+  .join(",")
+
+
+const createCsvString = () =>
+  Array.from(tableRows)
+    .map(getStringWithCommas)
+    .join("\n")
+
+
+const setCsvDownload = (csvString) => {
+  const csvUri = `data:text/csvcharset-utf-8,${encodeURIComponent(csvString)}`
+
+  exportBtn.setAttribute('href', csvUri)
+  exportBtn.setAttribute('download', 'table.csv')
+}
+
+const exportTable = () => {
+  const csvString = createCsvString()
+
+  setCsvDownload(csvString)
+}
+
+// exportBtn.addEventListener('click', exportTable)
 
 /*
   06
@@ -222,3 +266,94 @@ const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
   PS: o desafio aqui é você implementar essa aplicação sozinho(a) e enviá-la 
   para análise antes de ver as próximas aulas, ok? =)
 */
+
+const currencyOneEl = document.querySelector('[data-js="currency-one"]')
+const currencyTwoEl = document.querySelector('[data-js="currency-two"]')
+const currenciesEl = document.querySelector('[data-js="currencies-container"]')
+const convertedValueEl = document.querySelector('[data-js="converted-value"]')
+const valuePrecisionEl = document.querySelector('[data-js="conversion-precision"]')
+const timesCurrencyOneEl = document.querySelector('[data-js="currency-one-times"]')
+
+let internalExchangeRate = {}
+
+const getUrl = currency => `https://v6.exchangerate-api.com/v6/9e3a6fd942b2712ab9af7ee0/latest/${currency}`
+
+const getErrorMessage = errorType => ({
+  'unsupported-code': 'A moeda não existe em nosso banco de dados.',
+  'malformed-request': 'O endpoint do seu request precisa seguir a estrutura à seguir: https://www.exchangerate-api.com/docs/standard-requests',
+  'invalid-key': 'A chave da API não é válida',
+  'inactive-account': 'Você precisa confirmar o email registrado no site da API antes de prosseguir',
+  'quota-reached': 'O número máximo de queries para essa chave foi atingido',
+})[errorType] || 'Não foi possível obter as informações.'
+
+const fetchExchangeRate = async url => {
+  try {
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error('Sua conexão falhou. Não foi possível obter as informações.')
+    }
+
+    const exchangeRateData = await response.json()
+
+    if (exchangeRateData.result === 'error') {
+      throw new Error(getErrorMessage(exchangeRateData['error-type']))
+    }
+
+    return exchangeRateData
+  } catch (err) {
+    const div = document.createElement('div')
+    const button = document.createElement('button')
+
+    div.textContent = err.message
+    div.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show')
+    div.setAttribute('role', 'alert')
+    button.classList.add('btn-close')
+    button.setAttribute('type', 'button')
+    button.setAttribute('aria-label', 'Close')
+
+    button.addEventListener('click', () => {
+      div.remove()
+    })
+
+    div.appendChild(button)
+    currenciesEl.insertAdjacentElement('afterend', div)
+  }
+}
+
+const init = async () => { 
+  internalExchangeRate = { ...(await fetchExchangeRate(getUrl('USD'))) }
+
+  const getOptions = (selectedCurrency) => Object.keys(internalExchangeRate.conversion_rates)
+    .map((currency => `<option ${currency === selectedCurrency ? 'selected' : ''}>${currency}</option>`))
+    .join('')
+  
+  currencyOneEl.innerHTML = getOptions('USD')
+  currencyTwoEl.innerHTML = getOptions('BRL')
+
+  convertedValueEl.textContent = internalExchangeRate.conversion_rates.BRL.toFixed(2)
+  valuePrecisionEl.textContent = `1 USD = ${internalExchangeRate.conversion_rates.BRL} BRL`
+}
+
+timesCurrencyOneEl.addEventListener('input', e => {
+  convertedValueEl.textContent = (e.target.value * internalExchangeRate.conversion_rates[currencyTwoEl.value]).toFixed(2)
+})
+
+currencyTwoEl.addEventListener('input', e => {
+  const currencyTwoValue = internalExchangeRate.conversion_rates[e.target.value]
+
+  convertedValueEl.textContent = (timesCurrencyOneEl.value * currencyTwoValue).toFixed(2)
+  valuePrecisionEl.textContent = `1 ${currencyOneEl.value} = ${1 * internalExchangeRate.conversion_rates[currencyTwoEl.value]} ${currencyTwoEl.value}`
+})
+
+currencyOneEl.addEventListener('input', async e => {
+  internalExchangeRate = { ...(await fetchExchangeRate(getUrl(e.target.value))) }
+
+  convertedValueEl.textContent = (timesCurrencyOneEl.value * internalExchangeRate.conversion_rates[currencyTwoEl.value]).toFixed(2)
+  valuePrecisionEl.textContent = `1 ${currencyOneEl.value} = ${1 * internalExchangeRate.conversion_rates[currencyTwoEl.value]} ${currencyTwoEl.value}`
+})
+
+init()
+
+
+

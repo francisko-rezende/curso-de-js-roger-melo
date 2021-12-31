@@ -10,52 +10,20 @@
   - Teste o método getColor do prototype dos carros.
 */
 
-const obj = {
+const carProto = {
   getColor() {
     return this.color
   }
 }
 
-// Classe
+let firstCar = Object.create(carProto)
+let secondCar = Object.create(carProto)
 
-class Car {
-}
+firstCar.color = 'azul'
+secondCar.color = 'vermelho'
 
-Car.prototype.getColor = obj.getColor
-
-const blueCar = new Car()
-const yellowCar = new Car()
-
-blueCar.color = 'blue'
-yellowCar.color = 'yellow'
-
-// Função construtora
-
-// function Car () {
-// }
-
-// Car.prototype.getColor = obj.getColor
-
-// const blueCar = new Car()
-// const yellowCar = new Car()
-
-// blueCar.color = 'blue'
-// yellowCar.color = 'yellow'
-
-// Factory function
-
-// const createCar = () => ({getColor: obj.getColor})
-
-// const blueCar = createCar()
-// const yellowCar = createCar()
-
-// blueCar.color = 'blue'
-// yellowCar.color = 'yellow'
-
-// console.log(blueCar, yellowCar)
-// console.log(blueCar.getColor(), yellowCar.getColor())
-
-
+// console.log(firstCar.getColor(), secondCar.getColor())
+// console.log(carProto.isPrototypeOf(firstCar), carProto.isPrototypeOf(secondCar))
 
 /*
   02
@@ -78,11 +46,12 @@ const movie = {
   }
 }
 
-// const getSummary = ({ title, director, starringRole }) => 
-//   `${title} foi dirigido por ${director} e tem ${starringRole} no papel principal.`
+function getSummary () {
+  const { title, director, starringRole } = this
+  return `${title} foi dirigido por ${director} e tem ${starringRole} no papel principal.`
+}
 
-
-// console.log(movie.getSummary())
+// console.log(getSummary.apply(movie))
 
 /*
   03
@@ -96,12 +65,12 @@ const movie = {
   - Descomente o código e crie a função.
 */
 
-const createObj = (acc, [prop, value]) => {
-  acc[prop] = value
+const createObj = (acc, [key, value]) => {
+  acc[key] = value
   return acc
 }
 
-const arrayToObj = array => array.reduce(createObj, {})
+const arrayToObj = arr => arr.reduce(createObj, {})
 
 // console.log(
 //   arrayToObj([
@@ -117,8 +86,9 @@ const arrayToObj = array => array.reduce(createObj, {})
   - Refatore as classes abaixo para factory functions.
 */
 
-const formatTimeUnits = units => units
-  .map(unit => unit < 10 ? `0${unit}` : unit)
+const concatenateZero = unit => unit < 10 ? `0${unit}` : unit
+
+const formatTimeUnits = units => units.map(concatenateZero)
 
 const getTime = () => {
   const date = new Date()
@@ -132,89 +102,44 @@ const getTime = () => {
 const getFormattedTime = template => {
   const [hours, minutes, seconds] = getTime()
   const formattedTime = formatTimeUnits([hours, minutes, seconds])
+  const getTimeAsArray = (_, index) => formattedTime[index]
 
   return template
     .split(':')
-    .map((_, index) => formattedTime[index])
+    .map(getTimeAsArray)
     .join(':')
 }
 
+const makeClock = ({ template }) => ({
+  template,
+  render () {
+    const formattedTime = getFormattedTime(this.template)
+    console.log(formattedTime)
+  },
+  start () {
+    const oneSecond = 1000
 
-const getClock = ({ template }) => {
-  return {
-    template: template,
-    
-    render () {
-      const formattedTime = getFormattedTime(template)
-      console.log(formattedTime)
-    },
-
-    start () {
-      const oneSecond = 1000
-      this.render()
-      this.timer = setInterval(() => this.render(), oneSecond)
-    },
-
-    stop () {
-      clearInterval(this.timer)
-    }
+    this.render()
+    this.timer = setInterval(() => this.render(), oneSecond)
+  },
+  stop () {
+    clearInterval(this.timer)
   }
-}
+})
 
-const getExtendedClock = (obj) => {
-  const clock = getClock(obj)
-  const { precision = 1000 } = obj
-  
-  return {
-    ...clock,
-    precision,
-
-    start () {
-      this.render()
-      this.timer = setInterval(() => this.render(), precision)
-    }
-
+const makeExtendedClock = ({ template, precision = 1000 }) => ({
+  precision,
+  ...makeClock({ template }),
+  start () {
+    this.render()
+    this.timer = setInterval(() => this.render(), this.precision)
   }
-}
-// class Clock {
-//   constructor ({ template }) {
-//     this.template = template
-//   }
+})
 
-//   render () {
-//     const formattedTime = getFormattedTime(this.template)
-//     console.log(formattedTime)
-//   }
 
-//   start () {
-//     const oneSecond = 1000
-
-//     this.render()
-//     this.timer = setInterval(() => this.render(), oneSecond)
-//   }
-
-//   stop () {
-//     clearInterval(this.timer)
-//   }
-// }
-
-// class ExtendedClock extends Clock {
-//   constructor (options) {
-//     super(options)
-    
-//     const { precision = 1000 } = options
-//     this.precision = precision
-//   }
-
-//   start () {
-//     this.render()
-//     this.timer = setInterval(() => this.render(), this.precision)
-//   }
-// }
-
-// const clock = new ExtendedClock({ template: 'h:m:s', precision: 1000 })
-const clock = getExtendedClock({ template: 'h:m:s', precision: 1000 })
-
+const extendedClock = makeExtendedClock({ template: 'h:m:s', precision: 1000 })
+// extendedClock.start()
+// extendedClock.stop()
 // clock.start()
 
 /*
@@ -256,18 +181,37 @@ const clock = getExtendedClock({ template: 'h:m:s', precision: 1000 })
         - download, com o valor 'table.csv'.
 */
 
-const rows = document.querySelectorAll('tr')
-const exportButton = document.querySelector('[data-js="export-table-btn"]')
-let csvData = []
+const tableRows = document.querySelectorAll('tr')
+const exportBtn = document.querySelector('[data-js="export-table-btn"]')
 
-rows.forEach((row) => {
-  csvData.push([...row.cells].map((cell) => cell.textContent).join(','))
-})
+const getCellText = ({ textContent }) => textContent
 
-csvData = csvData.join('\n')
+const getStringWithCommas = (row) =>
+Array.from(row.cells)
+  .map(getCellText)
+  .join(",")
 
-// exportButton.setAttribute('href', `data:text/csvcharset=utf-8,${encodeURIComponent(csvData)}`)
-// exportButton.setAttribute('download', 'table.csv')
+
+const createCsvString = () =>
+  Array.from(tableRows)
+    .map(getStringWithCommas)
+    .join("\n")
+
+
+const setCsvDownload = (csvString) => {
+  const csvUri = `data:text/csvcharset-utf-8,${encodeURIComponent(csvString)}`
+
+  exportBtn.setAttribute('href', csvUri)
+  exportBtn.setAttribute('download', 'table.csv')
+}
+
+const exportTable = () => {
+  const csvString = createCsvString()
+
+  setCsvDownload(csvString)
+}
+
+// exportBtn.addEventListener('click', exportTable)
 
 /*
   06
@@ -325,89 +269,150 @@ csvData = csvData.join('\n')
   para análise antes de ver as próximas aulas, ok? =)
 */
 
+const currencyOneEl = document.querySelector('[data-js="currency-one"]')
+const currencyTwoEl = document.querySelector('[data-js="currency-two"]')
+const currenciesEl = document.querySelector('[data-js="currencies-container"]')
+const convertedValueEl = document.querySelector('[data-js="converted-value"]')
+const valuePrecisionEl = 
+  document.querySelector('[data-js="conversion-precision"]')
+const timesCurrencyOneEl = 
+  document.querySelector('[data-js="currency-one-times"]')
 
-const conversionSourceCurrencySelect = document.querySelector('[data-js="currency-one"]')
-const conversionTargetCurrencySelect = document.querySelector('[data-js="currency-two"]')
-const convertedValueParagraph = document.querySelector('[data-js="converted-value"]')
-const currencyOneTimes = document.querySelector('[data-js="currency-one-times"]')
-const conversionPrecisionParagraph = document.querySelector('[data-js="conversion-precision"]')
+
+const showAlert = err => {
+  const div = document.createElement('div')
+  const button = document.createElement('button')
+
+  div.textContent = err.message
+  div.classList.add('alert', 'alert-warning', 'alert-dismissible', 'fade', 'show')
+  div.setAttribute('role', 'alert')
+  button.classList.add('btn-close')
+  button.setAttribute('type', 'button')
+  button.setAttribute('aria-label', 'Close')
+
+  const removeAlert = () => div.remove()
+  button.addEventListener('click', removeAlert)
+
+  div.appendChild(button)
+  currenciesEl.insertAdjacentElement('afterend', div)
+}
+
+const state = (() => {
+  let exchangeRate = {}
+
+  return {
+    getExchangeRate: () => exchangeRate,
+    setExchangeRate: newExchangeRate => {
+      if (!newExchangeRate.conversion_rates) {
+        showAlert({ 
+          message: 'O objeto precisa ter uma propriedade conversion_rates' 
+        })
+        return
+      }
+
+      exchangeRate = newExchangeRate
+      return exchangeRate
+    }
+  }
+})()
+
 
 const APIKey = '9e3a6fd942b2712ab9af7ee0'
-let conversionRates = null
+const getUrl = currency => 
+  `https://v6.exchangerate-api.com/v6/${APIKey}/latest/${currency}`
 
-const generateOptionElement = (currency, conversionRate, isSelected) =>
-  isSelected 
-    ? `<option value="${currency}"  data-conversion-rate="${conversionRate}" selected>${currency}</option>`
-    : `<option value="${currency}" data-conversion-rate="${conversionRate}" >${currency}</option>`
+const getErrorMessage = errorType => ({
+  'unsupported-code': 'A moeda não existe em nosso banco de dados.',
+  'malformed-request': 'O endpoint do seu request precisa seguir a estrutura à seguir: https://www.exchangerate-api.com/docs/standard-requests',
+  'invalid-key': 'A chave da API não é válida',
+  'inactive-account': 'Você precisa confirmar o email registrado no site da API antes de prosseguir',
+  'quota-reached': 'O número máximo de queries para essa chave foi atingido',
+})[errorType] || 'Não foi possível obter as informações.'
 
-const insertCurrencyOptionIntoDOM = ([currency, conversionRate]) => {
-  const isUSD = currency === 'USD'
-  const isBRL = currency === 'BRL'
 
-  conversionSourceCurrencySelect.innerHTML += isUSD 
-  ? generateOptionElement(currency, conversionRate, true) 
-  : generateOptionElement(currency, conversionRate, false)
-  
-  conversionTargetCurrencySelect.innerHTML += isBRL 
-  ? generateOptionElement(currency, conversionRate, true) 
-  : generateOptionElement(currency, conversionRate, false)
-}
+const fetchExchangeRate = async url => {
+  try {
+    const response = await fetch(url)
 
-const generateUrl = (key, currency) => 
-  `https://v6.exchangerate-api.com/v6/${key}/latest/${currency}`
+    if (!response.ok) {
+      throw new Error('Sua conexão falhou. Não foi possível obter as informações.')
+    }
 
-const updateConversionRates = async (url) => {
-  const request = await fetch(url)
-  const data =  await request.json()
+    const exchangeRateData = await response.json()
 
-  conversionRates = data.conversion_rates
-}
+    if (exchangeRateData.result === 'error') {
+      const errorMessage = getErrorMessage(exchangeRateData['error-type'])
+      throw new Error(errorMessage)
+    }
 
-const populateCurrencySelectors = (conversionRates) => {
-  Object.entries(conversionRates).forEach(insertCurrencyOptionIntoDOM)
-}
-
-const updateDisplayedInfo = () => {
-  const targetCurrency = conversionTargetCurrencySelect.value
-  const sourceCurrency = conversionSourceCurrencySelect.value
-  const conversionRate = conversionRates[targetCurrency]
-  const formattedConversionResult = conversionRate.toFixed(2)
-  
-  convertedValueParagraph.textContent = `${formattedConversionResult}`
-  conversionPrecisionParagraph.textContent = 
-    `1 ${sourceCurrency} = ${conversionRate} ${targetCurrency}`
-}
-
-const showConversionInfo = async (currency) => {
-  const url = generateUrl(APIKey, currency)
-  await updateConversionRates(url)
-
-  const isSourceCurrencySelectorEmpty = 
-    conversionSourceCurrencySelect.childElementCount === 0
-
-  if (isSourceCurrencySelectorEmpty) {
-    populateCurrencySelectors(conversionRates)
+    return state.setExchangeRate(exchangeRateData)
+  } catch (err) {
+    showAlert(err)
   }
-
-  updateDisplayedInfo()
 }
 
-showConversionInfo('USD')
+const getOptions = (selectedCurrency, conversion_rates) => {
+  const setSelectedAttribute = currency => 
+    currency === selectedCurrency ? 'selected' : ''
+  const getOptionsAsArray = currency => 
+    `<option ${setSelectedAttribute(currency)}>${currency}</option>`
+  
+  return Object.keys(conversion_rates)
+    .map(getOptionsAsArray)
+    .join('')
+}
+  
 
-currencyOneTimes.addEventListener('input', event => {
-  const multiplier = event.target.value
-  const targetCurrency = conversionTargetCurrencySelect.value 
-  const conversionRate = conversionRates[targetCurrency]
-  const formattedConversionResult = (multiplier * conversionRate).toFixed(2)
+const getMultipliedExchangeRate = conversion_rates => {
+  const currencyTwo = conversion_rates[currencyTwoEl.value]
+  return (timesCurrencyOneEl.value * currencyTwo).toFixed(2)
+}
 
-  convertedValueParagraph.textContent = `${formattedConversionResult}`
-})
+const getNotRoundedExchangeRate = conversion_rates => {
+  const currencyTwo = conversion_rates[currencyTwoEl.value]
+  return `1 ${currencyOneEl.value} = ${1 * currencyTwo} ${currencyTwoEl.value}`
+}
 
-conversionTargetCurrencySelect.addEventListener('input', () => {
-  updateDisplayedInfo()
-})
+const showUpdatedRates = ({ conversion_rates }) => {
+  convertedValueEl.textContent = getMultipliedExchangeRate(conversion_rates)
+  valuePrecisionEl.textContent = getNotRoundedExchangeRate(conversion_rates)
+}
 
-conversionSourceCurrencySelect.addEventListener('input', event => {
-  const newCurrency = event.target.value
-  showConversionInfo(newCurrency)
-})
+const showInitialInfo = ({ conversion_rates }) => {
+    currencyOneEl.innerHTML = getOptions('USD', conversion_rates)
+    currencyTwoEl.innerHTML = getOptions('BRL', conversion_rates)
+
+    showUpdatedRates({ conversion_rates })
+}
+
+const init = async () => { 
+  const url = getUrl('USD')
+  const exchangeRate = await fetchExchangeRate(url)
+
+  if (exchangeRate && exchangeRate.conversion_rates) {
+    showInitialInfo(exchangeRate)
+  }
+}
+
+const handleTimesCurrencyOneElInput = () => {
+  const { conversion_rates } = state.getExchangeRate()
+  convertedValueEl.textContent = getMultipliedExchangeRate(conversion_rates)
+}
+
+const handleCurrencyTwoElInput = () => {
+  const exchangeRate = state.getExchangeRate()
+  showUpdatedRates(exchangeRate)
+}
+
+const handleCurrencyOneElInput  = async e => {
+  const url = getUrl(e.target.value)
+  const exchangeRate = await fetchExchangeRate(url)
+  
+  showUpdatedRates(exchangeRate)
+}
+
+timesCurrencyOneEl.addEventListener('input', handleTimesCurrencyOneElInput)
+currencyTwoEl.addEventListener('input', handleCurrencyTwoElInput)
+currencyOneEl.addEventListener('input', handleCurrencyOneElInput)
+
+init()

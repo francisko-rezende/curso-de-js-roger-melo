@@ -18,9 +18,11 @@
 
 const numbers = [50, 100, 50]
 
-const sum = (x, y, z) => x + y + z
+const sum = (...rest) => rest.reduce((acc, item) => acc += item)
 
-console.log(sum(...numbers))
+// const arraySum = arr => arr.reduce((acc, item) => acc += item, 0) // works if you assume the function gets an array
+
+// console.log(sum(...numbers))
 
 /*
   02
@@ -36,7 +38,33 @@ console.log(sum(...numbers))
     utilizando a classe "active".
 */
 
+const accordionItems = document.querySelectorAll('.accordion-item')
 
+const toggleActiveClass = e => {
+  const accordionItem = document
+    .querySelector(`[data-js="${e.target.dataset.js}"]`)
+  const accordionHeader = accordionItem.querySelector('.accordion-header')
+  const accordionBody = accordionItem.querySelector('.accordion-body')
+
+  accordionHeader.classList.toggle('active')
+  accordionBody.classList.toggle('active')
+}
+
+const setEventListeners = item => {
+  const dataJsContent = item.querySelector('strong').textContent
+  const strong = item.querySelector('strong')
+  const button = item.querySelector('button')
+  const icon = item.querySelector('i')
+
+  const clickableEls = [strong, button, icon]
+
+  item.setAttribute('data-js', dataJsContent)
+  clickableEls.forEach(el => el.setAttribute('data-js', dataJsContent))
+
+  item.addEventListener('click', toggleActiveClass)
+}
+
+accordionItems.forEach(setEventListeners)
 
 /*
   03
@@ -60,8 +88,17 @@ const volkswagenProto = {
   }
 }
 
-// const amarok = carMaker({ name: 'Amarok', color: 'preta' })
-// const jetta = carMaker({ name: 'Jetta', color: 'prata' })
+const carMaker = ({name, color}) => {
+  const newObj = Object.create(volkswagenProto)
+
+  newObj.name = name
+  newObj.color = color
+
+  return newObj
+}
+
+const amarok = carMaker({ name: 'Amarok', color: 'preta' })
+const jetta = carMaker({ name: 'Jetta', color: 'prata' })
 
 /*
   04
@@ -79,6 +116,15 @@ const volkswagenProto = {
 
 const aString = 'O Curso de JavaScript Roger Melo funciona com turmas fechadas, abertas poucas vezes e é focado em quem ainda não é fluente em JS. Ou seja, quem não consegue construir aplicações web com JavaScript puro.'
 
+const getIndexesOfCharacter = (string, char) => {
+  return [...string].reduce((acc, item, index) => {
+    if (item.toLowerCase() === char.toLowerCase() ) {
+      acc.push(index)
+    }
+
+    return acc
+  }, [])
+}
 
 
 // console.log(getIndexesOfCharacter(aString, 'b'))
@@ -128,6 +174,43 @@ const aString = 'O Curso de JavaScript Roger Melo funciona com turmas fechadas, 
 
 
 
+// const typing = document.querySelector('[data-js="typing"]')
+// const messages = ['sou fluente em JS', 'um baita fdp']
+
+// messages.forEach(word => {
+//   const letters = [...word]
+//   letters.forEach((letter, index, array) => {
+//     setTimeout(() => typing.textContent += letter, 250 * index)
+//   })
+// })
+
+const messages = ['sou fluente em JS', 'construo aplicações web com JS puro']
+
+const typing = document.querySelector('[data-js="typing"]')
+
+let messageIndex = 0
+let characterIndex = 0
+let currentMessage = ''
+let currentCharacters = ''
+
+const type = () => {
+  if (messageIndex === messages.length) {
+    messageIndex = 0
+  }
+
+  currentMessage = messages[messageIndex]
+  currentCharacters = currentMessage.slice(0, characterIndex)
+  characterIndex += 1
+
+  typing.textContent = currentCharacters
+
+  if (currentCharacters.length === currentMessage.length) {
+    messageIndex += 1
+    characterIndex = 0
+  }
+}
+
+setInterval(type, 200)
 /*
   06
 
@@ -148,6 +231,15 @@ const wrongDataFormat = [
   'azul-XG',
   'azul-P'
 ]
+
+const rightDataFormat = wrongDataFormat.reduce((acc, item) => {
+const [color, size] = item.split('-')
+acc[color] = acc[color] || {}
+acc[color][size] = acc[color][size] + 1 || 1
+
+return acc
+}, {})
+
 
 
 

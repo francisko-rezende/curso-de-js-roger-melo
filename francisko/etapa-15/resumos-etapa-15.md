@@ -1,21 +1,22 @@
 
-# Aula 01-01 - Correção dos exercícios da aula anterior
+# Aula 01
+## Aula 01-01 - Correção dos exercícios da aula anterior
 
-# Aula 01-02 - Correção dos exercícios da aula anterior
+## Aula 01-02 - Correção dos exercícios da aula anterior
 
-# Aula 01-03 - Correção dos exercícios da aula anterior
+## Aula 01-03 - Correção dos exercícios da aula anterior
 
-# Aula 01-04 - Correção dos exercícios da aula anterior
+## Aula 01-04 - Correção dos exercícios da aula anterior
 
-# Aula 01-05 - Correção dos exercícios da aula anterior
+## Aula 01-05 - Correção dos exercícios da aula anterior
 
-# Aula 01-06 - Correção dos exercícios da aula anterior
+## Aula 01-06 - Correção dos exercícios da aula anterior
 
-# Aula 01-07 - Correção dos exercícios da aula anterior
+## Aula 01-07 - Correção dos exercícios da aula anterior
 
-# Aula 01-08 - Correção dos exercícios da aula anterior
+## Aula 01-08 - Correção dos exercícios da aula anterior
 
-# Aula 01-09 - Correção dos exercícios da aula anterior
+## Aula 01-09 - Correção dos exercícios da aula anterior
 
 ## Aula 01-10 - Introdução ao Firebase
 

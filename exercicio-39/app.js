@@ -18,10 +18,12 @@
 
 const numbers = [50, 100, 50]
 
-const sum = (x, y, z) => x + y + z
+const sum = (...params) => params.reduce((acc, number) => acc + number, 0)
 
 console.log(sum(...numbers))
 
+
+// função variádica é uma função que recebe um número variável de parâmetros
 /*
   02
 
@@ -36,7 +38,20 @@ console.log(sum(...numbers))
     utilizando a classe "active".
 */
 
+const accordion = document.querySelector('[data-js="accordion"]')
 
+accordion.addEventListener('click', e => {
+  const accordionHeaderId = e.target.dataset.accordionHeader
+  const accordionItemToBeOpened = 
+    document.querySelector(`[data-accordion-body="${accordionHeaderId}"]`)
+  const clickedAccordionHeader = 
+    document.querySelector(`[data-accordion-header="${accordionHeaderId}"]`)
+  
+  
+  clickedAccordionHeader.classList.toggle('active')
+  accordionItemToBeOpened.classList.toggle('active')
+
+})
 
 /*
   03

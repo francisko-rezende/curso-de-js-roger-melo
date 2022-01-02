@@ -170,3 +170,69 @@ querySnapshot.forEach((doc) => {
   })
   .catch(console.log)
     ```
+
+# Aula 02
+
+## Aula 02-01 - Correção dos exercícios da última aula
+## Aula 02-02 - Correção dos exercícios da última aula
+## Aula 02-03 - Correção dos exercícios da última aula
+## Aula 02-04 - Correção dos exercícios da última aula
+## Aula 02-05 - Correção dos exercícios da última aula
+## Aula 02-06 - Correção dos exercícios da última aula
+## Aula 02-07 - Introdução a regras de segurança no Firestore
+
+- Lembrando que quando criamos um novo banco de dados no firestore temos duas opções de segurança: production mode e test mode
+- Production mode define umas regras que mantém os dados do banco privado
+- Essas regras previnem que qualquer pessoa leia e escreva nesse banco de dados
+- No test mode, por outro lado, qualquer pessoa com a referência do banco de dados pode acessar e interagir (ler e escrever) com o mesmo
+- Bancos criados em test mode só ficam ativos por 30 dias
+- Próximo a esse prazo recebemos emails avisando que nosso acesso vai expirar
+- Após o acesso expirar, temos que liberar o acesso e fazemos isso modificando as regras do banco de dados
+- Podemos acessar as regras indo em FirestoreDatabase e depois em rules
+- As regras do app são as seguintes (não são exatamente js mas são parecidas)
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents { // instrução que identifica um objeto nobanco
+    match /{document=**} {
+      allow read, write: if
+          request.time < timestamp.date(2022, 1, 30);
+    }
+  }
+}
+```
+
+- As regras começam no segundo match 
+- `match /{document=**}` dá match em qualquer documento
+- `allow read, write: if` faz com que possamos ler e escrever no banco de dados se a condição for cumprida
+- Pra liberar o acesso basta remover a condição ou setar a condição pra true
+- Podemos testar se as regras que setamos funcionam como esperamos usando o rules playground
+- O prazo do test mode é justamente uma data nessas regras, pra liberar o acesso após o tempo de teste expirar é só mudar a regra
+- Supunhetemos que queremos desabilitar a leitura dos docs do collection user e habilitar a leitura de todos os outros documents
+- Fazemos assim `match /users/{document} { allow read: if false: }`
+- Essa regra dá match em todos os documents do collection user e bloqueia a leitura desses documents
+- Esse block só funciona se ela estiver no fim das regras, ela pode ser sobrescrita por outras regras
+- Por padrão a leitura e escrita de um document é bloqueada. Ou seja, se não tiver regra afetando um document ele não vai poder ser lido nem escrito
+- Lembrando que só pode deixar leitura e escrita liberados em desenvolvimento, isso é uma baita vulnerabilidade que não pode rolar quando esse banco for publicado
+
+## Aula 02-08 - Salvando informações no Firestore
+
+- O primeiro passo pra salvar novos items no banco de dados é setar um eventListener no form pra essa finalidade 
+- Captamos os valores dos inputs do value
+- Importamos a função `addDoc`, da firestore e a usamos pra adicionar as informações captadas no form
+  - Essa função recebe a collection em que desejamos inserir o document e um objeto com as propriedades do document
+- Ficou assim
+
+```js
+addDoc(collectionGames, { 
+      title: e.target.title.value,
+      developedBy: e.target.developer.value,
+      createdAt: serverTimestamp()
+    })
+    .then(doc => console.log(`Document criado com o ID: ${doc.id}`))
+    .catch(console.log)
+```
+- A `addDoc` retorna uma promise com o status da tentativa de adição, por isso encadeamos as funções then e catch pra podermos simular o tratamento dos eventuais resultados
+
+## Aula 02-09 - Deletando informações no Firestore

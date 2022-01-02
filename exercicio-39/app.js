@@ -47,6 +47,9 @@ accordion.addEventListener('click', e => {
   const clickedAccordionHeader = 
     document.querySelector(`[data-accordion-header="${accordionHeaderId}"]`)
   
+  if (!e.target.dataset.accordionHeader) {
+    return
+  }
   
   clickedAccordionHeader.classList.toggle('active')
   accordionItemToBeOpened.classList.toggle('active')
@@ -75,8 +78,26 @@ const volkswagenProto = {
   }
 }
 
-// const amarok = carMaker({ name: 'Amarok', color: 'preta' })
-// const jetta = carMaker({ name: 'Jetta', color: 'prata' })
+const toyotaProto = {
+  logCarInfo () {
+    console.log(`Toyota ${this.name}, cor ${this.color}.`)
+  }
+}
+
+const carMaker = ({ name, color }, proto) => {
+  const car = Object.create(proto)
+
+  car.name = name
+  car.color = color
+
+  return car
+}
+
+const amarok = carMaker({ name: 'Amarok', color: 'preta' }, volkswagenProto)
+const jetta = carMaker({ name: 'Jetta', color: 'prata' }, volkswagenProto)
+const corolla = carMaker({ name: 'Corolla', color: 'vermelho' }, toyotaProto)
+
+// console.log(volkswagenProto.isPrototypeOf(jetta) === volkswagenProto.isPrototypeOf(amarok))
 
 /*
   04
@@ -141,7 +162,36 @@ const aString = 'O Curso de JavaScript Roger Melo funciona com turmas fechadas, 
       ela já tem + 1 e faça characterIndex receber 0.
 */
 
+const typing = document.querySelector('[data-js="typing"]')
 
+const messages = ['sou fluente em JS', 'construo aplicações web com JS puro']
+
+let messageIndex = 0
+let characterIndex = 0
+let currentMessage = ''
+let currentCharacters = ''
+
+const type = () => {
+  const shouldTypeFirstMessage = messageIndex === messages.length
+
+  if (shouldTypeFirstMessage) {
+    messageIndex = 0
+  }
+
+  currentMessage = messages[messageIndex]
+  currentCharacters = currentMessage.slice(0, characterIndex++)
+  typing.textContent = currentCharacters
+
+  const shouldChangeMessageToBeTyped = 
+    currentCharacters.length === currentMessage.length
+
+  if (shouldChangeMessageToBeTyped) {
+    messageIndex++
+    characterIndex = 0
+  }
+}
+
+setInterval(type, 200)
 
 /*
   06
@@ -164,8 +214,17 @@ const wrongDataFormat = [
   'azul-P'
 ]
 
+const correctDataFormat = wrongDataFormat.reduce((acc, colorAndSize) => {
+  const [color, size]  = colorAndSize.split('-')
+  acc[color] = acc[color] || {}
+  acc[color][size] = acc[color][size] || 1
+  acc[color][size] += 1
+
+  return acc
+}, {})
 
 
+console.log(correctDataFormat)
 /*
   {
     preto: {

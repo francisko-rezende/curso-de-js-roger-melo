@@ -18,12 +18,14 @@
 
 const numbers = [50, 100, 50]
 
-const sum = (...rest) => rest.reduce((acc, item) => acc += item)
+const sum = (...params) => params.reduce((acc, number) => acc + number, 0)
 
 // const arraySum = arr => arr.reduce((acc, item) => acc += item, 0) // works if you assume the function gets an array
 
 // console.log(sum(...numbers))
 
+
+// função variádica é uma função que recebe um número variável de parâmetros
 /*
   02
 
@@ -38,33 +40,23 @@ const sum = (...rest) => rest.reduce((acc, item) => acc += item)
     utilizando a classe "active".
 */
 
-const accordionItems = document.querySelectorAll('.accordion-item')
+const accordion = document.querySelector('[data-js="accordion"]')
 
-const toggleActiveClass = e => {
-  const accordionItem = document
-    .querySelector(`[data-js="${e.target.dataset.js}"]`)
-  const accordionHeader = accordionItem.querySelector('.accordion-header')
-  const accordionBody = accordionItem.querySelector('.accordion-body')
+accordion.addEventListener('click', e => {
+  const accordionHeaderId = e.target.dataset.accordionHeader
+  const accordionItemToBeOpened = 
+    document.querySelector(`[data-accordion-body="${accordionHeaderId}"]`)
+  const clickedAccordionHeader = 
+    document.querySelector(`[data-accordion-header="${accordionHeaderId}"]`)
+  
+  if (!e.target.dataset.accordionHeader) {
+    return
+  }
+  
+  clickedAccordionHeader.classList.toggle('active')
+  accordionItemToBeOpened.classList.toggle('active')
 
-  accordionHeader.classList.toggle('active')
-  accordionBody.classList.toggle('active')
-}
-
-const setEventListeners = item => {
-  const dataJsContent = item.querySelector('strong').textContent
-  const strong = item.querySelector('strong')
-  const button = item.querySelector('button')
-  const icon = item.querySelector('i')
-
-  const clickableEls = [strong, button, icon]
-
-  item.setAttribute('data-js', dataJsContent)
-  clickableEls.forEach(el => el.setAttribute('data-js', dataJsContent))
-
-  item.addEventListener('click', toggleActiveClass)
-}
-
-accordionItems.forEach(setEventListeners)
+})
 
 /*
   03
@@ -88,17 +80,26 @@ const volkswagenProto = {
   }
 }
 
-const carMaker = ({name, color}) => {
-  const newObj = Object.create(volkswagenProto)
-
-  newObj.name = name
-  newObj.color = color
-
-  return newObj
+const toyotaProto = {
+  logCarInfo () {
+    console.log(`Toyota ${this.name}, cor ${this.color}.`)
+  }
 }
 
-const amarok = carMaker({ name: 'Amarok', color: 'preta' })
-const jetta = carMaker({ name: 'Jetta', color: 'prata' })
+const carMaker = ({ name, color }, proto) => {
+  const car = Object.create(proto)
+
+  car.name = name
+  car.color = color
+
+  return car
+}
+
+const amarok = carMaker({ name: 'Amarok', color: 'preta' }, volkswagenProto)
+const jetta = carMaker({ name: 'Jetta', color: 'prata' }, volkswagenProto)
+const corolla = carMaker({ name: 'Corolla', color: 'vermelho' }, toyotaProto)
+
+// console.log(volkswagenProto.isPrototypeOf(jetta) === volkswagenProto.isPrototypeOf(amarok))
 
 /*
   04
@@ -172,7 +173,36 @@ const getIndexesOfCharacter = (string, char) => {
       ela já tem + 1 e faça characterIndex receber 0.
 */
 
+const typing = document.querySelector('[data-js="typing"]')
 
+const messages = ['sou fluente em JS', 'construo aplicações web com JS puro']
+
+let messageIndex = 0
+let characterIndex = 0
+let currentMessage = ''
+let currentCharacters = ''
+
+const type = () => {
+  const shouldTypeFirstMessage = messageIndex === messages.length
+
+  if (shouldTypeFirstMessage) {
+    messageIndex = 0
+  }
+
+  currentMessage = messages[messageIndex]
+  currentCharacters = currentMessage.slice(0, characterIndex++)
+  typing.textContent = currentCharacters
+
+  const shouldChangeMessageToBeTyped = 
+    currentCharacters.length === currentMessage.length
+
+  if (shouldChangeMessageToBeTyped) {
+    messageIndex++
+    characterIndex = 0
+  }
+}
+
+setInterval(type, 200)
 
 // const typing = document.querySelector('[data-js="typing"]')
 // const messages = ['sou fluente em JS', 'um baita fdp']
@@ -232,17 +262,17 @@ const wrongDataFormat = [
   'azul-P'
 ]
 
-const rightDataFormat = wrongDataFormat.reduce((acc, item) => {
-const [color, size] = item.split('-')
-acc[color] = acc[color] || {}
-acc[color][size] = acc[color][size] + 1 || 1
+const correctDataFormat = wrongDataFormat.reduce((acc, colorAndSize) => {
+  const [color, size]  = colorAndSize.split('-')
+  acc[color] = acc[color] || {}
+  acc[color][size] = acc[color][size] || 1
+  acc[color][size] += 1
 
-return acc
+  return acc
 }, {})
 
 
-
-
+console.log(correctDataFormat)
 /*
   {
     preto: {

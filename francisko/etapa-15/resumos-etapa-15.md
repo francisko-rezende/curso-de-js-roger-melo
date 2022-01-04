@@ -282,4 +282,61 @@ addDoc(collectionGames, {
 
 ## Aula 02-11 - Listeners em tempo real
 
-- 
+- A firebase é um banco com atualização em tempo real
+- Ou seja, com que quando ocorra uma atualização no banco a aplicação seja atualizada (sem precisar recarregar a página)
+- Esse deve ser o default pra usar a firestore
+- Começamos mudando a forma de obter os dados, não usaremos `getDocs()` pois essa função obtém os dados uma vez só (lembre-se, snapshot)
+- Também removemos o import da função
+- Agora, vamos setar um realTimeListener
+- Pra isso, usamos a função da firestore `onSnapshot`, que recebe a collection em que estamos interessados como primeiro argumento e uma função com o argumento querySnapshot como segundo argumento
+
+```js
+onSnapshot(collectionGames, querySnapshot => {
+  console.log(querySnapshot.docs)
+})
+```
+- `querySnapshot` tem uma prop docs (que não aparece no firefox...) que contém os documents
+- Além disso, a função de callback da `onSnapshot` é invocada sempre que rola uma mudança no banco de dados
+- Inclusive a callback é invocada duas vezes quando adicionamos um jogo novo, vamos resolver isso depois usando `serverTimestamp()`
+- De qualquer forma, já que o callback é invocado sempre que rola modificação, podemos usar essa callback pra atualizar as informações exibidas na interface
+- Vamos usar o mesmo código que escrevemos anteriormente, na getDocs
+
+```js
+querySnapshot => {
+  const gamesList = querySnapshot.docs.reduce((acc, doc) => {
+    const { title, developedBy } = doc.data()
+
+    acc += `<li data-id="${doc.id}" class="my-4">
+    <h5>${title}</h5>
+    
+    <ul>
+      <li>Desenvolvido por ${developedBy}</li>
+    </ul>
+
+    <button data-remove="${
+      doc.id
+    }" class="btn btn-danger btn-sm">Remover</button>
+  </li>`
+
+    return acc
+  }, "")
+
+  ul.innerHTML = gamesList
+}
+```
+- Essa modificação faz com ocorra um erro no console quando tentamos removes um jogo da lista, "game is null"
+- Esse erro rola no then da deleteDoc e isso rola porque deletar um jogo conta como uma operação de escrita no banco de dados
+- Sempre que uma operação de escrita é executada no código, os listeners do firestore são notificados com as novas informações e são invocados *imediatamente* antes mesmo que essas informações sejam enviadas pro backend
+  - Essa feature se chama **compensação de latência**
+- Em outras palavras, quando rola uma operação de escrita (ie adicionar um novo game, deletar um game, etc), a invocação da função responsável pela operação é executada só que antes da execução do callback to then da função de escrita ser executado, o callback do onSnapshot é executado.
+- Então, quando deletamos o jogo, a lista é atualizada e essa atualização já é passada pro callback de onSnapshot (que é invocado) antes mesmo de ir pro banco (o jogo removido não entra na marcação). Só então o then do deleteDoc é executado e, como o jogo que removemos não está mais no html, a referência que usamos no callback recebe null, gerando o erro
+- Pra contornar isso, removemos a manipulação de DOM dentro da callback do deleteDoc
+- Agora vamos focar no problema causado pelo serverTimestamp (invocar essa função faz com o callback do onSnapshot seja executada uma vez extra ao final da execução)
+- Isso rola porque a criação da data no servidor faz com que a informação de data seja criada uns milisegundos após o fluxo normal. Como essa operação é de escrita, ela dispara o callback de onSnapshot mais uma vez
+- Pra solucionar isso vamos usar querySnapshot (do callback de onSnapshot), especificamente *querySnapshot.metadata.hasPendingWrites*
+- Essa prop indica se há alguma atualização que já está disponível na onSnapshot que ainda não foi pro banco. No nosso exemplo, como a data ainda vai ser escrita no banco essa prop armazena true
+- Quando a data é criada o callback de onSnaptshot é executada de novo pois rolou uma escrita mas não há mais escrita pendente, pois a data já foi pro banco
+- Então usamos *querySnapshot.metadata.hasPendingWrites* como condição em um bloco de if: se o negativo dessa prop rolar, executamos a manipulação do DOM
+- O roger também faz uma rederização condicional da data pq tem uns casos que não têm o createdAt. Ele usa um ternário que faz com que caso createdAt exista a info de data seja renderizada. Caso contrário uma string vazia é "renderizada"
+- Por último, podemos desatrelar o real time listener usando o retorno do onSnapshot, que retorna a referências de uma função
+- Pra realizar essa interrupção, armazenamos essa referência em uma const unsubscribe e vamos usá-la no listener de eventos de um botão que acabamos de acrescentar (em suma, pra interromper a atualização contínua é só executar a função que o onSnapshot retorna)

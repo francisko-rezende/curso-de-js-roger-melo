@@ -265,7 +265,7 @@ const wrongDataFormat = [
 const correctDataFormat = wrongDataFormat.reduce((acc, colorAndSize) => {
   const [color, size]  = colorAndSize.split('-')
   acc[color] = acc[color] || {}
-  acc[color][size] = acc[color][size] || 1
+  acc[color][size] = acc[color][size] || 0
   acc[color][size] += 1
 
   return acc

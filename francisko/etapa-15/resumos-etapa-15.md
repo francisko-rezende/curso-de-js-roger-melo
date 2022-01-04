@@ -236,3 +236,50 @@ addDoc(collectionGames, {
 - A `addDoc` retorna uma promise com o status da tentativa de adição, por isso encadeamos as funções then e catch pra podermos simular o tratamento dos eventuais resultados
 
 ## Aula 02-09 - Deletando informações no Firestore
+
+- Pra remover os items, vamos identificar o botão de remoção clicado e a se eles tiverem a mesma id removemos a li
+- REVER!!!
+
+
+## Aula 02-10 - Modificando informações no Firestore
+
+- Pro modificar documents começamos obtendo a referência do document que queremos modificar `doc(db, 'games', ERKBtLz89yUlTjZuP5Uv)` (nesse exemplo pegamos o id de maneira manual, os argumentos são a ref do banco de dados, a collection em que o document se encontra e a id do document)
+- A expressão acima resulta na referência do document que queremos modificar
+- Vamos usar a função da firestore `updateDoc()`, então temos que importá-la
+  - Essa função é usada pra atualizar um ou mais campos de um document
+- Então atribuímos a referência pra uma const `const theLastOfUsRef = doc(db, 'games', id)`
+- Depois invocamos a updateDoc, que recebe a referência do document que queremos atualizar e um objeto contendo a(s) prop(s)/fields que queremos atualizar
+- Essa função retornar uma promise, podemos então encadear then/catch conforme fizemos anteriormente para tratar eventuais erros
+- Podemos inserir quantas props quisermos durante a invocação de `updateDoc`, basta adicioná-las no objeto do segundo argumento
+- Se usarmos o id de um doc que não existe, nada acontece no banco de dados e só o catch é executado
+- Se inserirmos um field que não existe no document, esse field será criado
+- Também podemos atualizar um document usando `setDoc()`
+- setDoc pode ser usada pra criar ou sobrescrever um document
+  - se o id que passarmos pra função não existir, ela cria um novo document com esse id
+  - se o id existir, o document com esse id será atualizado
+- Então pra adicionar um novo document fazemos assim
+  ```js
+  const re3 = doc(db, 'games', 're')
+
+  setDoc(re3, {
+    title: 'Resident Evil 3',
+    developedBy: 'Capcom'
+  })
+    .then(() => console.log('Document atualizado'))
+    .catch(console.log)
+  ```
+- Só pra frisar, `setDoc` vai reescrever o document caso passemos uma referência que já existe. Isso quer dizer que se passarmos um objeto com um field só como se quiséssemos atualizar esse field nós criaríamos um document só com aquele field
+- Pra contornar esse problema, podemos passar um terceiro argumento que recebe um objeto `{ merge: true }` 
+- Então, usamos `updatedDoc` quando queremos atualizar os fields de um document existente sem deletar os outros fields, só precisa lembrar que se o doc não existir vai dar ruim
+- Com a `setDoc` podemos atualizar ou criar um document então se quisermos atualizar um doc que não temos certeza que existe podemos usar essa função com a opção merge. Se o doc existir, já teremos. Segue um exemplo
+  ```js
+  const re3 = doc(db, 'games', 'fhjkhg')
+
+  setDoc(re3, { developedBy: 'Atari'}, { merge: true })
+    .then(() => console.log('Documento atualizado'))
+    .catch(console.log())
+  ```
+
+## Aula 02-11 - Listeners em tempo real
+
+- 

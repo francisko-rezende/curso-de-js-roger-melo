@@ -1,6 +1,6 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-app.js"
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-firestore.js"
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-firestore.js"
 
 const firebaseConfig = {
   apiKey: "AIzaSyDUZGaA0i0Vcih72SdV7wuc3vIoospcZuQ",
@@ -17,25 +17,28 @@ const db = getFirestore(app)
 const collectionGames = collection(db, 'games')
 
 const formAddGame = document.querySelector('[data-js="add-game-form"]')
+const ul = document.querySelector('[data-js="games-list"]')
+
 
 getDocs(collection(db, 'games'))
 .then(querySnapshot => {
   const gamesList = querySnapshot.docs.reduce((acc, doc) => {
     const { title, developedBy, createdAt } = doc.data()
 
-    acc += `<li class="my-4">
+    acc += `<li data-id="${doc.id}" class="my-4">
       <h5>${title}</h5>
       
       <ul>
         <li>Desenvolvido por ${developedBy}</li>
         <li>Adicionado no banco em ${createdAt.toDate()}</li>
       </ul>
+
+      <button data-remove="${doc.id}" class="btn btn-danger btn-sm">Remover</button>
     </li>`
 
     return acc
   }, '')
     
-    const ul = document.querySelector('[data-js="games-list"]')
     ul.innerHTML = gamesList
   })
   .catch(console.log)
@@ -51,3 +54,27 @@ getDocs(collection(db, 'games'))
     .then(doc => console.log(`Document criado com o ID: ${doc.id}`))
     .catch(console.log)
   })
+
+  ul.addEventListener('click', e => {
+    const idRemoveButton = e.target.dataset.remove
+    
+    if (idRemoveButton) {
+      deleteDoc(doc(db, 'games', idRemoveButton))
+        .then(() => {
+          const game = document.querySelector(`[data-id="${idRemoveButton}"]`)
+          game.remove()
+          
+          console.log('Game removido')
+        })
+        .catch(console.log)
+    }
+
+  })
+
+  const re3 = doc(db, 'games', 'fhjkhg')
+
+  setDoc(re3, { developedBy: 'Atari'}, { merge: true })
+    .then(() => console.log('Documento atualizado'))
+    .catch(console.log())
+
+  

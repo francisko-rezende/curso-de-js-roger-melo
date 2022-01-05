@@ -175,72 +175,86 @@ const getIndexesOfCharacter = (string, char) => {
 
 const typing = document.querySelector('[data-js="typing"]')
 
-const messages = ['sou fluente em JS', 'construo aplicações web com JS puro']
+const state = (() => {
+  const messages = ['sou fluente em JS', 'construo aplicações web com JS puro']
+  let messageIndex = 0
+  let characterIndex = 0
+  let currentMessage = ''
+  let currentCharacters = ''
 
-let messageIndex = 0
-let characterIndex = 0
-let currentMessage = ''
-let currentCharacters = ''
+  return {
+    getMessageIndex: () => messageIndex,
+    getCharacterIndex: () => characterIndex,
+    getCurrentMessage: () => currentMessage,
+    getCurrentCharacters: () => currentCharacters,
+    setCurrentMessage: index => {
+      currentMessage[index]
+    },
+    setMessageIndex: value => {
+      messageIndex = value
+    },
+    setCharacterIndex: value => {
+      characterIndex = value
+    },
+    setCurrentMessage: index => {
+      currentMessage = messages[index]
+    },
+    setCurrentCharacters: index => {
+      currentCharacters = currentMessage.slice(0, index)
+    },
+    incrementCharacterIndex () {
+      return characterIndex++
+    },
+    incrementMessageIndex () {
+      messageIndex++
+    },
+    getNumberOfMessages () {
+      return messages.length
+    }
+  }
 
-const type = () => {
-  const shouldTypeFirstMessage = messageIndex === messages.length
+})()
+
+const type = state => {
+  const { 
+    getMessageIndex,
+    getNumberOfMessages,
+    setCurrentMessage,
+    setCurrentCharacters,
+    setMessageIndex,
+    setCharacterIndex,
+    incrementCharacterIndex,
+    getCurrentCharacters,
+    getCurrentMessage,
+    incrementMessageIndex 
+  } = state
+
+  const currentCharactersLength = getCurrentCharacters().length
+  const currentMessageLength = getCurrentMessage().length
+  const resetMessageIndex = () => setMessageIndex(0)
+  const resetCharacterIndex = () => setCharacterIndex(0)
+
+  const shouldTypeFirstMessage = getMessageIndex() === getNumberOfMessages()
 
   if (shouldTypeFirstMessage) {
-    messageIndex = 0
+    resetMessageIndex()
   }
 
-  currentMessage = messages[messageIndex]
-  currentCharacters = currentMessage.slice(0, characterIndex++)
-  typing.textContent = currentCharacters
+  setCurrentMessage(getMessageIndex())
+  setCurrentCharacters(incrementCharacterIndex())
+  typing.textContent = getCurrentCharacters()
 
   const shouldChangeMessageToBeTyped = 
-    currentCharacters.length === currentMessage.length
+    currentCharactersLength === currentMessageLength
 
   if (shouldChangeMessageToBeTyped) {
-    messageIndex++
-    characterIndex = 0
+    incrementMessageIndex()
+    resetCharacterIndex()
   }
 }
 
-setInterval(type, 200)
+setInterval(type, 200, state)
 
-// const typing = document.querySelector('[data-js="typing"]')
-// const messages = ['sou fluente em JS', 'um baita fdp']
-
-// messages.forEach(word => {
-//   const letters = [...word]
-//   letters.forEach((letter, index, array) => {
-//     setTimeout(() => typing.textContent += letter, 250 * index)
-//   })
-// })
-
-const messages = ['sou fluente em JS', 'construo aplicações web com JS puro']
-
-const typing = document.querySelector('[data-js="typing"]')
-
-let messageIndex = 0
-let characterIndex = 0
-let currentMessage = ''
-let currentCharacters = ''
-
-const type = () => {
-  if (messageIndex === messages.length) {
-    messageIndex = 0
-  }
-
-  currentMessage = messages[messageIndex]
-  currentCharacters = currentMessage.slice(0, characterIndex)
-  characterIndex += 1
-
-  typing.textContent = currentCharacters
-
-  if (currentCharacters.length === currentMessage.length) {
-    messageIndex += 1
-    characterIndex = 0
-  }
-}
-
-setInterval(type, 200)
 /*
   06
 

@@ -24,76 +24,77 @@ const db = getFirestore(app)
 const collectionGames = collection(db, "games")
 
 const formAddGame = document.querySelector('[data-js="add-game-form"]')
-const ul = document.querySelector('[data-js="games-list"]')
+const gameList = document.querySelector('[data-js="games-list"]')
 const unsubscribeButton = document.querySelector('[data-js="unsub"]')
 
-const formatDateTime = dateTime => {
-  const options = { dateStyle: 'short', timeStyle: 'short' }
+const getFormattedDate = createdAt => new Intl
+  .DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+  .format(createdAt.toDate())
+
+const renderGamesList = querySnapshot => {
+  if (!querySnapshot.metadata.hasPendingWrites) {
+    gameList.innerHTML = querySnapshot.docs.reduce((acc, doc) => {
+      const [id  ,{ title, developedBy, createdAt }] = [doc.id, doc.data()]
   
-  return new Intl.DateTimeFormat('pt-br', options).format(dateTime)
-}
-
-const generateLi = ({ id }, title, developedBy, createdAt) => 
-  `<li data-id="${id}" class="my-4">
-  <h5>${title}</h5>
-
-  <ul>
-    <li>Desenvolvido por ${developedBy}</li>
-    ${createdAt ? `<li>Adicionado no banco em ${formatDateTime(createdAt.toDate())}</li>` : ''}
-  </ul>
-
-  <button data-remove="${
-    id
-  }" class="btn btn-danger btn-sm">Remover</button>
-  </li>`
-
-const generateGameList = (acc, doc) => {
-  const { title, developedBy, createdAt } = doc.data()
-
-  acc += generateLi(doc, title, developedBy, createdAt) 
-  return acc
-}
-
-const renderGameList = querySnapshot => {
-  const isDoneWriting = !querySnapshot.metadata.hasPendingWrites
-
-  if (isDoneWriting) {
-    ul.innerHTML = querySnapshot.docs.reduce(generateGameList, '')
+      return `${acc}<li data-id="${id}" class="my-4">
+      <h5>${title}</h5>
+      
+      <ul>
+        <li>Desenvolvido por ${developedBy}</li>
+        ${createdAt ? `<li>Adicionado no banco em ${getFormattedDate(createdAt)}</li>` : ''}
+      </ul>
+  
+      <button data-remove="${
+        id
+      }" class="btn btn-danger btn-sm">Remover</button>
+    </li>`
+    }, "")
   }
 
 }
 
-const addGameToDatabase = async e => {
+
+const to = promise => promise
+  .then(result => [null, result])
+  .catch(error => [error])
+
+const addGame = async e => {
   e.preventDefault()
 
-  try {
-    const { id } = await addDoc(collectionGames, {
-      title: e.target.title.value,
-      developedBy: e.target.developer.value,
-      createdAt: serverTimestamp(),
-    })
+  const [error, doc] = await to(addDoc(collection(db, 'games'), {
+    title: e.target.title.value,
+    developedBy: e.target.developer.value,
+    createdAt: serverTimestamp(),
+  }))
 
-    console.log(`Documento criado com o ID ${id}`)
-  } catch (err) {
-    console.log(err.message)
+  if (error) {
+    return console.log(error)
   }
+
+  console.log(`Documento criado com o ID: ${doc.id}`)
+  e.target.reset()
+  e.target.focus()
 }
 
-const removeGameFromDatabase = e => {
+const deleteGame = async e => {
   const idRemoveButton = e.target.dataset.remove
-
-  if (idRemoveButton) {
-    try {
-      deleteDoc(doc(db, "games", idRemoveButton))
-      console.log('Game removido')
-    } catch (err) {
-      console.log(err.message)
-    }
+  
+  if (!idRemoveButton) {
+    return
   }
+
+  const [error] = await to(deleteDoc(doc(db, "games", idRemoveButton)))
+
+  if (error) {
+    return console.log(error)
+  }
+
+  console.log('Game removido')
 }
 
-const unsubscribe = onSnapshot(collectionGames, renderGameList)
+const handleSnapshotError = e => console.log(e)
 
-formAddGame.addEventListener("submit", addGameToDatabase)
-ul.addEventListener("click", removeGameFromDatabase)
+const unsubscribe = onSnapshot(collectionGames, renderGamesList, handleSnapshotError)
+formAddGame.addEventListener("submit", addGame)
+gameList.addEventListener("click", deleteGame)
 unsubscribeButton.addEventListener('click', unsubscribe)
